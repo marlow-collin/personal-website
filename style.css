@@ -269,6 +269,21 @@ strong {
   }
 }
 
+.footer {
+
+  margin-top: 80px;
+
+  padding: 24px 0;
+
+  text-align: center;
+
+  font-size: 0.9rem;
+
+  color: #777;
+
+  border-top: 1px solid #e5e5e5;
+
+}
 
 
 /* PRINT / PDF */
@@ -363,4 +378,11 @@ strong {
   .project-link {
     display: none;
   }
+
+  .footer {
+
+    display: none;
+
+  }
+
 }
