@@ -1,265 +1,469 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="favicon.png">
-      
-  <title>Marlow Rischmüller</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Marlow Rischmüller - Applied AI &amp; Machine Learning</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="description" content="Marlow Rischmüller - Applied AI &amp; Machine Learning, focus on NLP &amp; LLMs. Fine-tuning open-source language models, NLP and computer vision." />
+<style>
+  /* Self-hosted fonts - IBM Plex (SIL Open Font License). No external requests. */
+  @font-face{font-family:"IBM Plex Sans";src:url("fonts/IBMPlexSans-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:"IBM Plex Sans";src:url("fonts/IBMPlexSans-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap;}
+  @font-face{font-family:"IBM Plex Sans";src:url("fonts/IBMPlexSans-SemiBold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap;}
+  @font-face{font-family:"IBM Plex Serif";src:url("fonts/IBMPlexSerif-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:"IBM Plex Serif";src:url("fonts/IBMPlexSerif-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap;}
+  @font-face{font-family:"IBM Plex Mono";src:url("fonts/IBMPlexMono-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:"IBM Plex Mono";src:url("fonts/IBMPlexMono-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap;}
+  :root{
+    --paper:#F5F6F7;
+    --surface:#FFFFFF;
+    --ink:#16181D;
+    --ink-soft:#565B66;
+    --ink-faint:#878C97;
+    --hairline:#E3E5E9;
+    --accent:#2A41B8;
+    --accent-soft:#EBEEF9;
+    --up:#2F7A55;
+    --down:#A8462E;
+    --serif:"IBM Plex Serif",Georgia,serif;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    --maxw:760px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:var(--accent);text-decoration:none;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px;}
 
-  <meta name="description" content="M.Sc. graduate focused on applied AI, machine learning and data-driven systems.">
-      
-  <link rel="stylesheet" href="style.css" />
+  /* ---- top nav ---- */
+  .nav{
+    position:sticky;top:0;z-index:20;
+    background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--hairline);
+  }
+  .nav-inner{
+    max-width:var(--maxw);margin:0 auto;padding:0.85rem 1.5rem;
+    display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  }
+  .nav-name{font-family:var(--mono);font-size:0.82rem;font-weight:500;letter-spacing:0.02em;color:var(--ink);}
+  .nav-links{display:flex;gap:1.15rem;font-family:var(--mono);font-size:0.78rem;}
+  .nav-links a{color:var(--ink-soft);}
+  .nav-links a:hover{color:var(--accent);}
+  .nav-links a.cv{color:var(--accent);}
+  @media(max-width:560px){ .nav-links a.hideable{display:none;} }
+
+  /* ---- layout ---- */
+  main{max-width:var(--maxw);margin:0 auto;padding:0 1.5rem;}
+  section{padding:3.6rem 0;border-bottom:1px solid var(--hairline);}
+  section:last-of-type{border-bottom:none;}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:0.74rem;font-weight:500;
+    letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:1.4rem;display:block;
+  }
+  h2.heading{
+    font-family:var(--mono);font-size:0.78rem;font-weight:500;
+    letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-faint);
+    margin-bottom:1.8rem;
+  }
+
+  /* ---- hero ---- */
+  .hero{padding-top:4.4rem;padding-bottom:3.4rem;}
+  .hero h1{
+    font-family:var(--serif);font-weight:500;
+    font-size:clamp(2.5rem,7vw,3.9rem);line-height:1.04;
+    letter-spacing:-0.015em;margin-bottom:1.3rem;
+  }
+  .hero .lede{
+    font-size:1.12rem;color:var(--ink-soft);max-width:36rem;margin-bottom:2.1rem;
+  }
+  .hero .lede strong{color:var(--ink);font-weight:600;}
+  .actions{display:flex;flex-wrap:wrap;gap:0.7rem;}
+  .btn{
+    font-family:var(--mono);font-size:0.82rem;
+    padding:0.62rem 1.1rem;border:1px solid var(--ink);border-radius:3px;
+    color:var(--ink);transition:background .15s,color .15s,border-color .15s;
+  }
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn.primary:hover{background:#1f3290;border-color:#1f3290;}
+
+  /* ---- about ---- */
+  .about p{margin-bottom:1rem;max-width:38rem;color:var(--ink);}
+  .about p:last-child{margin-bottom:0;}
+
+  /* ---- projects ---- */
+  .project{padding:2.2rem 0;border-top:1px solid var(--hairline);}
+  .project:first-of-type{border-top:none;padding-top:0;}
+  .p-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+  .p-kind{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);}
+  .p-year{font-family:var(--mono);font-size:0.72rem;color:var(--ink-faint);white-space:nowrap;}
+  .project h3{
+    font-family:var(--serif);font-weight:500;font-size:1.34rem;line-height:1.25;
+    letter-spacing:-0.01em;margin:0.5rem 0 0.7rem;
+  }
+  .project p{color:var(--ink-soft);margin-bottom:1rem;max-width:40rem;}
+  .project p:last-of-type{margin-bottom:1.1rem;}
+  .project p strong{color:var(--ink);font-weight:600;}
+
+  /* metric readout - the signature element */
+  .readout{
+    font-family:var(--mono);background:var(--surface);
+    border:1px solid var(--hairline);border-radius:4px;
+    padding:0.85rem 1rem;margin-bottom:1.1rem;font-size:0.85rem;line-height:1.85;
+  }
+  .readout .r-label{color:var(--ink-faint);font-size:0.74rem;letter-spacing:0.04em;}
+  .readout .r-line{color:var(--ink);display:flex;flex-wrap:wrap;gap:0.5rem;align-items:baseline;}
+  .readout .arrow{color:var(--ink-faint);}
+  .readout .up{color:var(--up);font-weight:500;}
+  .readout .down{color:var(--down);font-weight:500;}
+  .readout .flag{
+    display:inline-block;margin-top:0.35rem;padding:0.05rem 0.45rem;
+    font-size:0.72rem;border-radius:3px;background:#F6EAE6;color:var(--down);
+    border:1px solid #ECD6CF;
+  }
+  .readout .muted{color:var(--ink-soft);}
+
+  .tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem;}
+  .tag{
+    font-family:var(--mono);font-size:0.72rem;color:var(--ink-soft);
+    border:1px solid var(--hairline);border-radius:3px;padding:0.12rem 0.5rem;background:var(--surface);
+  }
+  .p-links{font-family:var(--mono);font-size:0.8rem;display:flex;gap:1.2rem;flex-wrap:wrap;}
+  .p-links a{display:inline-flex;align-items:center;gap:0.3rem;}
+  .p-links a::after{content:"↗";font-size:0.72rem;color:var(--ink-faint);}
+
+  /* ---- skills ---- */
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem 2.4rem;}
+  @media(max-width:560px){ .skills-grid{grid-template-columns:1fr;} }
+  .skill-group h4{
+    font-family:var(--mono);font-size:0.74rem;font-weight:500;letter-spacing:0.06em;
+    text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.45rem;
+  }
+  .skill-group p{color:var(--ink);font-size:0.96rem;}
+
+  /* ---- experience / education ---- */
+  .entry{padding:1.4rem 0;border-top:1px solid var(--hairline);}
+  .entry:first-of-type{border-top:none;padding-top:0;}
+  .e-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+  .entry h3{font-family:var(--sans);font-size:1.02rem;font-weight:600;}
+  .e-meta{font-family:var(--mono);font-size:0.74rem;color:var(--ink-faint);white-space:nowrap;}
+  .e-org{font-size:0.92rem;color:var(--ink-soft);margin-bottom:0.55rem;}
+  .entry ul{list-style:none;}
+  .entry li{color:var(--ink-soft);font-size:0.96rem;padding-left:1.05rem;position:relative;margin-bottom:0.3rem;}
+  .entry li::before{content:"-";position:absolute;left:0;color:var(--ink-faint);}
+  .entry .grade{font-size:0.92rem;color:var(--ink-soft);}
+
+  /* ---- contact / footer ---- */
+  .contact p{color:var(--ink-soft);max-width:34rem;margin-bottom:1.3rem;}
+  .contact-links{font-family:var(--mono);font-size:0.9rem;display:flex;flex-direction:column;gap:0.5rem;}
+  .contact-links a{display:inline-flex;align-items:center;gap:0.55rem;width:fit-content;}
+  .contact-links .k{color:var(--ink-faint);width:5.5rem;display:inline-block;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:2rem 1.5rem 3rem;
+    font-family:var(--mono);font-size:0.74rem;color:var(--ink-faint);}
+
+  /* ---- scroll reveal ---- */
+  .reveal{opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .reveal{opacity:1;transform:none;transition:none;}
+  }
+</style>
 </head>
-
 <body>
 
-  <main class="container">
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-name">Marlow Rischmüller</span>
+    <div class="nav-links">
+      <a href="#projects" class="hideable">Projects</a>
+      <a href="#skills" class="hideable">Skills</a>
+      <a href="#contact">Contact</a>
+      <a href="marlow-rischmueller-cv.html" class="cv">CV</a>
+    </div>
+  </div>
+</nav>
 
-    <!-- HERO -->
+<main>
 
-    <section class="hero">
+  <!-- HERO -->
+  <header class="hero">
+    <span class="eyebrow">Applied AI &amp; Machine Learning - Focus on NLP &amp; LLMs</span>
+    <h1>Marlow Rischmüller</h1>
+    <p class="lede">
+      I build and fine-tune machine learning models - language models and computer vision systems - and I pay close attention to what they <strong>actually do</strong>, including where they fall short. M.Sc. in Management Information Systems, focused on LLM fine-tuning, NLP and computer vision.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="#projects">View projects</a>
+      <a class="btn" href="marlow-rischmueller-cv.html">Read CV</a>
+    </div>
+  </header>
 
-      <h1>Marlow Rischmüller</h1>
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <h2 class="heading">About</h2>
+    <p>
+      I recently completed my M.Sc. in Management Information Systems at the University of Bremen (1.96), following a B.Sc. in Business Informatics (1.98). My work centres on applied machine learning: fine-tuning language models under hardware constraints, natural language processing, and computer vision.
+    </p>
+    <p>
+      Before and alongside my studies, I spent seven years in hands-on technical operations - methodical fault-finding, building a distributed audio system, and automating recurring statistical reporting. That work shaped how I approach problems now: define the question first, measure carefully, and stay honest about what the results support.
+    </p>
+    <p class="note">
+      I am comfortable reporting a negative result when that is what the data shows. Several of the projects below did exactly that, and I think they are more informative for it.
+    </p>
+  </section>
 
-      <p class="degree">
-        M.Sc. Management Information Systems
-      </p>
+  <!-- PROJECTS -->
+  <section id="projects">
+    <h2 class="heading">Selected Projects</h2>
 
-      <p class="hero-text">
-        Focused on Applied Artificial Intelligence & Machine Learning with interests in LLMs, AI systems and data-driven applications.
-      </p>
-
-      <p class="location">
-        Bremen Area, Germany
-      </p>
-
-      <div class="links">
-        <a href="cv.html">CV</a>
-        <a href="https://www.linkedin.com/in/marlow-rischmueller"
-            target="_blank"
-            rel="noopener noreferrer">LinkedIn</a>
-        <a href="mailto:marlow@marlow-rischmueller.com">Contact</a>
+    <!-- 1 · Master thesis -->
+    <article class="project reveal">
+      <div class="p-top">
+        <span class="p-kind">Master's Thesis · LLM Fine-Tuning</span>
+        <span class="p-year">2025</span>
       </div>
-
-    </section>
-
-    <!-- ABOUT -->
-
-    <section class="section">
-
-      <h2>About</h2>
-
+      <h3>Specialising an Open Source LLM for Marine Engineering Applications within Hardware Constraints using LoRA Fine-Tuning</h3>
       <p>
-        I recently completed my M.Sc. in Management Information Systems at the University of Bremen, following a B.Sc. in Business Informatics.
+        I fine-tuned Microsoft's Phi-3-mini for marine engineering and oceanography using LoRA and supervised fine-tuning, training on a single RTX 3090 Ti and targeting inference under 8&nbsp;GB of VRAM - the kind of consumer hardware a researcher might have on board a vessel with limited connectivity.
       </p>
-
+      <div class="readout">
+        <span class="r-label">OceanBench (domain benchmark) · METEOR</span>
+        <div class="r-line">0.300 <span class="arrow">→</span> 0.348 <span class="up">▲ +0.048</span></div>
+        <span class="r-label">MMLU (general knowledge)</span>
+        <div class="r-line"><span class="muted">0.660 → 0.645 - effectively unchanged, no catastrophic forgetting</span></div>
+      </div>
       <p>
-        Throughout my studies, I focused on applied AI and machine learning topics, particularly in the areas of NLP, computer vision and data analysis. My projects included fine-tuning language models under hardware constraints, computer vision applications and data-driven analysis projects.
+        The point was not the size of the gain but the <strong>combination</strong>: the model picked up domain knowledge without losing general capability. A second strand adapted Phi-3 to the xVal continuous number encoding; LoRA fine-tuning alone proved insufficient there, which matches the original authors' later finding that the approach needs full pre-training rather than adaptation.
       </p>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">PyTorch</span><span class="tag">HuggingFace Transformers</span><span class="tag">PEFT / LoRA</span><span class="tag">CUDA</span>
+      </div>
+      <div class="p-links">
+        <a href="https://github.com/marlow-rischmueller/Phi3-Marine-LoRA" target="_blank" rel="noopener">Code & full results on GitHub</a>
+      </div>
+    </article>
 
+    <!-- 2 · GDP replication -->
+    <article class="project reveal">
+      <div class="p-top">
+        <span class="p-kind">ML in Finance · Replication & Extension</span>
+        <span class="p-year">2023 / 24</span>
+      </div>
+      <h3>Is Accounting Useful for Forecasting GDP Growth? Replicating and Extending a Machine-Learning Study</h3>
       <p>
-        I am especially interested in practical AI applications, technical problem solving and building systems with real-world relevance.
+        A two-person replication of Datar et&nbsp;al. (2020). I was responsible for implementation and data preparation: rebuilding the feature pipeline over 341 variables and validating the models with an expanding walk-forward scheme that respects the time-series structure of the data. Where the original feature count would not reconcile, we corresponded with one of the authors to trace the discrepancy.
       </p>
-
-    </section>
-
-    <!-- PROJECTS -->
-
-    <section class="section">
-
-      <h2>Selected Projects</h2>
-
-      <!-- MASTER THESIS -->
-
-      <div class="project">
-
-        <h3>
-          Specialising an Open Source LLM for Marine Engineering Applications within Hardware Constraints using LoRA Fine Tuning
-        </h3>
-
-        <p>
-          In this thesis, I fine-tuned a resource-efficient small language model based on Microsoft’s Phi-3 architecture for marine engineering and oceanography-related tasks using supervised fine-tuning and LoRA.
-        </p>
-
-        <p>
-          A second focus of the project was adapting the model to use the xVal number-encoding approach in order to improve the handling of numerical data.
-        </p>
-
-        <p class="tech">
-          Python · PyTorch · HuggingFace Transformers · CUDA · NumPy · pandas
-        </p>
-        
-        <a class="project-link" href="mailto:marlow@marlow-rischmueller.com?subject=Project details request">
-          Additional details available on request
-        </a>
-
+      <div class="readout">
+        <span class="r-label">Holdout MSE @ Q+4 - lower is better</span>
+        <div class="r-line">baseline 1.969 <span class="arrow">→</span> 1.187 <span class="up">▲ Random Forest, all features</span></div>
+        <span class="r-label">vs. reference paper</span>
+        <div class="r-line"><span class="muted">outperforms the original model at long horizons (Q+3, Q+4)</span></div>
       </div>
-
-      <!-- BACHELOR THESIS -->
-
-      <div class="project">
-
-        <h3>
-          Simulation and Prediction of Saliency Maps for People with Impaired Visual Perception using Convolutional Neural Networks
-        </h3>
-
-        <p>
-          This thesis explored the prediction of visual saliency for people with different types of simulated visual impairments, including reduced contrast, color blindness and macular degeneration.
-        </p>
-
-        <p>
-          The project focused on adapting an existing saliency prediction model to learn impairment-specific saliency patterns while still using the original image as input.
-        </p>
-
-        <p class="tech">
-          Python · PyTorch · OpenCV · CUDA · NumPy · torchvision · matplotlib
-        </p>
-        
-        <a class="project-link" href="mailto:marlow@marlow-rischmueller.com?subject=Project details request">
-          Additional details available on request
-        </a>
-
+      <p>
+        Beyond replicating the core finding - accounting data helps at longer horizons - the extended Random Forest beat both the Elastic Net replication and the original paper for Q+3 and Q+4. The neural network, kept deliberately within the original's constraints, underperformed the baseline throughout, which I report as such.
+      </p>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">pandas</span><span class="tag">NumPy</span>
       </div>
-
-      <!-- POLITICAL SPEECH ANALYSIS -->
-
-      <div class="project">
-
-        <h3>
-          Unified or Divided Through Sentiment? A Party Analysis of Parliamentary Speeches
-        </h3>
-
-        <p>
-          This project analysed speeches from the German Bundestag to examine differences in party unity based on sentiment and language patterns.
-        </p>
-
-        <p>
-          The focus was on building a custom text parsing pipeline, preparing and analysing parliamentary speech data and evaluating sentiment differences between governing, opposition and fringe parties.
-        </p>
-
-        <p class="tech">
-          Python · NLTK · pandas · NumPy · matplotlib · seaborn
-        </p>
-        
-        <a class="project-link" href="mailto:marlow@marlow-rischmueller.com?subject=Project details request">
-          Additional details available on request
-        </a>
-
+      <div class="p-links">
+        <a href="https://github.com/marlow-rischmueller/gdp-forecasting-accounting-replication" target="_blank" rel="noopener">Code & full results on GitHub</a>
       </div>
+    </article>
 
-      <!-- ML IN FINANCE -->
-
-      <div class="project">
-
-        <h3>
-          Is Accounting Useful for Forecasting GDP Growth? A Machine Learning Perspective
-        </h3>
-
-        <p>
-          This project focused on replicating and evaluating a machine learning approach for forecasting GDP growth using accounting and financial market data.
-        </p>
-
-        <p>
-          The work included building data and model pipelines, validating financial datasets and comparing different machine learning approaches, including Elastic Net, Random Forests and neural networks.
-        </p>
-
-        <p class="tech">
-          Python · scikit-learn · pandas · NumPy
-        </p>
-        
-        <a class="project-link" href="mailto:marlow@marlow-rischmueller.com?subject=Project details request">
-          Additional details available on request
-        </a>
-
+    <!-- 3 · Bundestag sentiment -->
+    <article class="project reveal">
+      <div class="p-top">
+        <span class="p-kind">NLP · Data Science Project (Lead)</span>
+        <span class="p-year">2023 / 24</span>
       </div>
-
-      <!-- OCEANVIEW -->
-
-      <div class="project">
-
-        <h3>
-          OceanView
-        </h3>
-
-        <p>
-          OceanView was a group project focused on detecting and analysing beach pollution using publicly available webcam data and object detection methods.
-        </p>
-
-        <p>
-          My contributions included data collection and preprocessing, project coordination and parts of the project website and documentation.
-        </p>
-
-        <p class="tech">
-          Python · OpenCV · YOLO · Web Scraping
-        </p>
-        
-        <a class="project-link" href="mailto:marlow@marlow-rischmueller.com?subject=Project details request">
-          Additional details available on request
-        </a>
-
+      <h3>Unified or Divided Through Sentiment? – A Party Analysis of Parliamentary Speeches</h3>
+      <p>
+        I led a team of three and handled the programming and data processing: a custom XML parser over 139 Bundestag protocols, yielding 17,198 speeches, scored with the SentiWS lexicon and compared across parties by their coefficient of variation. The question was whether sentiment <strong>within</strong> a party is homogeneous - a different angle on unity than roll-call votes.
+      </p>
+      <div class="readout">
+        <span class="r-label">17,198 speeches · 139 protocols · 7 party groups</span>
+        <div class="r-line"><span class="down">H1 rejected</span> <span class="muted">governing parties were less unified, not more</span></div>
+        <div class="r-line"><span class="up">H2 supported</span> <span class="muted">fringe parties showed the most homogeneous sentiment</span></div>
       </div>
-
-    </section>
-
-    <!-- SKILLS -->
-
-    <section class="section">
-
-      <h2>Skills</h2>
-
-      <div class="skills-group">
-
-        <p>
-          <strong>Languages & Frameworks:</strong>
-          Python, Java, PyTorch, scikit-learn, HuggingFace Transformers
-        </p>
-
-        <p>
-          <strong>Areas:</strong>
-          Machine Learning, NLP, Computer Vision, Data Analysis
-        </p>
-
-        <p>
-          <strong>Tools & Technologies:</strong>
-          Git, CUDA, OpenCV, pandas, NumPy
-        </p>
-
+      <p>
+        The result ran against our first hypothesis and we kept it that way; it lines up with Sieberer (2020), who finds that governing reduces party unity. Building the parser and the scoring pipeline end to end was the core of the work.
+      </p>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">NLTK</span><span class="tag">pandas</span><span class="tag">seaborn</span><span class="tag">matplotlib</span>
       </div>
-
-    </section>
-
-    <!-- EXPERIENCE -->
-
-    <section class="section">
-
-      <h2>Experience</h2>
-
-      <div class="project">
-
-        <h3>
-          Technical Operations & IT Support
-        </h3>
-
-        <p>
-          Alongside my studies, I supported the day-to-day technical operations of a family-run business in the beauty & wellness sector.
-        </p>
-
-        <p>
-          My work included troubleshooting technical issues, supporting operational processes, assisting with technical decisions and helping to organise and maintain parts of the business infrastructure.
-        </p>
-
+      <div class="p-links">
+        <a href="https://github.com/marlow-rischmueller/bundestag-sentiment-party-unity" target="_blank" rel="noopener">Code & full results on GitHub</a>
       </div>
+    </article>
 
-    </section>
+    <!-- 4 · Bachelor thesis (honest negative) -->
+    <article class="project reveal">
+      <div class="p-top">
+        <span class="p-kind">Bachelor's Thesis · Computer Vision</span>
+        <span class="p-year">2023 / 24</span>
+      </div>
+      <h3>Simulation and Prediction of Saliency Maps for People with Impaired Visual Perception using Convolutional Neural Networks</h3>
+      <p>
+        I adapted DeepGazeIIE to predict where attention falls under three simulated impairments - reduced contrast, colour-vision deficiency, and macular degeneration - given only the original image and a flag for the impairment type. Trained on 10,000 images, evaluated on 4,012, scored with the SIM metric against computed ground truth.
+      </p>
+      <div class="readout">
+        <span class="r-label">SIM (contrast modification)</span>
+        <div class="r-line">0.780 <span class="arrow">→</span> 0.791 <span class="up">▲ +0.011 quantitatively</span></div>
+        <span class="flag">Qualitative review: the gain is not real - the goal was not achieved</span>
+      </div>
+      <p>
+        The numbers suggested a slight improvement, but inspecting the predictions showed the model does not meaningfully learn impairment-specific saliency - the metric was misleading. I treat that as the actual finding: the approach, as built, does not work even for the single modifications it was trained on, let alone combinations, and I can point to why (the model cannot process simultaneous modification signals, and the ground truth was simulated rather than collected from participants).
+      </p>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">PyTorch</span><span class="tag">OpenCV</span><span class="tag">torchvision</span><span class="tag">CUDA</span>
+      </div>
+      <div class="p-links">
+        <a href="https://github.com/marlow-rischmueller/saliency-prediction-visual-impairment" target="_blank" rel="noopener">Code & full results on GitHub</a>
+      </div>
+    </article>
 
-  </main>
-  
-  <footer class="footer">
+    <!-- 5 · OceanView -->
+    <article class="project reveal">
+      <div class="p-top">
+        <span class="p-kind">Applied CV · Group Project</span>
+        <span class="p-year">2021 / 22</span>
+      </div>
+      <h3>OceanView - Detecting Beach Pollution on Public Webcam Streams</h3>
+      <p>
+        A larger group project detecting beach litter from publicly available webcam feeds using object detection without task-specific training. My role was coordination of a five-person sub-team and the project's outward representation - defining the technical requirements for camera positioning and the project's documentation and site, rather than the core detection code.
+      </p>
+      <div class="readout">
+        <span class="r-label">Approach</span>
+        <div class="r-line"><span class="muted">off-the-shelf object detection on live public streams · no custom training</span></div>
+        <span class="r-label">My contribution</span>
+        <div class="r-line"><span class="muted">sub-team coordination (5 of 11) · requirements · outward representation</span></div>
+      </div>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">YOLO</span><span class="tag">OpenCV</span><span class="tag">Web Scraping</span>
+      </div>
+    </article>
 
-    <p>© 2026 Marlow Rischmüller</p>
+  </section>
 
-  </footer>
-  
+  <!-- SKILLS -->
+  <section id="skills">
+    <h2 class="heading">Skills</h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <h4>GenAI &amp; LLMs</h4>
+        <p>HuggingFace Transformers, PEFT / LoRA, supervised fine-tuning</p>
+      </div>
+      <div class="skill-group">
+        <h4>Machine Learning &amp; Deep Learning</h4>
+        <p>PyTorch, scikit-learn, OpenCV, torchvision, CUDA</p>
+      </div>
+      <div class="skill-group">
+        <h4>Data &amp; Analysis</h4>
+        <p>pandas, NumPy, NLTK, matplotlib, seaborn</p>
+      </div>
+      <div class="skill-group">
+        <h4>Programming</h4>
+        <p>Python (primary); SQL, Java (working knowledge)</p>
+      </div>
+      <div class="skill-group">
+        <h4>Tools</h4>
+        <p>Git, Jupyter</p>
+      </div>
+      <div class="skill-group">
+        <h4>Focus areas</h4>
+        <p>NLP, LLM fine-tuning, computer vision, data analysis</p>
+      </div>
+      <div class="skill-group">
+        <h4>Spoken languages</h4>
+        <p>German (native), English C1 (certified)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <h2 class="heading">Experience</h2>
+    <div class="entry">
+      <div class="e-top">
+        <h3>Technical Operations &amp; IT</h3>
+        <span class="e-meta">2017 – 2024</span>
+      </div>
+      <div class="e-org">Sun-Power, Delmenhorst - alongside studies</div>
+      <ul>
+        <li>Designed and implemented a distributed audio system: eight independent streams from one PC, individually selectable in up to 15 cabins.</li>
+        <li>Modernised, extended and partly automated the recurring statistical reporting used across the business.</li>
+        <li>Systems maintenance and methodical fault diagnosis; onboarding and training of staff on tools and processes.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <h2 class="heading">Education</h2>
+    <div class="entry">
+      <div class="e-top">
+        <h3>M.Sc. Management Information Systems</h3>
+        <span class="e-meta">2024 – 2026</span>
+      </div>
+      <div class="e-org">University of Bremen</div>
+      <p class="grade">Final grade 1.96</p>
+    </div>
+    <div class="entry">
+      <div class="e-top">
+        <h3>B.Sc. Business Informatics</h3>
+        <span class="e-meta">2019 – 2024</span>
+      </div>
+      <div class="e-org">University of Bremen</div>
+      <p class="grade">Final grade 1.98</p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <h2 class="heading">Contact</h2>
+    <p>
+      The fastest way to reach me is by email; my code is on GitHub.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:marlow@marlow-rischmueller.com"><span class="k">Email</span> marlow@marlow-rischmueller.com</a>
+      <a href="https://www.linkedin.com/in/marlow-rischmueller" target="_blank" rel="noopener"><span class="k">LinkedIn</span> /in/marlow-rischmueller</a>
+      <a href="https://github.com/marlow-rischmueller" target="_blank" rel="noopener"><span class="k">GitHub</span> /marlow-rischmueller</a>
+      <a href="marlow-rischmueller-cv.html"><span class="k">CV</span> read the CV</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 Marlow Rischmüller · Bremen area, Germany
+</footer>
+
+<script>
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      els.forEach(function(e){e.classList.add('in');}); return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    },{threshold:0.12});
+    els.forEach(function(e){io.observe(e);});
+  })();
+</script>
+
 </body>
 </html>
