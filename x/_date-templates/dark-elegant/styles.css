@@ -35,7 +35,7 @@ h1{
 .intro-sub{color:var(--muted);font-size:1.05rem;margin-bottom:34px}
 .lux-primary,.lux-secondary{
   min-height:56px;border-radius:18px;padding:15px 20px;font-weight:720;
-  transition:transform .16s ease,box-shadow .2s ease,left .5s ease,top .5s ease
+  transition:transform .16s ease,box-shadow .2s ease,left .28s ease,top .28s ease
 }
 .lux-primary{
   background:linear-gradient(135deg,#f5eee3,#d9c7aa);color:#171514;
@@ -56,7 +56,7 @@ h1{
 .no-home{min-height:56px}
 .no-btn{position:relative;z-index:30}
 .no-btn.free{position:absolute;width:auto;min-width:116px}
-.no-btn.wandering{transition:left .72s ease,top .72s ease}
+.no-btn.wandering{transition:left .45s ease,top .45s ease}
 .movement-zone{position:absolute;left:1vw;right:1vw;top:46%;bottom:8vh;pointer-events:auto}
 .reaction{position:absolute;left:1vw;right:1vw;bottom:3vh;min-height:20px;color:var(--muted);font-size:.9rem}
 .transition-lux{justify-content:center;align-items:flex-start}
@@ -104,3 +104,40 @@ h1{
   .lux-time button{min-height:120px}
 }
 .no-btn{pointer-events:auto!important}
+
+
+/* V4: Ja wird nach Nein-Klicks schrittweise prominenter. */
+#yesButton,
+button[data-action="yes"],
+.yes-button {
+  --yes-scale: 1;
+  --yes-shadow: 10px;
+  transform: scale(var(--yes-scale));
+  box-shadow: 0 8px var(--yes-shadow) rgba(0,0,0,.12);
+  transition: transform .22s ease, box-shadow .24s ease;
+  transform-origin: center;
+}
+
+#yesButton.yes-pulse,
+button[data-action="yes"].yes-pulse,
+.yes-button.yes-pulse {
+  animation: yesPulseV4 .48s ease;
+}
+
+@keyframes yesPulseV4 {
+  0%,100% { transform: scale(var(--yes-scale)); }
+  45% { transform: scale(calc(var(--yes-scale) * 1.08)); }
+}
+
+/* V4: Nein-Bewegung flotter, aber weiterhin anklickbar. */
+#noButton,
+button[data-action="no"],
+.no-button {
+  transition-duration: .28s;
+}
+
+#noButton.wandering,
+button[data-action="no"].wandering,
+.no-button.wandering {
+  transition-duration: .45s;
+}

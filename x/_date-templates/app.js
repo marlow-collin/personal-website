@@ -24,27 +24,61 @@
     ["Eher nicht","Das sah verdächtig nach einem Fehlklick aus.","nudge"],
     ["Bist du sicher?","Ich frage nur zur Sicherheit.","jump-small"],
     ["Wirklich nicht?","Okay, du testest die Website.","nudge"],
-    ["Nope","Interessante Strategie.","wander"],
-    ["Nochmal überlegen","Ich geb dir noch eine Chance.","jump"],
-    ["Immer noch nein","Konsequent bist du jedenfalls.","tilt-move"],
-    ["Nicht überzeugt","Das System bleibt skeptisch.","nudge"],
-    ["Bleibt bei nein","Die Datenlage wird ungewöhnlich.","wander"],
-    ["Nein.","Du bist erstaunlich engagiert für ein Nein.","jump-small"],
-    ["Ich bleibe dabei","10 Versuche. Respekt.","wander"],
-    ["Weiter nein","Achievement unlocked: hartnäckig.","nudge"],
-    ["Noch immer","Wir können das noch eine Weile machen.","jump-small"],
-    ["Nein bleibt nein","Technisch funktioniert der Button.","wander"],
-    ["Nicht heute","Ich bewundere fast die Ausdauer.","jump"],
-    ["Nope","Und noch eine Runde …","tilt-move"],
+    ["Nope","Interessante Strategie.","wander"]
   ];
 
-  const loop = [
-    ["Immer noch nein","Das wird langsam persönlich.","wander"],
-    ["Nope","Nächste Runde.","jump-small"],
-    ["Nicht heute","Mutige Wortwahl.","nudge"],
-    ["Weiter nein","Ich hab Zeit.","tilt-move"],
-    ["Nein","Der Ja-Button wäre effizienter.","wander"]
+  const noLabels = [
+    "Nochmal überlegen",
+    "Immer noch nein",
+    "Nicht überzeugt",
+    "Bleibt bei nein",
+    "Nein.",
+    "Ich bleibe dabei",
+    "Weiter nein",
+    "Noch immer",
+    "Nein bleibt nein",
+    "Nicht heute",
+    "Nope",
+    "Eher nicht",
+    "Wirklich nicht?"
   ];
+
+  const noComments = [
+    "Ich geb dir noch eine Chance.",
+    "Konsequent bist du jedenfalls.",
+    "Das System bleibt skeptisch.",
+    "Die Datenlage wird ungewöhnlich.",
+    "Du bist erstaunlich engagiert für ein Nein.",
+    "Respekt für die Ausdauer.",
+    "Achievement unlocked: hartnäckig.",
+    "Wir können das noch eine Weile machen.",
+    "Technisch funktioniert der Button.",
+    "Ich bewundere fast die Ausdauer.",
+    "Und noch eine Runde …",
+    "Das wird langsam persönlich.",
+    "Der Ja-Button wäre effizienter."
+  ];
+
+  const randomEffects = ["nudge","jump","jump-small","tilt-move","wander"];
+  let lastRandomEffect = null;
+
+  function pickDifferentEffect(){
+    let choices = randomEffects.filter(x => x !== lastRandomEffect);
+    // wander soll regelmäßig auftauchen, aber nicht permanent.
+    if(state.noAttempts >= 6 && Math.random() < .28 && lastRandomEffect !== "wander"){
+      lastRandomEffect = "wander";
+      return "wander";
+    }
+    const picked = choices[Math.floor(Math.random()*choices.length)];
+    lastRandomEffect = picked;
+    return picked;
+  }
+
+  function randomNoStep(count){
+    const label = noLabels[Math.floor(Math.random()*noLabels.length)];
+    const comment = noComments[Math.floor(Math.random()*noComments.length)];
+    return [label, comment, pickDifferentEffect()];
+  }
 
   function showScreen(name){
     stopWander();
@@ -124,7 +158,7 @@
       noButton.style.transform = "scale(1)";
     };
     move();
-    state.wanderTimer = setInterval(move,1350);
+    state.wanderTimer = setInterval(move,900);
   }
 
   function applyEffect(effect){
@@ -136,9 +170,30 @@
     if(effect==="wander") wander();
   }
 
+  function shouldPulseYes(count){
+    if(count===3 || count===6 || count===10) return true;
+    return count>10 && ((count-10)%3===0);
+  }
+
+  function updateYesProminence(count, pulse=false){
+    const scale = Math.min(1.25, 1 + count*.04);
+    const afterMax = Math.max(0, count-7);
+    const shadowStrength = Math.min(34, 10 + afterMax*3);
+
+    yesButton.style.setProperty("--yes-scale", scale.toFixed(3));
+    yesButton.style.setProperty("--yes-shadow", `${shadowStrength}px`);
+
+    if(pulse){
+      yesButton.classList.remove("yes-pulse");
+      // force restart animation
+      void yesButton.offsetWidth;
+      yesButton.classList.add("yes-pulse");
+    }
+  }
+
   function noStepForCount(count){
     if(count <= fixedSteps.length) return fixedSteps[count-1];
-    return loop[(count-fixedSteps.length-1)%loop.length];
+    return randomNoStep(count);
   }
 
   async function api(path="", options={}){

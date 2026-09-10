@@ -30,9 +30,9 @@ h2{font-size:clamp(2.35rem,10vw,4rem);line-height:.98;letter-spacing:-.055em;mar
 .answer-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:5vh;position:relative;z-index:5}
 .answer-btn,.no-home,.no-home .no-btn{width:100%}
 .no-home{min-height:54px}
-.no-btn{position:relative;z-index:30;transition:left .5s ease,top .5s ease,transform .18s ease}
+.no-btn{position:relative;z-index:30;transition:left .28s ease,top .28s ease,transform .18s ease}
 .no-btn.free{position:absolute;width:auto;min-width:112px}
-.no-btn.wandering{transition:left .72s ease,top .72s ease}
+.no-btn.wandering{transition:left .45s ease,top .45s ease}
 .movement-zone{position:absolute;left:2vw;right:2vw;top:42%;bottom:9vh;pointer-events:auto}
 .reaction{position:absolute;left:2vw;right:2vw;bottom:3vh;min-height:20px;color:var(--muted);font-size:.92rem}
 .center-stage{display:grid;place-items:center}
@@ -71,3 +71,40 @@ h2{font-size:clamp(2.35rem,10vw,4rem);line-height:.98;letter-spacing:-.055em;mar
   .time-pair button{height:120px}
 }
 .no-btn{pointer-events:auto!important}
+
+
+/* V4: Ja wird nach Nein-Klicks schrittweise prominenter. */
+#yesButton,
+button[data-action="yes"],
+.yes-button {
+  --yes-scale: 1;
+  --yes-shadow: 10px;
+  transform: scale(var(--yes-scale));
+  box-shadow: 0 8px var(--yes-shadow) rgba(0,0,0,.12);
+  transition: transform .22s ease, box-shadow .24s ease;
+  transform-origin: center;
+}
+
+#yesButton.yes-pulse,
+button[data-action="yes"].yes-pulse,
+.yes-button.yes-pulse {
+  animation: yesPulseV4 .48s ease;
+}
+
+@keyframes yesPulseV4 {
+  0%,100% { transform: scale(var(--yes-scale)); }
+  45% { transform: scale(calc(var(--yes-scale) * 1.08)); }
+}
+
+/* V4: Nein-Bewegung flotter, aber weiterhin anklickbar. */
+#noButton,
+button[data-action="no"],
+.no-button {
+  transition-duration: .28s;
+}
+
+#noButton.wandering,
+button[data-action="no"].wandering,
+.no-button.wandering {
+  transition-duration: .45s;
+}
