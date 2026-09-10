@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#08090c">
+  <title>Eine kleine Frage</title>
+  <link rel="stylesheet" href="/x/_date-templates/dark-elegant/styles.css">
+</head>
+<body>
+<div class="ambient orb-one"></div>
+<div class="ambient orb-two"></div>
+
+<main class="app" aria-live="polite">
+  <section class="screen active" data-screen="intro">
+    <div class="lux-shell intro-lux">
+      <div class="seal">✦</div>
+      <p class="overline">Eine kleine Einladung</p>
+      <h1>Hey <span id="introName">du</span>.</h1>
+      <p class="intro-sub">Ich wollte dich etwas fragen.</p>
+      <button class="lux-primary" data-action="start">Zeig mir die Frage</button>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="question">
+    <div class="lux-shell question-lux">
+      <div class="question-glow"></div>
+      <p class="overline">Nur zwischen uns</p>
+      <h2>Hast du Lust auf ein Date mit mir?</h2>
+
+      <div class="answer-row">
+        <button class="lux-primary" data-action="yes">Ja, gerne</button>
+        <div class="no-home" id="noHome">
+          <button class="lux-secondary no-btn" id="noButton" data-action="no">Eher nicht</button>
+        </div>
+      </div>
+
+      <div class="movement-zone" id="noArena" aria-hidden="true"></div>
+      <p class="reaction" id="reaction"></p>
+      <span id="questionName" hidden></span>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="yes-transition">
+    <div class="lux-shell transition-lux">
+      <div class="spark">✦</div>
+      <p>Sehr gute Entscheidung.</p>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="activity">
+    <div class="lux-shell">
+      <p class="overline">Dann weiter</p>
+      <h2 class="section-title">Was machen wir?</h2>
+      <div class="lux-grid">
+        <button data-choice="activity" data-value="Café"><span>☕</span><strong>Café</strong></button>
+        <button data-choice="activity" data-value="Billard"><span>🎱</span><strong>Billard</strong></button>
+        <button data-choice="activity" data-value="Drinks"><span>🍸</span><strong>Drinks</strong></button>
+        <button class="surprise" data-choice="activity" data-value="Überrasch mich"><span>🎲</span><strong>Überrasch mich</strong></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="day">
+    <div class="lux-shell">
+      <p class="overline">Wann</p>
+      <h2 class="section-title">Wann passt es dir eher?</h2>
+      <div class="lux-stack">
+        <button data-choice="day" data-value="Unter der Woche">Unter der Woche</button>
+        <button data-choice="day" data-value="Freitag">Freitag</button>
+        <button data-choice="day" data-value="Wochenende">Am Wochenende</button>
+        <button data-choice="day" data-value="Flexibel">Bin flexibel</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="time">
+    <div class="lux-shell">
+      <p class="overline">Tageszeit</p>
+      <h2 class="section-title">Und eher …</h2>
+      <div class="lux-time">
+        <button data-choice="time" data-value="Nachmittags"><span>☀️</span><strong>Nachmittags</strong></button>
+        <button data-choice="time" data-value="Abends"><span>🌙</span><strong>Abends</strong></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="ride">
+    <div class="lux-shell">
+      <p class="overline">Noch eine Sache</p>
+      <h2 class="section-title">Wie machen wir das mit der Fahrt?</h2>
+      <div class="lux-stack">
+        <button data-choice="ride" data-value="Hol mich ab">Hol mich ab 🚘</button>
+        <button data-choice="ride" data-value="Ich komme selbst">Ich komme selbst 🚗</button>
+        <button data-choice="ride" data-value="Klären wir später">Klären wir später</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="done">
+    <div class="lux-shell final-lux">
+      <div class="seal">✓</div>
+      <p class="overline">Abgemacht</p>
+      <h2 class="section-title" id="finalHeading">Klingt nach einem Plan.</h2>
+      <div class="summary">
+        <div><span>Idee</span><strong id="sumActivity">–</strong></div>
+        <div><span>Wann</span><strong id="sumDay">–</strong></div>
+        <div><span>Zeit</span><strong id="sumTime">–</strong></div>
+        <div id="rideRow"><span>Fahrt</span><strong id="sumRide">–</strong></div>
+      </div>
+      <p class="signoff">Ich freu mich drauf.</p>
+      <button class="reset" data-action="restart">Nochmal ansehen</button>
+    </div>
+  </section>
+</main>
+<script src="/x/_date-templates/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#fff7ef">
+  <title>Eine kleine Frage</title>
+  <link rel="stylesheet" href="/x/_date-templates/soft-playful/styles.css">
+</head>
+<body>
+<main class="app" aria-live="polite">
+  <section class="screen active" data-screen="intro">
+    <div class="intro-layout">
+      <span class="mini-label">für <span id="introName">dich</span></span>
+      <div class="intro-copy">
+        <h1>Hey <span id="introGreetingName"></span><span id="introGreetingFallback">👋</span></h1>
+        <p>Ich wollte dich etwas fragen.</p>
+      </div>
+      <button class="pill primary" data-action="start">Okay, schieß los</button>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="question">
+    <div class="question-layout" id="questionLayout">
+      <span class="mini-label">okay <span id="questionName"></span> …</span>
+      <h2>Hast du Lust, was mit mir zu machen?</h2>
+
+      <div class="answer-row">
+        <button class="pill primary answer-btn" data-action="yes">Ja, klingt gut</button>
+        <div class="no-home" id="noHome">
+          <button class="pill secondary no-btn" id="noButton" data-action="no">Eher nicht</button>
+        </div>
+      </div>
+
+      <div class="movement-zone" id="noArena" aria-hidden="true"></div>
+      <p class="reaction" id="reaction"></p>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="yes-transition">
+    <div class="center-stage"><p class="transition-copy">Sehr gute Entscheidung.</p></div>
+  </section>
+
+  <section class="screen" data-screen="activity">
+    <div class="flow-layout">
+      <h2>Was machen wir?</h2>
+      <div class="activity-grid">
+        <button class="activity" data-choice="activity" data-value="Café"><span>☕</span><strong>Café</strong></button>
+        <button class="activity" data-choice="activity" data-value="Billard"><span>🎱</span><strong>Billard</strong></button>
+        <button class="activity" data-choice="activity" data-value="Drinks"><span>🍸</span><strong>Drinks</strong></button>
+        <button class="activity surprise" data-choice="activity" data-value="Überrasch mich"><span>🎲</span><strong>Überrasch mich</strong></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="day">
+    <div class="flow-layout">
+      <h2>Wann passt es dir eher?</h2>
+      <div class="choice-list">
+        <button data-choice="day" data-value="Unter der Woche">Unter der Woche</button>
+        <button data-choice="day" data-value="Freitag">Freitag</button>
+        <button data-choice="day" data-value="Wochenende">Am Wochenende</button>
+        <button data-choice="day" data-value="Flexibel">Bin flexibel</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="time">
+    <div class="flow-layout">
+      <h2>Und eher …</h2>
+      <div class="time-pair">
+        <button data-choice="time" data-value="Nachmittags"><span>☀️</span><strong>Nachmittags</strong></button>
+        <button data-choice="time" data-value="Abends"><span>🌙</span><strong>Abends</strong></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="ride">
+    <div class="flow-layout">
+      <h2>Wie machen wir das mit der Fahrt?</h2>
+      <div class="choice-list">
+        <button data-choice="ride" data-value="Hol mich ab">Hol mich ab 🚘</button>
+        <button data-choice="ride" data-value="Ich komme selbst">Ich komme selbst 🚗</button>
+        <button data-choice="ride" data-value="Klären wir später">Klären wir später</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="done">
+    <div class="final-layout">
+      <div class="check">✓</div>
+      <h2 id="finalHeading">Klingt nach einem Plan.</h2>
+      <div class="summary">
+        <div><span>Idee</span><strong id="sumActivity">–</strong></div>
+        <div><span>Wann</span><strong id="sumDay">–</strong></div>
+        <div><span>Zeit</span><strong id="sumTime">–</strong></div>
+        <div id="rideRow"><span>Fahrt</span><strong id="sumRide">–</strong></div>
+      </div>
+      <p class="signoff">Ich freu mich drauf 🙂</p>
+      <button class="link-btn" data-action="restart">Nochmal ansehen</button>
+    </div>
+  </section>
+</main>
+<script src="/x/_date-templates/app.js"></script>
+</body>
+</html>
