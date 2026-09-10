@@ -203,8 +203,8 @@
 
     // Nach Erreichen der Maximalgröße steigt die optische Hervorhebung weiter.
     const afterMax = Math.max(0, count-7);
-    const emphasis = Math.min(1, afterMax / 10);
-    const shadowStrength = Math.min(38, 10 + afterMax*3);
+    const emphasis = Math.min(1, afterMax / 5);
+    const shadowStrength = Math.min(46, 12 + afterMax*5);
 
     yesButton.style.setProperty("--yes-scale", scale.toFixed(3));
     yesButton.style.setProperty("--yes-shadow", `${shadowStrength}px`);
