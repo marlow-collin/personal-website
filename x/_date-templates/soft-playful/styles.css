@@ -108,8 +108,16 @@ button[data-action="no"].wandering,
 }
 
 button[data-action="yes"] {
+  /* Soft Playful: pastelliger Rand + weicher Glow statt dunklem Schatten. */
+  border: calc(1px + 2px * var(--yes-emphasis)) solid
+    rgba(255,255,255,calc(.55 + .35 * var(--yes-emphasis)));
   box-shadow:
-    0 10px var(--yes-shadow) rgba(0,0,0,calc(.14 + .10 * var(--yes-emphasis))),
-    0 0 calc(10px + 30px * var(--yes-emphasis)) rgba(255,255,255,calc(.12 + .34 * var(--yes-emphasis)));
-  filter: brightness(calc(1 + .06 * var(--yes-emphasis)));
+    0 8px 18px rgba(0,0,0,.10),
+    0 0 calc(8px + 24px * var(--yes-emphasis))
+      rgba(255,182,193,calc(.08 + .28 * var(--yes-emphasis))),
+    0 0 calc(4px + 12px * var(--yes-emphasis))
+      rgba(186,225,255,calc(.06 + .24 * var(--yes-emphasis)));
+  filter:
+    brightness(calc(1 + .08 * var(--yes-emphasis)))
+    saturate(calc(1 + .08 * var(--yes-emphasis)));
 }
