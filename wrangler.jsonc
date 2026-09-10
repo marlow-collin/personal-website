@@ -1,14 +1,29 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "personal-website",
-  "compatibility_date": "2026-06-22",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-09",
   "observability": {
     "enabled": true
   },
   "assets": {
     "directory": ".",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/x/date/*",
+      "/x/api/*",
+      "/x/admin/api/*"
+    ]
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "personal-website-date-invitations",
+      "database_id": "5e9cdc4a-99c8-4235-9a2d-e0f08d855de5",
+      "migrations_dir": "migrations"
+    }
+  ],
   "compatibility_flags": [
     "nodejs_compat"
   ]
