@@ -1,6 +1,6 @@
 const THEMES = new Set(["soft-playful", "dark-elegant"]);
 const PUBLIC_FIELDS = `
-  token, first_name, personal_message, theme, status, no_attempts,
+  token, first_name, personal_message, final_message, theme, status, no_attempts,
   activity, day_preference, time_preference, ride_preference,
   accepted_at, completed_at
 `;
@@ -149,7 +149,7 @@ async function handlePublicEvent(request, env, token){
 
 async function handleAdminList(env){
   const result = await env.DB.prepare(`
-    SELECT token, first_name, internal_label, personal_message, theme, status,
+    SELECT token, first_name, internal_label, personal_message, final_message, theme, status,
            no_attempts, activity, day_preference, time_preference, ride_preference,
            created_at, opened_at, accepted_at, completed_at
     FROM invitations
@@ -171,7 +171,8 @@ async function handleAdminCreate(request, env){
 
   const firstName = cleanString(body.first_name,60);
   const internalLabel = cleanString(body.internal_label,120);
-  const personalMessage = cleanString(body.personal_message,240);
+  const personalMessage = cleanString(body.personal_message,240) || "Ich wollte dich etwas fragen.";
+  const finalMessage = cleanString(body.final_message,240) || "Klingt nach einem ziemlich guten Plan ✨";
   const theme = cleanString(body.theme,30);
 
   if(!firstName) return json({error:"Vorname fehlt."},400);
@@ -183,15 +184,44 @@ async function handleAdminCreate(request, env){
     try{
       await env.DB.prepare(`
         INSERT INTO invitations
-          (token, first_name, internal_label, personal_message, theme, status)
-        VALUES (?, ?, ?, ?, ?, 'created')
-      `).bind(token,firstName,internalLabel,personalMessage,theme).run();
+          (token, first_name, internal_label, personal_message, final_message, theme, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'created')
+      `).bind(token,firstName,internalLabel,personalMessage,finalMessage,theme).run();
       return json({token},201);
     }catch(err){
       if(attempt===2) throw err;
     }
   }
   return json({error:"Token konnte nicht erzeugt werden."},500);
+}
+
+async function handleAdminReset(env, token){
+  const inv = await getInvitation(env, token, false);
+  if(!inv) return json({error:"Einladung nicht gefunden."},404);
+  await env.DB.prepare(`
+    UPDATE invitations SET status='created', no_attempts=0, activity=NULL,
+      day_preference=NULL, time_preference=NULL, ride_preference=NULL,
+      opened_at=NULL, accepted_at=NULL, completed_at=NULL WHERE token=?
+  `).bind(token).run();
+  return json({ok:true});
+}
+
+async function handleAdminDelete(env, token){
+  const inv = await getInvitation(env, token, false);
+  if(!inv) return json({error:"Einladung nicht gefunden."},404);
+  await env.DB.prepare("DELETE FROM invitations WHERE token=?").bind(token).run();
+  return json({ok:true});
+}
+
+async function serveStatic(request, env){
+  const response = await env.ASSETS.fetch(request);
+  const url = new URL(request.url);
+  if(!url.pathname.startsWith("/x/")) return response;
+  const headers = new Headers(response.headers);
+  headers.set("X-Robots-Tag","noindex, nofollow, noarchive, nosnippet");
+  headers.set("Referrer-Policy","no-referrer");
+  headers.set("X-Content-Type-Options","nosniff");
+  return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
 }
 
 export default {
@@ -218,8 +248,14 @@ export default {
       m = path.match(/^\/x\/admin\/api\/invitations\/([A-Za-z0-9_-]{20,80})\/?$/);
       if(m && request.method==="GET") return handleAdminDetail(env,m[1]);
 
+      m = path.match(/^\/x\/admin\/api\/invitations\/([A-Za-z0-9_-]{20,80})\/reset\/?$/);
+      if(m && request.method==="POST") return handleAdminReset(env,m[1]);
+
+      m = path.match(/^\/x\/admin\/api\/invitations\/([A-Za-z0-9_-]{20,80})\/?$/);
+      if(m && request.method==="DELETE") return handleAdminDelete(env,m[1]);
+
       // Everything else falls through to the existing static site.
-      return env.ASSETS.fetch(request);
+      return serveStatic(request, env);
     }catch(err){
       console.error(err);
       return json({error:"Interner Fehler."},500);

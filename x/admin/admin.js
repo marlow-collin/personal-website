@@ -151,6 +151,7 @@
       <div><span>Wann</span><strong>${esc(current.day_preference || "–")}</strong></div>
       <div><span>Zeit</span><strong>${esc(current.time_preference || "–")}</strong></div>
       <div><span>Fahrt</span><strong>${esc(current.ride_preference || "–")}</strong></div>
+      <div><span>Abschlussnachricht</span><strong>${esc(current.final_message || "Klingt nach einem ziemlich guten Plan ✨")}</strong></div>
     `;
     $("#qrWrap").hidden = true;
     $("#toggleQr").textContent = "Anzeigen";
@@ -209,6 +210,27 @@
   });
 
   $("#downloadPng").addEventListener("click",downloadPng);
+
+  $("#resetProgress").addEventListener("click", async()=>{
+    if(!current) return;
+    if(!confirm(`Fortschritt für ${current.first_name} wirklich zurücksetzen?\n\nDer Link bleibt gleich, aber Status, Nein-Versuche und Auswahlen werden gelöscht.`)) return;
+    try{
+      await api(`/invitations/${encodeURIComponent(current.token)}/reset`,{method:"POST"});
+      showToast("Fortschritt zurückgesetzt");
+      dialog.close();
+      await load();
+    }catch(err){ showToast(err.message); }
+  });
+
+  $("#deleteInvite").addEventListener("click", async()=>{
+    if(!current) return;
+    if(!confirm(`Einladung für ${current.first_name} wirklich endgültig löschen?\n\nDer Link funktioniert danach nicht mehr.`)) return;
+    try{
+      await api(`/invitations/${encodeURIComponent(current.token)}`,{method:"DELETE"});
+      showToast("Einladung gelöscht");
+      dialog.close(); current=null; await load();
+    }catch(err){ showToast(err.message); }
+  });
 
   load().catch(err=>{
     list.innerHTML=`<p class="muted">${esc(err.message)}</p>`;

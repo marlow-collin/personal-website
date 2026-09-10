@@ -42,6 +42,13 @@
         <label>
           <span>Persönlicher Satz <em>optional</em></span>
           <textarea name="personal_message" maxlength="240" rows="3" placeholder="Ich wollte dich etwas fragen."></textarea>
+          <small>Wenn leer: „Ich wollte dich etwas fragen.“</small>
+        </label>
+
+        <label>
+          <span>Abschlussnachricht <em>optional</em></span>
+          <textarea name="final_message" maxlength="240" rows="3" placeholder="Klingt nach einem ziemlich guten Plan ✨"></textarea>
+          <small>Wird auf der letzten Seite angezeigt.</small>
         </label>
 
         <fieldset>
@@ -104,6 +111,15 @@
       <div class="button-row">
         <button class="primary small" id="copyLink">Link kopieren</button>
         <button class="secondary small" id="previewLink">Vorschau</button>
+      </div>
+    </div>
+
+    <div class="danger-section">
+      <h3>Verwaltung</h3>
+      <p class="muted">Fortschritt zurücksetzen behält den Link. Löschen entfernt die Einladung vollständig.</p>
+      <div class="button-row">
+        <button class="secondary small" id="resetProgress">Fortschritt zurücksetzen</button>
+        <button class="danger small" id="deleteInvite">Einladung löschen</button>
       </div>
     </div>
 

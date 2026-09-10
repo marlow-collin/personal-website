@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# /x/ is intentionally not blocked here.
+# Crawlers must be able to fetch those URLs to see their noindex directives.

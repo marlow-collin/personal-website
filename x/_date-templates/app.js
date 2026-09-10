@@ -22,28 +22,28 @@
 
   const fixedSteps = [
     ["Eher nicht","Das sah verdächtig nach einem Fehlklick aus.","nudge"],
-    ["Bist du sicher?","Ich frage nur zur Sicherheit.","small"],
+    ["Bist du sicher?","Ich frage nur zur Sicherheit.","jump-small"],
     ["Wirklich nicht?","Okay, du testest die Website.","nudge"],
-    ["Nope","Interessante Strategie.","small"],
+    ["Nope","Interessante Strategie.","wander"],
     ["Nochmal überlegen","Ich geb dir noch eine Chance.","jump"],
-    ["Immer noch nein","Konsequent bist du jedenfalls.","tilt"],
+    ["Immer noch nein","Konsequent bist du jedenfalls.","tilt-move"],
     ["Nicht überzeugt","Das System bleibt skeptisch.","nudge"],
-    ["Bleibt bei nein","Die Datenlage wird ungewöhnlich.","small"],
-    ["Nein.","Du bist erstaunlich engagiert für ein Nein.","jump"],
+    ["Bleibt bei nein","Die Datenlage wird ungewöhnlich.","wander"],
+    ["Nein.","Du bist erstaunlich engagiert für ein Nein.","jump-small"],
     ["Ich bleibe dabei","10 Versuche. Respekt.","wander"],
     ["Weiter nein","Achievement unlocked: hartnäckig.","nudge"],
-    ["Noch immer","Wir können das noch eine Weile machen.","small"],
+    ["Noch immer","Wir können das noch eine Weile machen.","jump-small"],
     ["Nein bleibt nein","Technisch funktioniert der Button.","wander"],
     ["Nicht heute","Ich bewundere fast die Ausdauer.","jump"],
-    ["Nope","Und noch eine Runde …","nudge"],
+    ["Nope","Und noch eine Runde …","tilt-move"],
   ];
 
   const loop = [
     ["Immer noch nein","Das wird langsam persönlich.","wander"],
-    ["Nope","Nächste Runde.","small"],
-    ["Nicht heute","Mutige Wortwahl.","jump"],
-    ["Weiter nein","Ich hab Zeit.","tilt"],
-    ["Nein","Der Ja-Button wäre effizienter.","nudge"]
+    ["Nope","Nächste Runde.","jump-small"],
+    ["Nicht heute","Mutige Wortwahl.","nudge"],
+    ["Weiter nein","Ich hab Zeit.","tilt-move"],
+    ["Nein","Der Ja-Button wäre effizienter.","wander"]
   ];
 
   function showScreen(name){
@@ -88,23 +88,52 @@
     noButton.style.top = `${pad + maxY*Math.max(0,Math.min(1,yRatio))}px`;
   }
 
-  function nudge(){ moveIntoArena(.25 + Math.random()*.5, .10 + Math.random()*.45); }
-  function jump(){ moveIntoArena(Math.random(), Math.random()); }
+  function ensureInArena(){
+    if(noButton.parentElement !== noArena) noArena.appendChild(noButton);
+    noButton.classList.add("free");
+    noButton.style.pointerEvents = "auto";
+    noButton.style.zIndex = "50";
+  }
+
+  function moveIntoArena(xRatio,yRatio,scale=1,rotate=0){
+    stopWander();
+    ensureInArena();
+    const a = arenaRect(), b = buttonSize(), pad = 8;
+    const maxX = Math.max(0,a.width-b.w-pad*2);
+    const maxY = Math.max(0,a.height-b.h-pad*2);
+    noButton.style.left = `${pad + maxX*Math.max(0,Math.min(1,xRatio))}px`;
+    noButton.style.top = `${pad + maxY*Math.max(0,Math.min(1,yRatio))}px`;
+    noButton.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
+  }
+
+  function nudge(){ moveIntoArena(.18+Math.random()*.64,.08+Math.random()*.62); }
+  function jump(){ moveIntoArena(.06+Math.random()*.88,.04+Math.random()*.82); }
+  function jumpSmall(){ moveIntoArena(.08+Math.random()*.84,.05+Math.random()*.78,.78); }
+  function tiltMove(){ moveIntoArena(.10+Math.random()*.80,.05+Math.random()*.78,.90,Math.random()>.5?6:-6); }
 
   function wander(){
-    moveIntoArena(.5,.3);
+    stopWander();
+    ensureInArena();
     noButton.classList.add("wandering");
-    const move = () => moveIntoArena(.1+Math.random()*.8, .05+Math.random()*.75);
-    state.wanderTimer = setInterval(move,1550);
+    const move = () => {
+      const a = arenaRect(), b = buttonSize(), pad = 8;
+      const maxX = Math.max(0,a.width-b.w-pad*2);
+      const maxY = Math.max(0,a.height-b.h-pad*2);
+      noButton.style.left = `${pad + maxX*(.07+Math.random()*.86)}px`;
+      noButton.style.top = `${pad + maxY*(.05+Math.random()*.78)}px`;
+      noButton.style.transform = "scale(1)";
+    };
+    move();
+    state.wanderTimer = setInterval(move,1350);
   }
 
   function applyEffect(effect){
-    restoreHome();
+    stopWander();
     if(effect==="nudge") nudge();
     if(effect==="jump") jump();
+    if(effect==="jump-small") jumpSmall();
+    if(effect==="tilt-move") tiltMove();
     if(effect==="wander") wander();
-    if(effect==="small") noButton.style.transform="scale(.82)";
-    if(effect==="tilt") noButton.style.transform=`rotate(${Math.random()>.5?5:-5}deg)`;
   }
 
   function noStepForCount(count){
@@ -146,6 +175,8 @@
       const introText = document.querySelector(".intro-copy p, .intro-sub");
       if(introText) introText.textContent = inv.personal_message;
     }
+    const finalMessage = document.getElementById("finalMessage");
+    if(finalMessage) finalMessage.textContent = inv.final_message || "Klingt nach einem ziemlich guten Plan ✨";
   }
 
   function resume(inv){
@@ -231,9 +262,8 @@
       }
     }
 
-    const firstName = state.invitation?.first_name || "";
     const fh=document.getElementById("finalHeading");
-    if(fh) fh.textContent=firstName ? `Klingt nach einem Plan, ${firstName}.` : "Klingt nach einem Plan.";
+    if(fh) fh.textContent="Abgemacht.";
     showScreen("done");
   }
 
@@ -243,12 +273,6 @@
     if(b.dataset.action==="start") return showScreen("question");
     if(b.dataset.action==="yes") return yes().catch(showError);
     if(b.dataset.action==="no") return handleNo();
-    if(b.dataset.action==="restart"){
-      restoreHome();
-      noButton.textContent = state.noAttempts ? noStepForCount(state.noAttempts)[0] : "Eher nicht";
-      reaction.textContent = state.noAttempts ? noStepForCount(state.noAttempts)[1] : "";
-      return showScreen("intro");
-    }
     if(b.dataset.choice && b.dataset.value) return choose(b.dataset.choice,b.dataset.value).catch(showError);
   });
 
