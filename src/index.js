@@ -82,6 +82,41 @@ const VALID_VALUES = {
   ride: new Set(["Hol mich ab","Ich komme selbst","Klären wir später"]),
 };
 
+
+function notificationSubject(inv){
+  return `Date-Zusage von ${inv.first_name} 🎉`;
+}
+
+function notificationText(inv){
+  const ride = inv.activity === "Drinks"
+    ? "entfällt"
+    : (inv.ride_preference || "–");
+
+  return [
+    `Interne Notiz: ${inv.internal_label || "–"}`,
+    `Aktivität: ${inv.activity || "–"}`,
+    `Wann: ${inv.day_preference || "–"}`,
+    `Zeit: ${inv.time_preference || "–"}`,
+    `Fahrt: ${ride}`,
+    `Nein-Versuche: ${Number(inv.no_attempts || 0)}`
+  ].join("\n");
+}
+
+async function sendDateNotification(env, inv){
+  if(!env.DATE_EMAIL) throw new Error("DATE_EMAIL Binding fehlt.");
+  if(!env.DATE_EMAIL_DESTINATION) throw new Error("DATE_EMAIL_DESTINATION Secret fehlt.");
+
+  return env.DATE_EMAIL.send({
+    to: env.DATE_EMAIL_DESTINATION,
+    from: {
+      email: "date@marlow-rischmueller.com",
+      name: "Date Invitation"
+    },
+    subject: notificationSubject(inv),
+    text: notificationText(inv)
+  });
+}
+
 async function handlePublicEvent(request, env, token){
   const inv = await getInvitation(env, token, true);
   if(!inv) return json({error:"Einladung nicht gefunden."},404);
@@ -137,9 +172,50 @@ async function handlePublicEvent(request, env, token){
       WHERE token = ?
     `).bind(token).run();
 
-    // Mailversand wird später hier ergänzt.
-    // Die Empfängeradresse kommt NICHT in das Frontend oder Repository.
-    // Stattdessen wird sie später als Worker Secret / serverseitige Konfiguration gesetzt.
+    /*
+      Atomarer Versand-Claim:
+      Nur der erste parallele complete-Request darf notification_sent_at
+      von NULL auf einen Claim-Wert setzen und damit die Mail senden.
+    */
+    const claimId = `pending:${crypto.randomUUID()}`;
+    const claim = await env.DB.prepare(`
+      UPDATE invitations
+      SET notification_sent_at = ?
+      WHERE token = ? AND notification_sent_at IS NULL
+    `).bind(claimId, token).run();
+
+    if((claim.meta?.changes || 0) === 1){
+      const fullInvitation = await getInvitation(env, token, false);
+
+      try{
+        await sendDateNotification(env, fullInvitation);
+
+        await env.DB.prepare(`
+          UPDATE invitations
+          SET notification_sent_at = CURRENT_TIMESTAMP
+          WHERE token = ? AND notification_sent_at = ?
+        `).bind(token, claimId).run();
+      }catch(error){
+        /*
+          Bei einem Versandfehler geben wir den Claim wieder frei.
+          Dadurch kann ein erneuter complete-Request den Versand wiederholen.
+        */
+        await env.DB.prepare(`
+          UPDATE invitations
+          SET notification_sent_at = NULL
+          WHERE token = ? AND notification_sent_at = ?
+        `).bind(token, claimId).run();
+
+        console.error("Date notification email failed", {
+          code: error?.code,
+          message: error?.message
+        });
+
+        return json({
+          error:"Die Zusage wurde gespeichert, aber die Benachrichtigungs-Mail konnte noch nicht gesendet werden."
+        },503);
+      }
+    }
 
     return json({ok:true});
   }
@@ -151,7 +227,7 @@ async function handleAdminList(env){
   const result = await env.DB.prepare(`
     SELECT token, first_name, internal_label, personal_message, final_message, theme, status,
            no_attempts, activity, day_preference, time_preference, ride_preference,
-           created_at, opened_at, accepted_at, completed_at
+           created_at, opened_at, accepted_at, completed_at, notification_sent_at
     FROM invitations
     ORDER BY created_at DESC
   `).all();
@@ -201,7 +277,8 @@ async function handleAdminReset(env, token){
   await env.DB.prepare(`
     UPDATE invitations SET status='created', no_attempts=0, activity=NULL,
       day_preference=NULL, time_preference=NULL, ride_preference=NULL,
-      opened_at=NULL, accepted_at=NULL, completed_at=NULL WHERE token=?
+      opened_at=NULL, accepted_at=NULL, completed_at=NULL,
+      notification_sent_at=NULL WHERE token=?
   `).bind(token).run();
   return json({ok:true});
 }
