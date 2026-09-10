@@ -73,30 +73,28 @@ h2{font-size:clamp(2.35rem,10vw,4rem);line-height:.98;letter-spacing:-.055em;mar
 .no-btn{pointer-events:auto!important}
 
 
-/* V4: Ja wird nach Nein-Klicks schrittweise prominenter. */
-#yesButton,
-button[data-action="yes"],
-.yes-button {
+/* V5: Ja wird nach Nein-Klicks schrittweise prominenter. */
+button[data-action="yes"] {
   --yes-scale: 1;
   --yes-shadow: 10px;
+  --yes-emphasis: 0;
   transform: scale(var(--yes-scale));
-  box-shadow: 0 8px var(--yes-shadow) rgba(0,0,0,.12);
-  transition: transform .22s ease, box-shadow .24s ease;
+  transition: transform .22s ease, box-shadow .24s ease, filter .24s ease;
   transform-origin: center;
+  position: relative;
+  z-index: 5;
 }
 
-#yesButton.yes-pulse,
-button[data-action="yes"].yes-pulse,
-.yes-button.yes-pulse {
-  animation: yesPulseV4 .48s ease;
+button[data-action="yes"].yes-pulse {
+  animation: yesPulseV5 .48s ease;
 }
 
-@keyframes yesPulseV4 {
+@keyframes yesPulseV5 {
   0%,100% { transform: scale(var(--yes-scale)); }
   45% { transform: scale(calc(var(--yes-scale) * 1.08)); }
 }
 
-/* V4: Nein-Bewegung flotter, aber weiterhin anklickbar. */
+/* Nein-Bewegung flotter, aber weiterhin anklickbar. */
 #noButton,
 button[data-action="no"],
 .no-button {
@@ -107,4 +105,10 @@ button[data-action="no"],
 button[data-action="no"].wandering,
 .no-button.wandering {
   transition-duration: .45s;
+}
+
+button[data-action="yes"] {
+  box-shadow:
+    0 8px var(--yes-shadow) rgba(0,0,0,.12),
+    0 0 calc(8px + 18px * var(--yes-emphasis)) rgba(255,255,255,calc(.08 + .18 * var(--yes-emphasis)));
 }

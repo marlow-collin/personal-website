@@ -3,6 +3,7 @@
 
   const screens = [...document.querySelectorAll(".screen")];
   const noButton = document.getElementById("noButton");
+  const yesButton = document.querySelector('button[data-action="yes"]');
   const noHome = document.getElementById("noHome");
   const noArena = document.getElementById("noArena");
   const reaction = document.getElementById("reaction");
@@ -62,21 +63,41 @@
   const randomEffects = ["nudge","jump","jump-small","tilt-move","wander"];
   let lastRandomEffect = null;
 
+  // Mindestens vier andere Werte müssen dazwischen liegen, bevor
+  // ein Buttontext oder Kommentar erneut ausgewählt werden darf.
+  const recentNoLabels = fixedSteps.map(x => x[0]).slice(-4);
+  const recentNoComments = fixedSteps.map(x => x[1]).slice(-4);
+  const RECENT_LIMIT = 4;
+
+  function pickWithHistory(pool, recent){
+    let choices = pool.filter(value => !recent.includes(value));
+
+    // Der Pool ist groß genug; der Fallback verhindert nur einen theoretischen Leerzustand.
+    if(!choices.length) choices = pool.filter(value => value !== recent[recent.length-1]);
+
+    const picked = choices[Math.floor(Math.random()*choices.length)];
+    recent.push(picked);
+    if(recent.length > RECENT_LIMIT) recent.shift();
+    return picked;
+  }
+
   function pickDifferentEffect(){
     let choices = randomEffects.filter(x => x !== lastRandomEffect);
+
     // wander soll regelmäßig auftauchen, aber nicht permanent.
     if(state.noAttempts >= 6 && Math.random() < .28 && lastRandomEffect !== "wander"){
       lastRandomEffect = "wander";
       return "wander";
     }
+
     const picked = choices[Math.floor(Math.random()*choices.length)];
     lastRandomEffect = picked;
     return picked;
   }
 
   function randomNoStep(count){
-    const label = noLabels[Math.floor(Math.random()*noLabels.length)];
-    const comment = noComments[Math.floor(Math.random()*noComments.length)];
+    const label = pickWithHistory(noLabels, recentNoLabels);
+    const comment = pickWithHistory(noComments, recentNoComments);
     return [label, comment, pickDifferentEffect()];
   }
 
@@ -176,16 +197,21 @@
   }
 
   function updateYesProminence(count, pulse=false){
+    if(!yesButton) return;
+
     const scale = Math.min(1.25, 1 + count*.04);
+
+    // Nach Erreichen der Maximalgröße steigt die optische Hervorhebung weiter.
     const afterMax = Math.max(0, count-7);
-    const shadowStrength = Math.min(34, 10 + afterMax*3);
+    const emphasis = Math.min(1, afterMax / 10);
+    const shadowStrength = Math.min(38, 10 + afterMax*3);
 
     yesButton.style.setProperty("--yes-scale", scale.toFixed(3));
     yesButton.style.setProperty("--yes-shadow", `${shadowStrength}px`);
+    yesButton.style.setProperty("--yes-emphasis", emphasis.toFixed(3));
 
     if(pulse){
       yesButton.classList.remove("yes-pulse");
-      // force restart animation
       void yesButton.offsetWidth;
       yesButton.classList.add("yes-pulse");
     }
@@ -240,6 +266,7 @@
     state.day = inv.day_preference || null;
     state.time = inv.time_preference || null;
     state.ride = inv.ride_preference || null;
+    updateYesProminence(state.noAttempts, false);
 
     if(inv.status === "completed"){
       return finish(false);
@@ -262,6 +289,7 @@
 
   async function handleNo(){
     state.noAttempts++;
+    updateYesProminence(state.noAttempts, shouldPulseYes(state.noAttempts));
     const item = noStepForCount(state.noAttempts);
     const [label,comment,effect] = item;
     noButton.textContent = label;
