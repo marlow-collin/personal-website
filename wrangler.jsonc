@@ -27,17 +27,13 @@
     }
   ],
 
-  "send_email": [
-    {
-      "name": "DATE_EMAIL"
-    }
-  ],
-
   "secrets": {
     "required": [
-      "DATE_EMAIL_DESTINATION"
-      ]
-    },
+      "DATE_EMAIL_DESTINATION",
+      "IONOS_SMTP_USER",
+      "IONOS_SMTP_PASSWORD"
+    ]
+  },
 
   "compatibility_flags": [
     "nodejs_compat"
