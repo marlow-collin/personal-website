@@ -6,6 +6,7 @@
   "observability": {
     "enabled": true
   },
+
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
@@ -16,6 +17,7 @@
       "/x/admin/api/*"
     ]
   },
+
   "d1_databases": [
     {
       "binding": "DB",
@@ -24,11 +26,19 @@
       "migrations_dir": "migrations"
     }
   ],
+
   "send_email": [
     {
       "name": "DATE_EMAIL"
     }
   ],
+
+  "secrets": {
+    "required": [
+      "DATE_EMAIL_DESTINATION"
+      ]
+    },
+
   "compatibility_flags": [
     "nodejs_compat"
   ]
