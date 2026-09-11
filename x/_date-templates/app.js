@@ -309,22 +309,30 @@
   async function choose(kind,value){
     state[kind] = value;
     const eventMap = {activity:"activity",day:"day",time:"time",ride:"ride"};
+
+    // Der letzte sichtbare Schritt soll nie auf den Mailversand warten.
+    if(kind==="ride"){
+      finish(false);
+      sendEvent("ride", value)
+        .then(()=>sendEvent("complete"))
+        .catch(showError);
+      return;
+    }
+
+    if(kind==="time" && state.activity==="Drinks"){
+      state.ride="Entfällt";
+      finish(false);
+      sendEvent("time", value)
+        .then(()=>sendEvent("complete"))
+        .catch(showError);
+      return;
+    }
+
     await sendEvent(eventMap[kind], value);
 
     if(kind==="activity") return showScreen("day");
     if(kind==="day") return showScreen("time");
-    if(kind==="time"){
-      if(state.activity==="Drinks"){
-        state.ride="Entfällt";
-        await sendEvent("complete");
-        return finish(false);
-      }
-      return showScreen("ride");
-    }
-    if(kind==="ride"){
-      await sendEvent("complete");
-      return finish(false);
-    }
+    if(kind==="time") return showScreen("ride");
   }
 
   function finish(sendComplete=false){

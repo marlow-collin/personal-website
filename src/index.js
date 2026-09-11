@@ -117,7 +117,7 @@ async function sendDateNotification(env, inv){
   });
 }
 
-async function handlePublicEvent(request, env, token){
+async function handlePublicEvent(request, env, token, ctx){
   const inv = await getInvitation(env, token, true);
   if(!inv) return json({error:"Einladung nicht gefunden."},404);
 
@@ -185,36 +185,31 @@ async function handlePublicEvent(request, env, token){
     `).bind(claimId, token).run();
 
     if((claim.meta?.changes || 0) === 1){
-      const fullInvitation = await getInvitation(env, token, false);
+      // Mailversand läuft nach der HTTP-Antwort weiter und blockiert die Abschlussseite nicht.
+      ctx.waitUntil((async()=>{
+        try{
+          const fullInvitation = await getInvitation(env, token, false);
+          await sendDateNotification(env, fullInvitation);
 
-      try{
-        await sendDateNotification(env, fullInvitation);
+          await env.DB.prepare(`
+            UPDATE invitations
+            SET notification_sent_at = CURRENT_TIMESTAMP
+            WHERE token = ? AND notification_sent_at = ?
+          `).bind(token, claimId).run();
+        }catch(error){
+          // Versand fehlgeschlagen: Claim freigeben, damit ein späterer Versuch erneut senden kann.
+          await env.DB.prepare(`
+            UPDATE invitations
+            SET notification_sent_at = NULL
+            WHERE token = ? AND notification_sent_at = ?
+          `).bind(token, claimId).run();
 
-        await env.DB.prepare(`
-          UPDATE invitations
-          SET notification_sent_at = CURRENT_TIMESTAMP
-          WHERE token = ? AND notification_sent_at = ?
-        `).bind(token, claimId).run();
-      }catch(error){
-        /*
-          Bei einem Versandfehler geben wir den Claim wieder frei.
-          Dadurch kann ein erneuter complete-Request den Versand wiederholen.
-        */
-        await env.DB.prepare(`
-          UPDATE invitations
-          SET notification_sent_at = NULL
-          WHERE token = ? AND notification_sent_at = ?
-        `).bind(token, claimId).run();
-
-        console.error("Date notification email failed", {
-          code: error?.code,
-          message: error?.message
-        });
-
-        return json({
-          error:"Die Zusage wurde gespeichert, aber die Benachrichtigungs-Mail konnte noch nicht gesendet werden."
-        },503);
-      }
+          console.error("Date notification email failed", {
+            code: error?.code,
+            message: error?.message
+          });
+        }
+      })());
     }
 
     return json({ok:true});
@@ -302,7 +297,7 @@ async function serveStatic(request, env){
 }
 
 export default {
-  async fetch(request, env){
+  async fetch(request, env, ctx){
     const url = new URL(request.url);
     const path = url.pathname;
 
@@ -316,7 +311,7 @@ export default {
       if(m && request.method==="GET") return handlePublicGet(request,env,m[1]);
 
       m = path.match(/^\/x\/api\/date\/([A-Za-z0-9_-]{20,80})\/event\/?$/);
-      if(m && request.method==="POST") return handlePublicEvent(request,env,m[1]);
+      if(m && request.method==="POST") return handlePublicEvent(request,env,m[1],ctx);
 
       // Admin API. Protect /x/admin/* with Cloudflare Access in production.
       if(path==="/x/admin/api/invitations" && request.method==="GET") return handleAdminList(env);

@@ -24,6 +24,11 @@
       "migrations_dir": "migrations"
     }
   ],
+  "send_email": [
+    {
+      "name": "DATE_EMAIL"
+    }
+  ],
   "compatibility_flags": [
     "nodejs_compat"
   ]
