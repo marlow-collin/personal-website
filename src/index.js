@@ -13,7 +13,7 @@ function json(data, status=200, extraHeaders={}){
     headers: {
       "Content-Type":"application/json; charset=utf-8",
       "Cache-Control":"no-store",
-      "X-Robots-Tag":"noindex, nofollow, noarchive",
+      "X-Robots-Tag":"noindex, nofollow, noarchive, nosnippet",
       ...extraHeaders
     }
   });
@@ -45,7 +45,7 @@ async function serveThemeAsset(request, env, theme){
   const assetResponse = await env.ASSETS.fetch(new Request(url.toString(), {method:"GET"}));
   const headers = new Headers(assetResponse.headers);
   headers.set("Cache-Control","no-store");
-  headers.set("X-Robots-Tag","noindex, nofollow, noarchive");
+  headers.set("X-Robots-Tag","noindex, nofollow, noarchive, nosnippet");
   return new Response(assetResponse.body, {status:assetResponse.status, headers});
 }
 
@@ -53,7 +53,7 @@ async function handlePublicPage(request, env, token){
   const inv = await getInvitation(env, token, true);
   if(!inv) return new Response("Invitation not found", {
     status:404,
-    headers:{"Content-Type":"text/plain; charset=utf-8","X-Robots-Tag":"noindex, nofollow, noarchive"}
+    headers:{"Content-Type":"text/plain; charset=utf-8","X-Robots-Tag":"noindex, nofollow, noarchive, nosnippet"}
   });
   return serveThemeAsset(request, env, inv.theme);
 }
