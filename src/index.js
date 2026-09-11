@@ -181,7 +181,7 @@ async function sendDateNotification(env, inv){
   const recipient = smtpAddress(env.DATE_EMAIL_DESTINATION, "DATE_EMAIL_DESTINATION");
 
   const socket = connect(
-    {hostname:"smtp.ionos.com", port:465},
+    {hostname:"smtp.ionos.de", port:465},
     {secureTransport:"on"}
   );
 
