@@ -36,30 +36,46 @@
     "Nein.",
     "Ich bleibe dabei",
     "Weiter nein",
-    "Noch immer",
+    "Nee",
     "Nein bleibt nein",
     "Nicht heute",
     "Nope",
     "Eher nicht",
     "Wirklich nicht?"
+    "Ganz sicher?",
+    "Doch nicht",
+    "Lieber nicht",
+    "Ich passe",
+    "Nein danke",
+    "Keine Chance",
+    "Bleibt ein Nein"
   ];
 
-  const noComments = [
-    "Ich geb dir noch eine Chance.",
-    "Konsequent bist du jedenfalls.",
-    "Das System bleibt skeptisch.",
-    "Die Datenlage wird ungewöhnlich.",
-    "Du bist erstaunlich engagiert für ein Nein.",
-    "Respekt für die Ausdauer.",
-    "Achievement unlocked: hartnäckig.",
-    "Wir können das noch eine Weile machen.",
-    "Technisch funktioniert der Button.",
-    "Ich bewundere fast die Ausdauer.",
-    "Und noch eine Runde …",
-    "Das wird langsam persönlich.",
-    "Der Ja-Button wäre effizienter."
-  ];
-
+    const noComments = [
+      "Ich geb dir noch eine Chance.",
+      "Konsequent bist du jedenfalls.",
+      "Das System bleibt skeptisch.",
+      "Die Datenlage wird ungewöhnlich.",
+      "Du bist erstaunlich engagiert für ein Nein.",
+      "Respekt für die Ausdauer.",
+      "Achievement unlocked: hartnäckig.",
+      "Wir können das noch eine Weile machen.",
+      "Technisch funktioniert der Button.",
+      "Ich bewundere langsam die Ausdauer.",
+      "Und noch eine Runde …",
+      "Das wird langsam persönlich.",
+      "Der Ja-Button wäre effizienter.",
+      "Du ziehst das wirklich durch.",
+      "Okay, das war ziemlich eindeutig.",
+      "Der Nein-Button bekommt heute viel Aufmerksamkeit.",
+      "Ich sehe schon, du hast Prinzipien.",
+      "Das war jetzt wirklich Absicht, oder?",
+      "Wir nähern uns einer statistischen Auffälligkeit.",
+      "Ich hätte nicht gedacht, dass du so motiviert Nein klickst.",
+      "Der Ja-Button fühlt sich langsam ignoriert.",
+      "Das hier entwickelt eine gewisse Dynamik."
+    ];
+    
   const randomEffects = ["nudge","jump","jump-small","tilt-move","wander"];
   let lastRandomEffect = null;
 
