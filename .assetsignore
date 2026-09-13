@@ -3,6 +3,7 @@ src/
 migrations/
 wrangler.jsonc
 README-DATE-SYSTEM.md
+README-SECRET-SITES.md
 .git/
 .github/
 *.zip
