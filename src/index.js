@@ -1,4 +1,5 @@
 import { connect } from "cloudflare:sockets";
+import { handleDailyRequest } from "./daily/routes.js";
 
 const THEMES = new Set(["soft-playful", "dark-elegant"]);
 const PUBLIC_FIELDS = `
@@ -428,6 +429,9 @@ export default {
   async fetch(request, env, ctx){
     const url = new URL(request.url);
     const path = url.pathname;
+    const dailyResponse = await handleDailyRequest(request, env);
+    if (dailyResponse) return dailyResponse;
+
 
     try{
       // Dynamic public invitation HTML

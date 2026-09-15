@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Fakt des Tages</title>
+  <link rel="stylesheet" href="/x/daily/assets/css/daily-base.css">
+  <link rel="stylesheet" href="/x/daily/assets/css/category.css">
+  <script src="/x/daily/assets/js/fact.js" defer></script>
+</head>
+<body>
+  <main class="daily-category" data-daily-fact>
+    <nav class="daily-category__nav">
+      <a href="/x/daily/">← Daily Content</a>
+    </nav>
+
+    <header class="daily-category__header">
+      <div class="daily-category__icon" aria-hidden="true">
+        <img src="/x/daily/icons/fact.svg" alt="" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+        <span hidden>ℹ️</span>
+      </div>
+      <div>
+        <p class="daily-eyebrow">Wissen &amp; Entdecken</p>
+        <h1>Fakt des Tages</h1>
+        <p class="daily-category__date" data-date aria-live="polite"></p>
+      </div>
+    </header>
+
+    <section class="daily-reveal" data-state="loading" aria-live="polite">
+      <div class="daily-loading" data-loading>
+        <span class="daily-loading__pulse" aria-hidden="true"></span>
+        <p>Der heutige Fakt wird aufgeschlagen …</p>
+      </div>
+
+      <article class="daily-fact" data-content hidden>
+        <p class="daily-fact__statement" data-fact-text></p>
+        <div class="daily-fact__explanation">
+          <h2>Kurz erklärt</h2>
+          <p data-explanation-text></p>
+        </div>
+
+        <details class="daily-sources" data-sources-wrap hidden>
+          <summary>Quellen &amp; Weiterlesen</summary>
+          <ol data-sources></ol>
+        </details>
+      </article>
+
+      <div class="daily-message" data-empty hidden>
+        <h2>Noch kein Fakt im Pool</h2>
+        <p>Sobald Testinhalte importiert sind, erscheint hier der Fakt des Tages.</p>
+      </div>
+
+      <div class="daily-message daily-message--error" data-error hidden>
+        <h2>Das hat gerade nicht geklappt.</h2>
+        <p>Der heutige Fakt konnte nicht geladen werden.</p>
+        <button type="button" data-retry>Erneut versuchen</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

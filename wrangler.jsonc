@@ -24,6 +24,12 @@
       "database_name": "personal-website-date-invitations",
       "database_id": "5e9cdc4a-99c8-4235-9a2d-e0f08d855de5",
       "migrations_dir": "migrations"
+    },
+    {
+      "binding": "DAILY_DB",
+      "database_name": "personal-website-daily-content",
+      "database_id": "2d2780c2-be82-4510-bf3e-dfcd00dd9793",
+      "migrations_dir": "migrations/daily"
     }
   ],
 
