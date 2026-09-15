@@ -1,39 +1,273 @@
-html[data-daily-group="thoughts"] { --daily-accent: #8a4939; --daily-accent-soft: #efe1d6; }
-html[data-daily-group="knowledge"] { --daily-accent: #176f78; --daily-accent-soft: #dcecef; }
-html[data-daily-group="playful"] { --daily-accent: #9a6218; --daily-accent-soft: #f4e8c9; }
-html[data-daily-group="mood"] { --daily-accent: #71527e; --daily-accent-soft: #e9deec; }
+/* --------------------------------------------------------------------------
+   Group identity
+   Four related visual families; category-specific selectors below provide the
+   individual personality without duplicating the page shell.
+   -------------------------------------------------------------------------- */
+html[data-daily-group="thoughts"] {
+  --daily-accent: #8a4939;
+  --daily-accent-2: #b47758;
+  --daily-accent-soft: #efe1d6;
+  --daily-group-surface: #fffaf2;
+}
+html[data-daily-group="knowledge"] {
+  --daily-accent: #176f78;
+  --daily-accent-2: #58a7a8;
+  --daily-accent-soft: #dcecef;
+  --daily-group-surface: #f9fdfc;
+}
+html[data-daily-group="playful"] {
+  --daily-accent: #9a6218;
+  --daily-accent-2: #d59a34;
+  --daily-accent-soft: #f4e8c9;
+  --daily-group-surface: #fffdf5;
+}
+html[data-daily-group="mood"] {
+  --daily-accent: #71527e;
+  --daily-accent-2: #a581a9;
+  --daily-accent-soft: #e9deec;
+  --daily-group-surface: #fcf9fd;
+}
 
-.daily-category { width: min(100% - 2rem, var(--daily-reading-width)); margin: 0 auto; padding: max(1.2rem, env(safe-area-inset-top)) 0 max(3rem, env(safe-area-inset-bottom)); }
-.daily-category__nav a { display: inline-block; padding: .7rem 0; color: var(--daily-muted); font-size: .9rem; text-decoration: none; }
-.daily-category__header { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1rem; margin: 2.2rem 0 2rem; animation: daily-header-enter .45s cubic-bezier(.2,.8,.2,1) both; }
-.daily-category__icon { display: grid; width: 4rem; height: 4rem; place-items: center; border-radius: 1.25rem; background: var(--daily-accent-soft); color: var(--daily-accent); font-size: 1.8rem; }
+body {
+  position: relative;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 90% 2%, color-mix(in srgb, var(--daily-accent-soft) 40%, transparent) 0 9rem, transparent 18rem),
+    var(--daily-bg);
+}
+
+.daily-category {
+  width: min(100% - 2rem, var(--daily-reading-width));
+  margin: 0 auto;
+  padding: max(1.2rem, env(safe-area-inset-top)) 0 max(3rem, env(safe-area-inset-bottom));
+}
+.daily-category__nav a {
+  display: inline-block;
+  padding: .7rem 0;
+  color: var(--daily-muted);
+  font-size: .9rem;
+  text-decoration: none;
+  transition: color .18s ease, transform .18s ease;
+}
+.daily-category__nav a:hover { color: var(--daily-text); transform: translateX(-.12rem); }
+
+.daily-category__header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.2rem 0 2rem;
+  animation: daily-header-enter .45s cubic-bezier(.2,.8,.2,1) both;
+}
+.daily-category__icon {
+  position: relative;
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border-radius: 1.25rem;
+  background: var(--daily-accent-soft);
+  color: var(--daily-accent);
+  font-size: 1.8rem;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--daily-accent) 9%, transparent);
+}
 .daily-category__icon img { width: 2rem; height: 2rem; }
 .daily-icon__emoji { line-height: 1; }
-.daily-category__header h1 { margin: 0; font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: -.04em; }
+.daily-category__header h1 { margin: 0; font-size: clamp(2rem, 8vw, 3.5rem); line-height: .98; letter-spacing: -.04em; }
 .daily-category__date { min-height: 1.25em; margin: .45rem 0 0; color: var(--daily-muted); }
 .daily-eyebrow { margin: 0 0 .4rem; color: var(--daily-accent); font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 
-.daily-reveal { position: relative; min-height: 20rem; padding: clamp(1.4rem, 5vw, 2.3rem); overflow: hidden; border: 1px solid var(--daily-line); border-radius: calc(var(--daily-radius-card) + .25rem); background: var(--daily-surface); box-shadow: var(--daily-shadow); }
-.daily-reveal::before { content: ""; position: absolute; inset: -30% -20% auto 35%; height: 14rem; border-radius: 50%; background: var(--daily-accent-soft); opacity: .65; transform: rotate(-10deg); pointer-events: none; }
-.daily-entry-transition { position: absolute; z-index: 3; inset: 0; overflow: hidden; border-radius: inherit; background: linear-gradient(145deg, var(--daily-surface) 0%, #fff 100%); opacity: 1; transform: scale(1); transition: opacity .34s ease, transform .34s cubic-bezier(.2,.8,.2,1); }
-.daily-entry-transition.is-leaving { opacity: 0; transform: scale(1.018); }
-.daily-entry-transition__orb,.daily-entry-transition__ring,.daily-entry-transition__mark,.daily-entry-transition__line { position: absolute; display: grid; }
-.daily-entry-transition__orb { width: 19rem; height: 19rem; right: -7rem; top: -7rem; border-radius: 50%; background: var(--daily-accent-soft); animation: daily-entry-orb 1.8s cubic-bezier(.2,.8,.2,1) both; }
-.daily-entry-transition__ring { width: 8rem; height: 8rem; right: 2.2rem; top: 3rem; border: .2rem solid color-mix(in srgb, var(--daily-accent) 30%, transparent); border-radius: 50%; animation: daily-entry-ring 1.2s .08s cubic-bezier(.2,.8,.2,1) both; }
-.daily-entry-transition__mark { width: 4.8rem; height: 4.8rem; left: clamp(1.4rem, 6vw, 2.5rem); bottom: clamp(1.6rem, 6vw, 2.6rem); place-items: center; border-radius: 1.5rem; background: var(--daily-accent-soft); color: var(--daily-accent); font-size: 2rem; animation: daily-entry-mark .72s cubic-bezier(.2,.8,.2,1) both; }
-.daily-entry-transition__line { left: calc(clamp(1.4rem, 6vw, 2.5rem) + 6.2rem); height: .24rem; border-radius: 999px; background: var(--daily-accent); opacity: .52; transform-origin: left center; }
-.daily-entry-transition__line--one { width: min(42%, 11rem); bottom: clamp(4.8rem, 12vw, 5.8rem); animation: daily-entry-line .55s .08s ease both; }
-.daily-entry-transition__line--two { width: min(28%, 7rem); bottom: clamp(3.4rem, 9vw, 4.4rem); animation: daily-entry-line .55s .14s ease both; }
+.daily-reveal {
+  position: relative;
+  min-height: 20rem;
+  padding: clamp(1.4rem, 5vw, 2.3rem);
+  overflow: hidden;
+  border: 1px solid var(--daily-line);
+  border-radius: calc(var(--daily-radius-card) + .25rem);
+  background: var(--daily-group-surface, var(--daily-surface));
+  box-shadow: var(--daily-shadow);
+}
+.daily-reveal::before,
+.daily-reveal::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.daily-reveal::before {
+  inset: -30% -20% auto 35%;
+  height: 14rem;
+  border-radius: 50%;
+  background: var(--daily-accent-soft);
+  opacity: .48;
+  transform: rotate(-10deg);
+}
+.daily-reveal::after { inset: auto 0 0; height: .3rem; background: var(--daily-accent); opacity: .16; }
+
 .daily-content,.daily-message { position: relative; z-index: 1; }
 .daily-content { animation: daily-content-in .55s cubic-bezier(.2,.8,.2,1) both; }
-@keyframes daily-content-in { from { opacity: 0; transform: translateY(.6rem) scale(.99); } to { opacity: 1; transform: none; } }
-@keyframes daily-header-enter { from { opacity: 0; transform: translateY(.35rem); } to { opacity: 1; transform: none; } }
-@keyframes daily-entry-orb { 0% { transform: scale(.55) translate(2rem,-2rem); opacity: .55; } 58% { transform: scale(1.04); opacity: .92; } 100% { transform: scale(1); opacity: .8; } }
-@keyframes daily-entry-ring { from { opacity: 0; transform: scale(.62) rotate(-12deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
-@keyframes daily-entry-mark { from { opacity: 0; transform: translateY(1.1rem) rotate(7deg) scale(.86); } to { opacity: 1; transform: none; } }
-@keyframes daily-entry-line { from { opacity: 0; transform: scaleX(.25); } to { opacity: .52; transform: scaleX(1); } }
+.daily-message { padding: 3rem 0; text-align: center; animation: daily-content-in .45s ease both; }
+.daily-message h2 { margin-top: 0; }
+.daily-message p { color: var(--daily-muted); line-height: 1.6; }
+.daily-message button { border: 0; border-radius: var(--daily-radius-pill); padding: .8rem 1rem; background: var(--daily-text); color: white; cursor: pointer; }
+.daily-message--error h2 { color: var(--daily-danger); }
 
-.daily-statement blockquote,.daily-knowledge__statement,.daily-comedy__main,.daily-cheer__main { max-width: 18ch; margin: 0; font-size: clamp(2rem, 8vw, 4rem); font-weight: 760; line-height: 1.04; letter-spacing: -.045em; }
+/* --------------------------------------------------------------------------
+   Entry transition framework. The request runs beneath this surface. Every
+   category changes the motion language while reusing the same tiny DOM.
+   -------------------------------------------------------------------------- */
+.daily-entry-transition {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: linear-gradient(145deg, var(--daily-group-surface, var(--daily-surface)) 0%, #fff 100%);
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity .34s ease, transform .34s cubic-bezier(.2,.8,.2,1), filter .34s ease;
+}
+.daily-entry-transition.is-leaving { opacity: 0; transform: scale(1.012); filter: blur(1px); }
+.daily-entry-transition__orb,
+.daily-entry-transition__ring,
+.daily-entry-transition__mark,
+.daily-entry-transition__line { position: absolute; display: grid; }
+.daily-entry-transition__orb { width: 19rem; height: 19rem; right: -7rem; top: -7rem; border-radius: 50%; background: var(--daily-accent-soft); }
+.daily-entry-transition__ring { width: 8rem; height: 8rem; right: 2.2rem; top: 3rem; border: .2rem solid color-mix(in srgb, var(--daily-accent) 30%, transparent); border-radius: 50%; }
+.daily-entry-transition__mark { width: 4.8rem; height: 4.8rem; left: clamp(1.4rem, 6vw, 2.5rem); bottom: clamp(1.6rem, 6vw, 2.6rem); place-items: center; border-radius: 1.5rem; background: var(--daily-accent-soft); color: var(--daily-accent); font-size: 2rem; }
+.daily-entry-transition__line { left: calc(clamp(1.4rem, 6vw, 2.5rem) + 6.2rem); height: .24rem; border-radius: 999px; background: var(--daily-accent); opacity: .52; transform-origin: left center; }
+.daily-entry-transition__line--one { width: min(42%, 11rem); bottom: clamp(4.8rem, 12vw, 5.8rem); }
+.daily-entry-transition__line--two { width: min(28%, 7rem); bottom: clamp(3.4rem, 9vw, 4.4rem); }
+
+/* Default fallback */
+.daily-entry-transition__orb { animation: entry-orb 1.8s cubic-bezier(.2,.8,.2,1) both; }
+.daily-entry-transition__ring { animation: entry-ring 1.2s .08s cubic-bezier(.2,.8,.2,1) both; }
+.daily-entry-transition__mark { animation: entry-mark .72s cubic-bezier(.2,.8,.2,1) both; }
+.daily-entry-transition__line--one { animation: entry-line .55s .08s ease both; }
+.daily-entry-transition__line--two { animation: entry-line .55s .14s ease both; }
+
+/* Quote — editorial opening mark */
+body[data-daily-category="quote"] .daily-entry-transition__orb { left: -5rem; right: auto; top: -6rem; border-radius: 44% 56% 48% 52%; animation: quote-paper 1.2s ease both; }
+body[data-daily-category="quote"] .daily-entry-transition__mark { width: auto; height: auto; left: 1.6rem; bottom: -.8rem; background: transparent; font: 700 8rem/1 Georgia, serif; opacity: .12; animation: quote-mark .7s ease both; }
+body[data-daily-category="quote"] .daily-entry-transition__ring { display: none; }
+body[data-daily-category="quote"] .daily-entry-transition__line { left: 2rem; height: .12rem; }
+body[data-daily-category="quote"] .daily-entry-transition__line--one { bottom: 5.5rem; animation: quote-line .55s .08s ease both; }
+body[data-daily-category="quote"] .daily-entry-transition__line--two { bottom: 4.4rem; animation: quote-line .55s .14s ease both; }
+
+/* Saying — two clean text strokes */
+body[data-daily-category="saying"] .daily-entry-transition__orb { opacity: .38; transform: skewX(-8deg); border-radius: 1.5rem; animation: saying-sheet .85s ease both; }
+body[data-daily-category="saying"] .daily-entry-transition__ring { display: none; }
+body[data-daily-category="saying"] .daily-entry-transition__mark { left: auto; right: 2rem; bottom: 2rem; animation: saying-mark .6s ease both; }
+body[data-daily-category="saying"] .daily-entry-transition__line { left: 2rem; right: auto; height: .18rem; animation: saying-line .48s ease both; }
+body[data-daily-category="saying"] .daily-entry-transition__line--one { width: 62%; bottom: 7rem; }
+body[data-daily-category="saying"] .daily-entry-transition__line--two { width: 42%; bottom: 5.6rem; animation-delay: .08s; }
+
+/* Wisdom — calm academic seal */
+body[data-daily-category="wisdom"] .daily-entry-transition__orb { right: 50%; top: -12rem; transform: translateX(50%); animation: wisdom-dome 1.3s ease both; }
+body[data-daily-category="wisdom"] .daily-entry-transition__ring { right: 50%; top: 50%; transform: translate(50%,-50%); animation: wisdom-seal 1.1s ease both; }
+body[data-daily-category="wisdom"] .daily-entry-transition__mark { left: 50%; bottom: 50%; transform: translate(-50%,50%); border-radius: 50%; animation: wisdom-cap .75s ease both; }
+body[data-daily-category="wisdom"] .daily-entry-transition__line { display: none; }
+
+/* Word — typography assembly */
+body[data-daily-category="word"] .daily-entry-transition__orb { width: 100%; height: 100%; inset: 0; border-radius: 0; opacity: .2; animation: word-field .7s ease both; }
+body[data-daily-category="word"] .daily-entry-transition__mark { width: 7rem; height: 7rem; left: 50%; bottom: 50%; transform: translate(-50%,50%); background: transparent; font-size: 3.4rem; animation: word-letter .75s cubic-bezier(.2,.8,.2,1) both; }
+body[data-daily-category="word"] .daily-entry-transition__ring { display: none; }
+body[data-daily-category="word"] .daily-entry-transition__line { left: 50%; transform: translateX(-50%); animation: word-baseline .55s ease both; }
+body[data-daily-category="word"] .daily-entry-transition__line--one { width: 10rem; bottom: calc(50% - 4.2rem); }
+body[data-daily-category="word"] .daily-entry-transition__line--two { display: none; }
+
+/* Idiom — speech layers */
+body[data-daily-category="idiom"] .daily-entry-transition__orb { right: 1rem; top: 1rem; width: 12rem; height: 8rem; border-radius: 50% 50% 50% 24%; animation: idiom-bubble 1s ease both; }
+body[data-daily-category="idiom"] .daily-entry-transition__ring { right: 8rem; top: 8rem; width: 5rem; height: 3.5rem; border-radius: 50% 50% 24% 50%; animation: idiom-bubble-two .9s .08s ease both; }
+body[data-daily-category="idiom"] .daily-entry-transition__mark { animation: idiom-mark .7s ease both; }
+body[data-daily-category="idiom"] .daily-entry-transition__line { display: none; }
+
+/* Fact — radar/data readout */
+body[data-daily-category="fact"] .daily-entry-transition__orb { animation: fact-orb 1.4s ease both; }
+body[data-daily-category="fact"] .daily-entry-transition__ring { animation: fact-radar 1.15s ease both; }
+body[data-daily-category="fact"] .daily-entry-transition__mark { animation: fact-mark .65s ease both; }
+body[data-daily-category="fact"] .daily-entry-transition__line--one { animation: fact-scan .52s .08s ease both; }
+body[data-daily-category="fact"] .daily-entry-transition__line--two { animation: fact-scan .52s .14s ease both; }
+
+/* Fun Fact — bulb/pop */
+body[data-daily-category="fun-fact"] .daily-entry-transition__orb { border-radius: 45% 55% 60% 40%; animation: fun-pop 1.05s cubic-bezier(.1,.9,.2,1.12) both; }
+body[data-daily-category="fun-fact"] .daily-entry-transition__ring { border-style: dashed; animation: fun-spin 1.05s ease both; }
+body[data-daily-category="fun-fact"] .daily-entry-transition__mark { animation: fun-bulb .72s cubic-bezier(.2,.9,.2,1.15) both; }
+body[data-daily-category="fun-fact"] .daily-entry-transition__line--one { transform: rotate(-8deg); animation: fun-ray .5s .08s ease both; }
+body[data-daily-category="fun-fact"] .daily-entry-transition__line--two { transform: rotate(7deg); animation: fun-ray .5s .12s ease both; }
+
+/* TIL — notebook/question reveal */
+body[data-daily-category="today-i-learned"] .daily-entry-transition__orb { border-radius: 1.2rem; transform: rotate(4deg); animation: til-card .85s ease both; }
+body[data-daily-category="today-i-learned"] .daily-entry-transition__ring { border-radius: .8rem; border-style: dotted; animation: til-box .8s .05s ease both; }
+body[data-daily-category="today-i-learned"] .daily-entry-transition__mark { animation: til-question .72s ease both; }
+body[data-daily-category="today-i-learned"] .daily-entry-transition__line { animation: til-rule .48s ease both; }
+
+/* Feel-good fact — soft organic float */
+body[data-daily-category="feel-good-fact"] .daily-entry-transition__orb { border-radius: 55% 45% 60% 40%; animation: feel-float 1.5s ease-in-out both; }
+body[data-daily-category="feel-good-fact"] .daily-entry-transition__ring { border-style: dotted; animation: feel-ring 1.4s ease both; }
+body[data-daily-category="feel-good-fact"] .daily-entry-transition__mark { border-radius: 50%; animation: feel-mark 1s ease both; }
+body[data-daily-category="feel-good-fact"] .daily-entry-transition__line { display: none; }
+
+/* Joke — stage/curtain */
+body[data-daily-category="joke"] .daily-entry-transition__orb { width: 60%; height: 140%; right: -10%; top: -20%; border-radius: 50% 0 0 50%; animation: joke-curtain-right .85s ease both; }
+body[data-daily-category="joke"] .daily-entry-transition__ring { width: 11rem; height: 11rem; right: 50%; top: 40%; transform: translate(50%,-50%); animation: joke-spotlight .9s ease both; }
+body[data-daily-category="joke"] .daily-entry-transition__mark { animation: joke-bounce .72s ease both; }
+body[data-daily-category="joke"] .daily-entry-transition__line { display: none; }
+
+/* Bad advice — warning tape */
+body[data-daily-category="bad-advice"] .daily-entry-transition { background: linear-gradient(145deg, #fffaf0, #fff); }
+body[data-daily-category="bad-advice"] .daily-entry-transition__orb { opacity: .35; border-radius: 0; transform: rotate(12deg); animation: warning-panel .7s ease both; }
+body[data-daily-category="bad-advice"] .daily-entry-transition__ring { display: none; }
+body[data-daily-category="bad-advice"] .daily-entry-transition__mark { animation: warning-mark .62s ease both; }
+body[data-daily-category="bad-advice"] .daily-entry-transition__line { height: .8rem; background: repeating-linear-gradient(135deg,var(--daily-accent) 0 .6rem,transparent .6rem 1.2rem); animation: warning-tape .5s ease both; }
+
+/* Excuse — slips sideways like an evasive message */
+body[data-daily-category="excuse"] .daily-entry-transition__orb { border-radius: 50% 50% 20% 50%; animation: excuse-bubble .85s ease both; }
+body[data-daily-category="excuse"] .daily-entry-transition__ring { display: none; }
+body[data-daily-category="excuse"] .daily-entry-transition__mark { animation: excuse-slip .75s ease both; }
+body[data-daily-category="excuse"] .daily-entry-transition__line { transform-origin: right center; animation: excuse-trail .55s ease both; }
+
+/* Side quest — compass sweep */
+body[data-daily-category="side-quest"] .daily-entry-transition__orb { opacity: .32; animation: quest-map 1.1s ease both; }
+body[data-daily-category="side-quest"] .daily-entry-transition__ring { animation: quest-compass 1.05s ease both; }
+body[data-daily-category="side-quest"] .daily-entry-transition__mark { animation: quest-marker .7s ease both; }
+body[data-daily-category="side-quest"] .daily-entry-transition__line--one { transform: rotate(-18deg); animation: quest-route .65s ease both; }
+body[data-daily-category="side-quest"] .daily-entry-transition__line--two { transform: rotate(10deg); animation: quest-route .65s .08s ease both; }
+
+/* Cheer me up — sunrise */
+body[data-daily-category="cheer-me-up"] .daily-entry-transition__orb { right: 50%; top: auto; bottom: -13rem; transform: translateX(50%); animation: cheer-sunrise 1.3s ease both; }
+body[data-daily-category="cheer-me-up"] .daily-entry-transition__ring { right: 50%; top: auto; bottom: -1rem; transform: translateX(50%); animation: cheer-rays 1.1s ease both; }
+body[data-daily-category="cheer-me-up"] .daily-entry-transition__mark { left: 50%; bottom: 2.4rem; transform: translateX(-50%); animation: cheer-mark .85s ease both; }
+body[data-daily-category="cheer-me-up"] .daily-entry-transition__line { display: none; }
+
+/* Worth remembering — bookmark settles */
+body[data-daily-category="worth-remembering"] .daily-entry-transition__orb { left: 50%; right: auto; top: -11rem; transform: translateX(-50%); border-radius: 2rem; animation: remember-paper 1.15s ease both; }
+body[data-daily-category="worth-remembering"] .daily-entry-transition__ring { display: none; }
+body[data-daily-category="worth-remembering"] .daily-entry-transition__mark { left: 50%; bottom: 50%; transform: translate(-50%,50%); border-radius: .5rem .5rem 1.5rem 1.5rem; animation: remember-mark .8s ease both; }
+body[data-daily-category="worth-remembering"] .daily-entry-transition__line { animation: remember-line .55s ease both; }
+
+/* Media quote — cinematic frame */
+body[data-daily-category="media-quote"] .daily-entry-transition { background: #202124; }
+body[data-daily-category="media-quote"] .daily-entry-transition__orb { width: 100%; height: 72%; inset: 14% 0 auto; border-radius: 0; background: color-mix(in srgb, var(--daily-accent) 32%, #17181a); animation: media-frame 1s ease both; }
+body[data-daily-category="media-quote"] .daily-entry-transition__ring { display: none; }
+body[data-daily-category="media-quote"] .daily-entry-transition__mark { left: 50%; bottom: 50%; transform: translate(-50%,50%); background: rgba(255,255,255,.1); color: white; animation: media-play .75s ease both; }
+body[data-daily-category="media-quote"] .daily-entry-transition__line { left: 0; width: 100%; height: 1.6rem; border-radius: 0; background: #0e0e0f; opacity: 1; }
+body[data-daily-category="media-quote"] .daily-entry-transition__line--one { top: 0; bottom: auto; animation: media-bar-top .7s ease both; }
+body[data-daily-category="media-quote"] .daily-entry-transition__line--two { bottom: 0; animation: media-bar-bottom .7s ease both; }
+
+/* --------------------------------------------------------------------------
+   Shared content building blocks
+   -------------------------------------------------------------------------- */
+.daily-statement blockquote,
+.daily-knowledge__statement,
+.daily-comedy__main,
+.daily-cheer__main {
+  max-width: 18ch;
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: 760;
+  line-height: 1.04;
+  letter-spacing: -.045em;
+}
 .daily-statement blockquote { font-family: ui-serif, Georgia, Cambria, serif; font-weight: 650; }
 .daily-attribution { margin: 1.25rem 0 0; color: var(--daily-muted); font-weight: 700; line-height: 1.5; }
 .daily-subsection { margin-top: 2rem; padding-top: 1.35rem; border-top: 1px solid var(--daily-line); }
@@ -52,7 +286,7 @@ html[data-daily-group="mood"] { --daily-accent: #71527e; --daily-accent-soft: #e
 .daily-comedy--warning .daily-comedy__main { font-size: clamp(1.9rem, 7vw, 3.6rem); }
 .daily-disclaimer { display: inline-block; margin: 1.4rem 0 0; padding: .55rem .75rem; border-radius: var(--daily-radius-pill); background: #f3dfd7; color: #763f34; font-weight: 800; }
 .daily-punchline-button,.daily-quest button { margin-top: 1.6rem; border: 0; border-radius: var(--daily-radius-pill); padding: .82rem 1rem; background: var(--daily-text); color: white; cursor: pointer; }
-.daily-punchline { margin: 1.6rem 0 0; font-size: clamp(1.5rem, 6vw, 2.5rem); font-weight: 780; line-height: 1.15; }
+.daily-punchline { margin: 1.6rem 0 0; font-size: clamp(1.5rem, 6vw, 2.5rem); font-weight: 780; line-height: 1.15; animation: punchline-in .42s cubic-bezier(.2,.8,.2,1) both; }
 .daily-quest__time { display: inline-block; margin: 0 0 1rem; padding: .5rem .7rem; border-radius: var(--daily-radius-pill); background: var(--daily-accent-soft); color: var(--daily-accent); font-weight: 800; }
 .daily-quest h2 { max-width: 18ch; margin: 0; font-size: clamp(2rem, 8vw, 3.8rem); line-height: 1.02; letter-spacing: -.045em; }
 .daily-quest__task { margin: 1.3rem 0 0; font-size: 1.15rem; line-height: 1.65; }
@@ -63,10 +297,185 @@ html[data-daily-group="mood"] { --daily-accent: #71527e; --daily-accent-soft: #e
 .daily-sources ol { padding-left: 1.25rem; }
 .daily-sources li { margin: .7rem 0; line-height: 1.45; }
 .daily-sources a { color: var(--daily-accent); text-underline-offset: .18em; }
-.daily-message { padding: 3rem 0; text-align: center; animation: daily-content-in .45s ease both; }
-.daily-message h2 { margin-top: 0; }
-.daily-message p { color: var(--daily-muted); line-height: 1.6; }
-.daily-message button { border: 0; border-radius: var(--daily-radius-pill); padding: .8rem 1rem; background: var(--daily-text); color: white; cursor: pointer; }
-.daily-message--error h2 { color: var(--daily-danger); }
 
-@media (min-width: 48rem) { .daily-category { padding-top: 2rem; } .daily-category__header { margin-top: 3rem; } .daily-reveal { min-height: 26rem; padding: 2.6rem; } .daily-entry-transition__mark { width: 5.4rem; height: 5.4rem; } }
+/* --------------------------------------------------------------------------
+   Individual detail-page identity
+   -------------------------------------------------------------------------- */
+/* Language & thoughts */
+body[data-daily-category="quote"] .daily-reveal { border-left: .35rem solid var(--daily-accent); }
+body[data-daily-category="quote"] .daily-reveal::before { content: "“"; inset: auto 1rem -2rem auto; height: auto; background: none; color: var(--daily-accent-soft); font: 700 11rem/1 Georgia, serif; opacity: .75; transform: none; }
+body[data-daily-category="quote"] .daily-content { animation-name: content-quote; }
+
+body[data-daily-category="saying"] .daily-reveal { background-image: linear-gradient(to bottom, transparent 2.1rem, color-mix(in srgb,var(--daily-accent) 7%,transparent) 2.16rem); background-size: 100% 2.16rem; }
+body[data-daily-category="saying"] .daily-statement blockquote { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-weight: 760; }
+body[data-daily-category="saying"] .daily-content { animation-name: content-saying; }
+
+body[data-daily-category="wisdom"] .daily-reveal { border-radius: .6rem 2rem .6rem 2rem; }
+body[data-daily-category="wisdom"] .daily-reveal::after { left: 20%; right: 20%; height: 1px; bottom: 1.2rem; background: var(--daily-accent); opacity: .4; }
+body[data-daily-category="wisdom"] .daily-statement blockquote { text-align: center; margin-inline: auto; }
+body[data-daily-category="wisdom"] .daily-attribution { text-align: center; }
+body[data-daily-category="wisdom"] .daily-content { animation-name: content-wisdom; }
+
+body[data-daily-category="word"] .daily-reveal { background: linear-gradient(160deg, #fffdf8 0 58%, var(--daily-accent-soft) 180%); }
+body[data-daily-category="word"] .daily-language__word { font-family: ui-serif, Georgia, Cambria, serif; color: var(--daily-accent); }
+body[data-daily-category="word"] .daily-example { border-left-width: .45rem; }
+body[data-daily-category="word"] .daily-content { animation-name: content-word; }
+
+body[data-daily-category="idiom"] .daily-reveal::before { inset: 1.2rem 1.2rem auto auto; width: 8rem; height: 5rem; border-radius: 50% 50% 25% 50%; }
+body[data-daily-category="idiom"] .daily-language__word { max-width: 15ch; font-family: ui-serif, Georgia, serif; font-size: clamp(2.2rem, 9vw, 4.6rem); }
+body[data-daily-category="idiom"] .daily-subsection { border-top-style: dashed; }
+body[data-daily-category="idiom"] .daily-content { animation-name: content-idiom; }
+
+/* Knowledge */
+body[data-daily-category="fact"] .daily-reveal { background-image: radial-gradient(color-mix(in srgb,var(--daily-accent) 9%,transparent) 1px, transparent 1px); background-size: 1.2rem 1.2rem; }
+body[data-daily-category="fact"] .daily-knowledge__statement { padding-right: clamp(0rem, 7vw, 3rem); }
+body[data-daily-category="fact"] .daily-subsection { background: color-mix(in srgb, white 76%, var(--daily-accent-soft)); margin-inline: -.2rem; padding: 1.2rem; border: 0; border-radius: 1rem; }
+body[data-daily-category="fact"] .daily-content { animation-name: content-fact; }
+
+body[data-daily-category="fun-fact"] .daily-reveal { transform: rotate(-.15deg); border-radius: 2.2rem .9rem 2.2rem 1.2rem; }
+body[data-daily-category="fun-fact"] .daily-reveal::before { border-radius: 40% 60% 58% 42%; transform: rotate(16deg); }
+body[data-daily-category="fun-fact"] .daily-knowledge__statement { color: color-mix(in srgb, var(--daily-text) 88%, var(--daily-accent)); }
+body[data-daily-category="fun-fact"] .daily-content { animation-name: content-fun; }
+
+body[data-daily-category="today-i-learned"] .daily-reveal { border-radius: .8rem; box-shadow: .45rem .45rem 0 color-mix(in srgb,var(--daily-accent-soft) 70%,transparent); }
+body[data-daily-category="today-i-learned"] .daily-til h2::before { content: "TIL"; display: block; width: max-content; margin-bottom: .9rem; padding: .3rem .5rem; border-radius: .35rem; background: var(--daily-accent); color: white; font-size: .68rem; letter-spacing: .12em; }
+body[data-daily-category="today-i-learned"] .daily-content { animation-name: content-til; }
+
+body[data-daily-category="feel-good-fact"] .daily-reveal { border-radius: 2.4rem; background: linear-gradient(150deg,#fffdf8 0%,color-mix(in srgb,var(--daily-accent-soft) 45%,#fff) 100%); }
+body[data-daily-category="feel-good-fact"] .daily-reveal::before { border-radius: 58% 42% 47% 53%; opacity: .62; }
+body[data-daily-category="feel-good-fact"] .daily-knowledge__statement { font-family: ui-serif, Georgia, serif; }
+body[data-daily-category="feel-good-fact"] .daily-content { animation-name: content-feel; }
+
+/* Humor & adventure */
+body[data-daily-category="joke"] .daily-reveal { border-radius: 2rem; background: linear-gradient(145deg,#fffdf8,#fff8e8); }
+body[data-daily-category="joke"] .daily-reveal::before { left: 50%; right: auto; top: -8rem; width: 16rem; height: 16rem; transform: translateX(-50%); background: radial-gradient(circle,var(--daily-accent-soft) 0 35%,transparent 70%); opacity: .8; }
+body[data-daily-category="joke"] .daily-comedy__main { max-width: 16ch; }
+body[data-daily-category="joke"] .daily-punchline-button { transform: rotate(-1deg); box-shadow: .2rem .25rem 0 var(--daily-accent-soft); }
+body[data-daily-category="joke"] .daily-content { animation-name: content-joke; }
+
+body[data-daily-category="bad-advice"] .daily-reveal { border: .18rem solid color-mix(in srgb,var(--daily-accent) 55%,var(--daily-line)); }
+body[data-daily-category="bad-advice"] .daily-reveal::after { height: .8rem; background: repeating-linear-gradient(135deg,var(--daily-accent) 0 .55rem,transparent .55rem 1.1rem); opacity: .2; }
+body[data-daily-category="bad-advice"] .daily-content { animation-name: content-warning; }
+
+body[data-daily-category="excuse"] .daily-reveal { border-radius: 2rem 2rem .65rem 2rem; }
+body[data-daily-category="excuse"] .daily-comedy { position: relative; padding-right: 1rem; }
+body[data-daily-category="excuse"] .daily-comedy::after { content: "…"; display: block; margin-top: 1rem; color: var(--daily-accent); font-size: 2rem; letter-spacing: .15em; }
+body[data-daily-category="excuse"] .daily-content { animation-name: content-excuse; }
+
+body[data-daily-category="side-quest"] .daily-reveal { border-radius: 1rem; background-image: linear-gradient(color-mix(in srgb,var(--daily-accent) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--daily-accent) 6%,transparent) 1px,transparent 1px); background-size: 2rem 2rem; }
+body[data-daily-category="side-quest"] .daily-quest__time { border: 1px solid color-mix(in srgb,var(--daily-accent) 22%,transparent); }
+body[data-daily-category="side-quest"] .daily-quest button { background: var(--daily-accent); }
+body[data-daily-category="side-quest"] .daily-content { animation-name: content-quest; }
+
+/* Mood & culture */
+body[data-daily-category="cheer-me-up"] .daily-reveal { border: 0; border-radius: 2.6rem; background: radial-gradient(circle at 50% 110%,var(--daily-accent-soft) 0 28%,transparent 58%),#fffdf9; }
+body[data-daily-category="cheer-me-up"] .daily-cheer { min-height: 15rem; display: grid; align-content: center; }
+body[data-daily-category="cheer-me-up"] .daily-cheer__main { max-width: 16ch; }
+body[data-daily-category="cheer-me-up"] .daily-content { animation-name: content-cheer; }
+
+body[data-daily-category="worth-remembering"] .daily-reveal { border-radius: .65rem; background: #fffdf9; }
+body[data-daily-category="worth-remembering"] .daily-reveal::after { left: auto; right: 1.4rem; top: 0; bottom: auto; width: 1.8rem; height: 4.5rem; background: var(--daily-accent-soft); clip-path: polygon(0 0,100% 0,100% 100%,50% 78%,0 100%); opacity: .8; }
+body[data-daily-category="worth-remembering"] .daily-statement blockquote { max-width: 16ch; font-size: clamp(1.9rem,7vw,3.4rem); }
+body[data-daily-category="worth-remembering"] .daily-content { animation-name: content-remember; }
+
+body[data-daily-category="media-quote"] { background: #ebe8e3; }
+body[data-daily-category="media-quote"] .daily-reveal { border-color: #25272a; border-radius: .55rem; background: #202124; color: #f6f4ee; box-shadow: 0 1.6rem 4rem rgba(20,20,22,.2); }
+body[data-daily-category="media-quote"] .daily-reveal::before { inset: 0; height: auto; border-radius: 0; background: linear-gradient(to bottom,#0d0d0e 0 1rem,transparent 1rem calc(100% - 1rem),#0d0d0e calc(100% - 1rem)); opacity: 1; transform: none; }
+body[data-daily-category="media-quote"] .daily-reveal::after { display: none; }
+body[data-daily-category="media-quote"] .daily-statement blockquote { max-width: 17ch; color: white; }
+body[data-daily-category="media-quote"] .daily-attribution,
+body[data-daily-category="media-quote"] .daily-subsection p,
+body[data-daily-category="media-quote"] .daily-sources summary { color: #c8c7c2; }
+body[data-daily-category="media-quote"] .daily-subsection,
+body[data-daily-category="media-quote"] .daily-sources { border-color: rgba(255,255,255,.16); }
+body[data-daily-category="media-quote"] .daily-content { animation-name: content-media; }
+
+/* --------------------------------------------------------------------------
+   Keyframes
+   -------------------------------------------------------------------------- */
+@keyframes daily-content-in { from { opacity: 0; transform: translateY(.6rem) scale(.99); } to { opacity: 1; transform: none; } }
+@keyframes daily-header-enter { from { opacity: 0; transform: translateY(.35rem); } to { opacity: 1; transform: none; } }
+@keyframes entry-orb { 0% { transform: scale(.55) translate(2rem,-2rem); opacity: .55; } 58% { transform: scale(1.04); opacity: .92; } 100% { transform: scale(1); opacity: .8; } }
+@keyframes entry-ring { from { opacity: 0; transform: scale(.62) rotate(-12deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+@keyframes entry-mark { from { opacity: 0; transform: translateY(1.1rem) rotate(7deg) scale(.86); } to { opacity: 1; transform: none; } }
+@keyframes entry-line { from { opacity: 0; transform: scaleX(.25); } to { opacity: .52; transform: scaleX(1); } }
+@keyframes punchline-in { from { opacity: 0; transform: translateY(.8rem) rotate(-1deg); } to { opacity: 1; transform: none; } }
+
+@keyframes quote-paper { from { transform: scale(.6) rotate(-8deg); opacity: .25; } to { transform: scale(1.05) rotate(0); opacity: .65; } }
+@keyframes quote-mark { from { opacity: 0; transform: translateY(2rem) scale(.7); } to { opacity: .16; transform: none; } }
+@keyframes quote-line { from { opacity: 0; transform: scaleX(.15); } to { opacity: .42; transform: scaleX(1); } }
+@keyframes saying-sheet { from { opacity: .15; transform: translateX(5rem) skewX(-8deg); } to { opacity: .4; transform: translateX(0) skewX(-8deg); } }
+@keyframes saying-mark { from { opacity: 0; transform: translateX(2rem); } to { opacity: 1; transform: none; } }
+@keyframes saying-line { from { opacity: 0; transform: translateX(-2rem) scaleX(.4); } to { opacity: .55; transform: none; } }
+@keyframes wisdom-dome { from { opacity: .15; transform: translateX(50%) translateY(-3rem) scale(.8); } to { opacity: .6; transform: translateX(50%) translateY(0) scale(1); } }
+@keyframes wisdom-seal { from { opacity: 0; transform: translate(50%,-50%) scale(.55) rotate(-60deg); } to { opacity: .55; transform: translate(50%,-50%) scale(1) rotate(0); } }
+@keyframes wisdom-cap { from { opacity: 0; transform: translate(-50%,90%) rotate(8deg); } to { opacity: 1; transform: translate(-50%,50%) rotate(0); } }
+@keyframes word-field { from { opacity: 0; } to { opacity: .22; } }
+@keyframes word-letter { from { opacity: 0; transform: translate(-50%,50%) scale(.35); filter: blur(5px); } to { opacity: 1; transform: translate(-50%,50%) scale(1); filter: none; } }
+@keyframes word-baseline { from { opacity: 0; width: 2rem; } to { opacity: .45; width: 10rem; } }
+@keyframes idiom-bubble { from { opacity: 0; transform: translateX(3rem) scale(.7); } to { opacity: .7; transform: none; } }
+@keyframes idiom-bubble-two { from { opacity: 0; transform: translateX(-2rem) scale(.6); } to { opacity: .35; transform: none; } }
+@keyframes idiom-mark { from { opacity: 0; transform: translateY(1rem) scale(.75); } to { opacity: 1; transform: none; } }
+@keyframes fact-orb { from { opacity: .15; transform: scale(.55); } to { opacity: .72; transform: scale(1); } }
+@keyframes fact-radar { 0% { opacity: 0; transform: scale(.35); } 65% { opacity: .65; } 100% { opacity: .18; transform: scale(1.65); } }
+@keyframes fact-mark { from { opacity: 0; transform: scale(.65); } to { opacity: 1; transform: none; } }
+@keyframes fact-scan { from { opacity: 0; transform: scaleX(.1); } to { opacity: .48; transform: scaleX(1); } }
+@keyframes fun-pop { 0% { opacity: .2; transform: scale(.5) rotate(-8deg); } 75% { opacity: .8; transform: scale(1.08) rotate(2deg); } 100% { opacity: .72; transform: scale(1); } }
+@keyframes fun-spin { from { opacity: 0; transform: scale(.55) rotate(-90deg); } to { opacity: .5; transform: scale(1.15) rotate(0); } }
+@keyframes fun-bulb { 0% { opacity: 0; transform: scale(.55) rotate(-10deg); } 70% { opacity: 1; transform: scale(1.12) rotate(4deg); } 100% { opacity: 1; transform: none; } }
+@keyframes fun-ray { from { opacity: 0; scale: .3 1; } to { opacity: .45; scale: 1 1; } }
+@keyframes til-card { from { opacity: .15; transform: translate(2rem,-2rem) rotate(8deg) scale(.8); } to { opacity: .55; transform: rotate(4deg); } }
+@keyframes til-box { from { opacity: 0; transform: translateY(2rem) rotate(-5deg); } to { opacity: .4; transform: none; } }
+@keyframes til-question { from { opacity: 0; transform: translateY(-1.5rem) rotate(-12deg); } to { opacity: 1; transform: none; } }
+@keyframes til-rule { from { opacity: 0; transform: translateX(-2rem) scaleX(.3); } to { opacity: .45; transform: none; } }
+@keyframes feel-float { from { opacity: .25; transform: translate(2rem,-1rem) scale(.75); } to { opacity: .66; transform: translate(0,0) scale(1); } }
+@keyframes feel-ring { from { opacity: 0; transform: scale(.6); } to { opacity: .35; transform: scale(1.1); } }
+@keyframes feel-mark { from { opacity: 0; transform: translateY(1rem) scale(.7); } to { opacity: 1; transform: none; } }
+@keyframes joke-curtain-right { from { opacity: .2; transform: translateX(6rem); } to { opacity: .62; transform: none; } }
+@keyframes joke-spotlight { from { opacity: 0; transform: translate(50%,-50%) scale(.4); } to { opacity: .3; transform: translate(50%,-50%) scale(1); } }
+@keyframes joke-bounce { 0% { opacity: 0; transform: translateY(2rem) rotate(-8deg); } 65% { opacity: 1; transform: translateY(-.3rem) rotate(3deg); } 100% { opacity: 1; transform: none; } }
+@keyframes warning-panel { from { opacity: 0; transform: translateX(6rem) rotate(12deg); } to { opacity: .35; transform: rotate(12deg); } }
+@keyframes warning-mark { from { opacity: 0; transform: scale(.45) rotate(-18deg); } to { opacity: 1; transform: scale(1.08) rotate(0); } }
+@keyframes warning-tape { from { opacity: 0; transform: translateX(3rem) rotate(-8deg) scaleX(.35); } to { opacity: .6; transform: rotate(-8deg) scaleX(1); } }
+@keyframes excuse-bubble { from { opacity: 0; transform: translateX(4rem) scale(.75); } to { opacity: .64; transform: none; } }
+@keyframes excuse-slip { from { opacity: 0; transform: translateX(-2.5rem) rotate(-7deg); } to { opacity: 1; transform: translateX(.7rem) rotate(3deg); } }
+@keyframes excuse-trail { from { opacity: 0; transform: translateX(-3rem) scaleX(.3); } to { opacity: .35; transform: translateX(0) scaleX(1); } }
+@keyframes quest-map { from { opacity: 0; transform: scale(.8) rotate(-6deg); } to { opacity: .35; transform: none; } }
+@keyframes quest-compass { from { opacity: 0; transform: scale(.5) rotate(-150deg); } to { opacity: .55; transform: scale(1.1) rotate(0); } }
+@keyframes quest-marker { from { opacity: 0; transform: translateY(-1.5rem) scale(.6); } to { opacity: 1; transform: none; } }
+@keyframes quest-route { from { opacity: 0; transform: rotate(-18deg) scaleX(.15); } to { opacity: .42; transform: rotate(-18deg) scaleX(1); } }
+@keyframes cheer-sunrise { from { opacity: .15; transform: translateX(50%) translateY(4rem) scale(.75); } to { opacity: .7; transform: translateX(50%) translateY(0) scale(1); } }
+@keyframes cheer-rays { from { opacity: 0; transform: translateX(50%) scale(.4); box-shadow: 0 0 0 0 var(--daily-accent-soft); } to { opacity: .32; transform: translateX(50%) scale(1.15); box-shadow: 0 0 0 2rem transparent; } }
+@keyframes cheer-mark { from { opacity: 0; transform: translateX(-50%) translateY(1.2rem) scale(.7); } to { opacity: 1; transform: translateX(-50%); } }
+@keyframes remember-paper { from { opacity: .2; transform: translateX(-50%) translateY(-2rem) scale(.85); } to { opacity: .5; transform: translateX(-50%); } }
+@keyframes remember-mark { from { opacity: 0; transform: translate(-50%,10%) scaleY(1.35); } to { opacity: 1; transform: translate(-50%,50%); } }
+@keyframes remember-line { from { opacity: 0; transform: scaleX(.2); } to { opacity: .32; transform: scaleX(1); } }
+@keyframes media-frame { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes media-play { from { opacity: 0; transform: translate(-50%,50%) scale(.55); } to { opacity: 1; transform: translate(-50%,50%) scale(1); } }
+@keyframes media-bar-top { from { transform: translateY(-2rem); } to { transform: none; } }
+@keyframes media-bar-bottom { from { transform: translateY(2rem); } to { transform: none; } }
+
+/* Category-specific content reveals */
+@keyframes content-quote { from { opacity: 0; transform: translateX(-.7rem); } to { opacity: 1; transform: none; } }
+@keyframes content-saying { from { opacity: 0; transform: translateY(.7rem); clip-path: inset(0 100% 0 0); } to { opacity: 1; transform: none; clip-path: inset(0); } }
+@keyframes content-wisdom { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes content-word { from { opacity: 0; transform: translateY(.6rem) scale(.96); letter-spacing: .02em; } to { opacity: 1; transform: none; } }
+@keyframes content-idiom { from { opacity: 0; transform: translateX(.8rem); } to { opacity: 1; transform: none; } }
+@keyframes content-fact { from { opacity: 0; transform: translateY(.45rem); } to { opacity: 1; transform: none; } }
+@keyframes content-fun { 0% { opacity: 0; transform: scale(.94) rotate(-.8deg); } 75% { opacity: 1; transform: scale(1.01) rotate(.2deg); } 100% { transform: rotate(0); } }
+@keyframes content-til { from { opacity: 0; transform: translateY(.8rem) rotate(-.3deg); } to { opacity: 1; transform: none; } }
+@keyframes content-feel { from { opacity: 0; transform: translateY(.6rem) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes content-joke { 0% { opacity: 0; transform: translateY(1rem) scale(.98); } 70% { opacity: 1; transform: translateY(-.12rem); } 100% { transform: none; } }
+@keyframes content-warning { from { opacity: 0; transform: translateX(-.8rem) rotate(-.4deg); } to { opacity: 1; transform: none; } }
+@keyframes content-excuse { from { opacity: 0; transform: translateX(-1.2rem); } to { opacity: 1; transform: none; } }
+@keyframes content-quest { from { opacity: 0; transform: scale(.97) translateY(.7rem); } to { opacity: 1; transform: none; } }
+@keyframes content-cheer { from { opacity: 0; transform: translateY(1rem); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes content-remember { from { opacity: 0; transform: translateY(-.5rem); } to { opacity: 1; transform: none; } }
+@keyframes content-media { from { opacity: 0; transform: scale(.985); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+
+@media (min-width: 48rem) {
+  .daily-category { padding-top: 2rem; }
+  .daily-category__header { margin-top: 3rem; }
+  .daily-reveal { min-height: 26rem; padding: 2.6rem; }
+  .daily-entry-transition__mark { width: 5.4rem; height: 5.4rem; }
+}
