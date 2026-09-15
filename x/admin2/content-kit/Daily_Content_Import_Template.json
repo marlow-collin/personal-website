@@ -1,0 +1,48 @@
+{
+  "format": "daily-content-import",
+  "format_version": 1,
+  "category": "fact",
+  "payload_schema_version": 1,
+  "defaults": {
+    "status": "active",
+    "initial_times_shown": {
+      "mode": "match_current_pool"
+    }
+  },
+  "items": [
+    {
+      "client_ref": "template-fact-001",
+      "payload": {
+        "fact": {
+          "text": "REPLACE_WITH_VERIFIED_FACT",
+          "source_refs": [
+            "src_1"
+          ]
+        },
+        "explanation": {
+          "text": "REPLACE_WITH_SHORT_EXPLANATION",
+          "source_refs": [
+            "src_1"
+          ]
+        }
+      },
+      "provenance": {
+        "sources": [
+          {
+            "id": "src_1",
+            "type": "web",
+            "title": "REPLACE_WITH_VERIFIED_SOURCE_TITLE",
+            "publisher": "REPLACE_WITH_PUBLISHER",
+            "url": "https://example.invalid/replace-with-verified-source",
+            "year": null,
+            "locator": null
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "note": "TEMPLATE ONLY – replace content and verify before import."
+        }
+      }
+    }
+  ]
+}
