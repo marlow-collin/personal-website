@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Daily Content – Bulk Import</title>
+  <link rel="stylesheet" href="/x/admin2/admin2.css">
+  <script type="module" src="/x/admin2/admin2.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Temporäres Admin-Werkzeug</p>
+      <h1>Daily Content Bulk Import</h1>
+      <p>JSON-Datei auswählen oder Inhalt einfügen, validieren und anschließend in D1 importieren.</p>
+    </header>
+
+    <section class="panel">
+      <label class="file-label">JSON-Datei <input type="file" accept="application/json,.json" data-file></label>
+      <label for="json-input">Oder JSON einfügen</label>
+      <textarea id="json-input" data-input spellcheck="false" placeholder='{"format":"daily-content-import", ...}'></textarea>
+      <div class="actions">
+        <button type="button" data-validate>Validieren</button>
+        <button type="button" data-commit disabled>Importieren</button>
+        <button type="button" class="secondary" data-clear>Leeren</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-live="polite">
+      <h2>Ergebnis</h2>
+      <div data-status>Noch nichts validiert.</div>
+      <div data-summary></div>
+      <div data-preview></div>
+      <div data-issues></div>
+    </section>
+  </main>
+</body>
+</html>
