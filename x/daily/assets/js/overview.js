@@ -9,28 +9,28 @@ let navigating = false;
 let navigationTimer = 0;
 
 const TRANSITION_DURATIONS = Object.freeze({
-  quote: 260,
-  saying: 240,
-  wisdom: 300,
-  word: 250,
-  idiom: 280,
-  fact: 260,
-  "fun-fact": 300,
-  "today-i-learned": 270,
-  "feel-good-fact": 320,
-  joke: 300,
-  "bad-advice": 260,
-  excuse: 240,
-  "side-quest": 300,
-  "cheer-me-up": 320,
-  "worth-remembering": 300,
-  "media-quote": 280
+  quote: 340,
+  saying: 310,
+  wisdom: 390,
+  word: 360,
+  idiom: 370,
+  fact: 340,
+  "fun-fact": 400,
+  "today-i-learned": 370,
+  "feel-good-fact": 410,
+  joke: 390,
+  "bad-advice": 340,
+  excuse: 320,
+  "side-quest": 400,
+  "cheer-me-up": 410,
+  "worth-remembering": 390,
+  "media-quote": 370
 });
 
+// Emoji mode is intentional for now. The SVG paths remain in categories.js as
+// future assets/fallbacks, but are not rendered by the current UI.
 function iconMarkup(category) {
-  const fallback = `<span class="daily-icon__emoji" aria-hidden="true">${category.icon.emoji}</span>`;
-  if (!category.icon.svg) return fallback;
-  return `<img src="${category.icon.svg}" alt="" aria-hidden="true" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="daily-icon__emoji" aria-hidden="true" hidden>${category.icon.emoji}</span>`;
+  return `<span class="daily-icon__emoji" aria-hidden="true">${category.icon.emoji}</span>`;
 }
 
 function renderOverview() {
@@ -84,6 +84,7 @@ function resetNavigationState() {
   if (transition) {
     delete transition.dataset.transition;
     delete transition.dataset.accent;
+    delete transition.dataset.label;
   }
 
   document.querySelectorAll(".daily-category-card.is-entering")
@@ -111,6 +112,7 @@ function wireTransitions() {
       const transitionName = link.dataset.transition || "default";
       transition.dataset.transition = transitionName;
       transition.dataset.accent = link.dataset.accent || "knowledge";
+      transition.dataset.label = category?.shortLabel || "Daily Content";
       if (transitionMark && category) transitionMark.textContent = category.icon.emoji;
 
       link.classList.add("is-entering");
@@ -118,7 +120,7 @@ function wireTransitions() {
       transition.classList.add("is-active");
 
       const destination = link.href;
-      const duration = TRANSITION_DURATIONS[transitionName] || 260;
+      const duration = TRANSITION_DURATIONS[transitionName] || 340;
       navigationTimer = window.setTimeout(() => {
         navigationTimer = 0;
         window.location.assign(destination);
@@ -127,9 +129,8 @@ function wireTransitions() {
   }
 }
 
-// Safari/Chrome can restore this page from the back-forward cache with the
-// exact DOM state it had at navigation time. Always remove the outgoing
-// transition state when the page becomes visible again.
+// Safari/Chrome can restore this page from BFCache with the outgoing transition
+// still applied. Always reset the view when the overview becomes visible again.
 window.addEventListener("pageshow", resetNavigationState);
 
 renderOverview();
