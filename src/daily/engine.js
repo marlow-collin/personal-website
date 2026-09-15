@@ -7,7 +7,7 @@ import {
   getMinimumActiveLevel,
   getPreviousContentId
 } from "./repository.js";
-import { serializeFactActivation } from "./serializers.js";
+import { serializeDailyActivation } from "./serializers.js";
 
 const MAX_CLAIM_ATTEMPTS = 3;
 
@@ -19,7 +19,7 @@ export async function activateDailyCategory(db, categorySlug, now = new Date()) 
   const timeZone = getDailyTimeZone();
 
   const existing = await getActivationForDate(db, categorySlug, localDate);
-  if (existing) return serializeFactActivation(existing);
+  if (existing) return serializeDailyActivation(existing, categorySlug);
 
   for (let attempt = 0; attempt < MAX_CLAIM_ATTEMPTS; attempt += 1) {
     const minLevel = await getMinimumActiveLevel(db, categorySlug);
@@ -34,11 +34,7 @@ export async function activateDailyCategory(db, categorySlug, now = new Date()) 
 
     const previousContentId = await getPreviousContentId(db, categorySlug);
     const contentId = await chooseCandidate(db, categorySlug, minLevel, previousContentId);
-
     if (!contentId) continue;
-
-    const activationId = crypto.randomUUID();
-    const activationToken = crypto.randomUUID();
 
     await claimActivation({
       db,
@@ -47,12 +43,12 @@ export async function activateDailyCategory(db, categorySlug, now = new Date()) 
       timeZone,
       contentId,
       selectionLevel: minLevel,
-      activationId,
-      activationToken
+      activationId: crypto.randomUUID(),
+      activationToken: crypto.randomUUID()
     });
 
     const winner = await getActivationForDate(db, categorySlug, localDate);
-    if (winner) return serializeFactActivation(winner);
+    if (winner) return serializeDailyActivation(winner, categorySlug);
   }
 
   throw new Error("Unable to claim Daily Content activation after retries");

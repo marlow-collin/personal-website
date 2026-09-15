@@ -18,36 +18,26 @@ function publicSources(provenance) {
       title: source.title ? String(source.title) : null,
       publisher: source.publisher ? String(source.publisher) : null,
       url: source.url ? String(source.url) : null,
+      author: source.author ? String(source.author) : null,
       year: Number.isInteger(source.year) ? source.year : null,
       locator: source.locator ? String(source.locator) : null
     }))
     .filter((source) => source.id && source.title);
 }
 
-export function serializeFactActivation(row) {
+export function serializeDailyActivation(row, categorySlug) {
   const payload = parseJsonObject(row.payload_json, {});
   const provenance = parseJsonObject(row.provenance_json, {});
 
   return {
     state: "ready",
-    category: "fact",
+    category: categorySlug,
     date: row.local_date,
     timeZone: row.time_zone,
     content: {
       id: row.content_id,
       label: row.display_label,
-      fact: {
-        text: String(payload?.fact?.text || ""),
-        sourceRefs: Array.isArray(payload?.fact?.source_refs)
-          ? payload.fact.source_refs.map(String)
-          : []
-      },
-      explanation: {
-        text: String(payload?.explanation?.text || ""),
-        sourceRefs: Array.isArray(payload?.explanation?.source_refs)
-          ? payload.explanation.source_refs.map(String)
-          : []
-      },
+      payload,
       sources: publicSources(provenance)
     }
   };

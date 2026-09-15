@@ -8,35 +8,28 @@
   <title>Daily Content</title>
   <link rel="stylesheet" href="/x/daily/assets/css/daily-base.css">
   <link rel="stylesheet" href="/x/daily/assets/css/overview.css">
-  <script src="/x/daily/assets/js/overview.js" defer></script>
+  <script type="module" src="/x/daily/assets/js/overview.js"></script>
 </head>
 <body>
   <main class="daily-overview">
     <header class="daily-overview__intro">
       <p class="daily-eyebrow">Daily Content</p>
       <h1>Ein kleiner Fund für heute.</h1>
-      <p>Zum Start testen wir nur eine Kategorie. Weitere kommen hinzu, sobald die Daily-Logik vollständig geprüft ist.</p>
+      <p>Sechzehn kleine Daily-Kategorien. Inhalt wird erst verbraucht, wenn du die jeweilige Kategorie wirklich öffnest.</p>
     </header>
 
-    <section aria-labelledby="knowledge-title">
-      <h2 id="knowledge-title">Wissen &amp; Entdecken</h2>
-      <a class="daily-category-card" href="/x/daily/fact/" data-daily-category-link="fact">
-        <span class="daily-category-card__icon" aria-hidden="true">
-          <img src="/x/daily/icons/fact.svg" alt="" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
-          <span hidden>ℹ️</span>
-        </span>
-        <span class="daily-category-card__copy">
-          <strong>Fakt des Tages</strong>
-          <span>Ein überprüfbarer Fakt – kurz erklärt und mit Quellen belegt.</span>
-        </span>
-        <span class="daily-category-card__arrow" aria-hidden="true">→</span>
-      </a>
-    </section>
+    <nav class="daily-shortcuts" aria-label="Zu einer Kategoriegruppe springen" data-shortcuts></nav>
+    <div class="daily-groups" data-groups></div>
+
+    <noscript>
+      <p class="daily-noscript">Für Daily Content muss JavaScript aktiviert sein.</p>
+    </noscript>
   </main>
 
   <div class="daily-overview-transition" aria-hidden="true" data-overview-transition>
     <span class="daily-overview-transition__orb"></span>
     <span class="daily-overview-transition__ring"></span>
+    <span class="daily-overview-transition__mark" data-transition-mark></span>
     <span class="daily-overview-transition__line daily-overview-transition__line--one"></span>
     <span class="daily-overview-transition__line daily-overview-transition__line--two"></span>
   </div>
