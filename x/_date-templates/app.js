@@ -41,7 +41,7 @@
     "Nicht heute",
     "Nope",
     "Eher nicht",
-    "Wirklich nicht?"
+    "Wirklich nicht?",
     "Ganz sicher?",
     "Doch nicht",
     "Lieber nicht",
