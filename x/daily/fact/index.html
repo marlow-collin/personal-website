@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/x/daily/assets/css/category.css">
   <script src="/x/daily/assets/js/fact.js" defer></script>
 </head>
-<body>
+<body class="daily-fact-page">
   <main class="daily-category" data-daily-fact>
     <nav class="daily-category__nav">
       <a href="/x/daily/">← Daily Content</a>
@@ -28,10 +28,16 @@
       </div>
     </header>
 
-    <section class="daily-reveal" data-state="loading" aria-live="polite">
-      <div class="daily-loading" data-loading>
-        <span class="daily-loading__pulse" aria-hidden="true"></span>
-        <p>Der heutige Fakt wird aufgeschlagen …</p>
+    <section class="daily-reveal" data-state="transition" aria-live="polite">
+      <div class="daily-entry-transition" data-entry-transition aria-hidden="true">
+        <span class="daily-entry-transition__orb"></span>
+        <span class="daily-entry-transition__ring"></span>
+        <span class="daily-entry-transition__mark">
+          <img src="/x/daily/icons/fact.svg" alt="" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <span hidden>ℹ️</span>
+        </span>
+        <span class="daily-entry-transition__line daily-entry-transition__line--one"></span>
+        <span class="daily-entry-transition__line daily-entry-transition__line--two"></span>
       </div>
 
       <article class="daily-fact" data-content hidden>

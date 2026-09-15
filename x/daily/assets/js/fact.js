@@ -2,7 +2,8 @@
   const root = document.querySelector("[data-daily-fact]");
   if (!root) return;
 
-  const loading = root.querySelector("[data-loading]");
+  const reveal = root.querySelector(".daily-reveal");
+  const entryTransition = root.querySelector("[data-entry-transition]");
   const content = root.querySelector("[data-content]");
   const empty = root.querySelector("[data-empty]");
   const error = root.querySelector("[data-error]");
@@ -13,12 +14,39 @@
   const sourcesWrap = root.querySelector("[data-sources-wrap]");
   const sourcesList = root.querySelector("[data-sources]");
 
+  let transitionHidden = false;
+
+  const hideEntryTransition = () => {
+    if (transitionHidden || !entryTransition) return;
+    transitionHidden = true;
+    entryTransition.classList.add("is-leaving");
+
+    const finish = () => {
+      entryTransition.hidden = true;
+    };
+
+    entryTransition.addEventListener("transitionend", finish, { once: true });
+    window.setTimeout(finish, 450);
+  };
+
   const setState = (state) => {
-    loading.hidden = state !== "loading";
     content.hidden = state !== "ready";
     empty.hidden = state !== "empty";
     error.hidden = state !== "error";
-    root.querySelector(".daily-reveal").dataset.state = state;
+    reveal.dataset.state = state;
+
+    if (state !== "transition") hideEntryTransition();
+  };
+
+  const resetTransition = () => {
+    if (!entryTransition) return;
+    transitionHidden = false;
+    content.hidden = true;
+    empty.hidden = true;
+    error.hidden = true;
+    entryTransition.hidden = false;
+    entryTransition.classList.remove("is-leaving");
+    reveal.dataset.state = "transition";
   };
 
   const formatDate = (isoDate) => {
@@ -56,8 +84,8 @@
     }
   };
 
-  async function loadFact() {
-    setState("loading");
+  async function loadFact({ retrying = false } = {}) {
+    if (retrying) resetTransition();
 
     try {
       const response = await fetch("/x/api/daily/fact/activate", {
@@ -89,6 +117,6 @@
     }
   }
 
-  retry.addEventListener("click", loadFact);
+  retry.addEventListener("click", () => loadFact({ retrying: true }));
   loadFact();
 })();

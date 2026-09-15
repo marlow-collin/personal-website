@@ -8,6 +8,7 @@
   <title>Daily Content</title>
   <link rel="stylesheet" href="/x/daily/assets/css/daily-base.css">
   <link rel="stylesheet" href="/x/daily/assets/css/overview.css">
+  <script src="/x/daily/assets/js/overview.js" defer></script>
 </head>
 <body>
   <main class="daily-overview">
@@ -19,7 +20,7 @@
 
     <section aria-labelledby="knowledge-title">
       <h2 id="knowledge-title">Wissen &amp; Entdecken</h2>
-      <a class="daily-category-card" href="/x/daily/fact/">
+      <a class="daily-category-card" href="/x/daily/fact/" data-daily-category-link="fact">
         <span class="daily-category-card__icon" aria-hidden="true">
           <img src="/x/daily/icons/fact.svg" alt="" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
           <span hidden>ℹ️</span>
@@ -32,5 +33,12 @@
       </a>
     </section>
   </main>
+
+  <div class="daily-overview-transition" aria-hidden="true" data-overview-transition>
+    <span class="daily-overview-transition__orb"></span>
+    <span class="daily-overview-transition__ring"></span>
+    <span class="daily-overview-transition__line daily-overview-transition__line--one"></span>
+    <span class="daily-overview-transition__line daily-overview-transition__line--two"></span>
+  </div>
 </body>
 </html>
