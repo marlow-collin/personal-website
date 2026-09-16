@@ -1,0 +1,48 @@
+:root {
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #202426;
+  background: #f3f4f5;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { width: min(100% - 2rem, 60rem); margin: 0 auto; padding: 2rem 0 4rem; }
+header { max-width: 46rem; margin-bottom: 1.5rem; }
+h1 { margin: .25rem 0 .6rem; font-size: clamp(2rem, 7vw, 3.4rem); }
+h2 { margin: .2rem 0; }
+p { line-height: 1.6; }
+header > p:last-child { color: #62696d; }
+.eyebrow { margin: 0; font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.panel { padding: 1.2rem; border: 1px solid #d9dcde; border-radius: 1rem; background: #fff; }
+.section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+button { border: 0; border-radius: .7rem; padding: .75rem .9rem; background: #202426; color: #fff; font: inherit; font-weight: 750; cursor: pointer; }
+button:disabled { opacity: .45; cursor: wait; }
+.status { margin-top: 1rem; padding: .85rem 1rem; border-radius: .75rem; background: #eef0f1; }
+.status--ok { background: #edf5f0; color: #176b43; }
+.status--error { background: #f8eded; color: #983838; }
+.metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: 1rem 0 0; }
+.metrics div { padding: 1rem; border-radius: .75rem; background: #f6f7f7; }
+.metrics dt { color: #687075; font-size: .8rem; }
+.metrics dd { margin: .25rem 0 0; font-size: 1.8rem; font-weight: 800; }
+details { margin-top: 1rem; }
+summary { cursor: pointer; font-weight: 700; }
+pre { overflow: auto; padding: .9rem; border-radius: .7rem; background: #f6f7f7; font-size: .8rem; }
+
+@media (max-width: 36rem) {
+  main { width: min(100% - 1rem, 60rem); padding-top: 1rem; }
+  .section-heading { display: block; }
+  .section-heading button { margin-top: .8rem; }
+  .metrics { grid-template-columns: 1fr; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { color: #eceeed; background: #111312; }
+  header > p:last-child { color: #aeb4b1; }
+  .panel { border-color: #343936; background: #181b19; }
+  button { background: #eceeed; color: #151716; }
+  .status { background: #252a27; }
+  .status--ok { background: #173126; color: #99dab8; }
+  .status--error { background: #351e1e; color: #efaaaa; }
+  .metrics div, pre { background: #222624; }
+  .metrics dt { color: #aab0ad; }
+}

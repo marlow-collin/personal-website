@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="color-scheme" content="light dark">
+  <title>Conversation Content – Admin</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">temporary admin · conversation roulette</p>
+      <h1>Conversation Content</h1>
+      <p>Technischer Grundstand für die neue D1-Contentverwaltung. Import, Export und Bearbeitung folgen in den nächsten Iterationen.</p>
+    </header>
+
+    <section class="panel" aria-labelledby="databaseHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">step 1</p>
+          <h2 id="databaseHeading">D1-Verbindung</h2>
+        </div>
+        <button id="refreshButton" type="button">Neu prüfen</button>
+      </div>
+
+      <div id="status" class="status" role="status">Prüfe Verbindung …</div>
+
+      <dl class="metrics" id="metrics" hidden>
+        <div><dt>Gesamt</dt><dd id="totalCount">0</dd></div>
+        <div><dt>Aktiv</dt><dd id="activeCount">0</dd></div>
+        <div><dt>Archiviert</dt><dd id="archivedCount">0</dd></div>
+      </dl>
+
+      <details id="details" hidden>
+        <summary>Technische Antwort</summary>
+        <pre id="raw"></pre>
+      </details>
+    </section>
+  </main>
+</body>
+</html>

@@ -14,7 +14,8 @@
       "/x/date/*",
       "/x/api/*",
       "/x/admin/api/*",
-      "/x/admin3/api/*"
+      "/x/admin3/api/*",
+      "/x/admin4/api/*"
     ]
   },
   "d1_databases": [
@@ -35,6 +36,12 @@
       "database_name": "personal-website-personal-checkins",
       "database_id": "6595dfba-3be7-40d5-9854-ebae02d57cb5",
       "migrations_dir": "migrations/checkins"
+    },
+    {
+      "binding": "CONVERSATION_DB",
+      "database_name": "personal-website-conversation-content",
+      "database_id": "cea7065e-e57e-444c-a605-3f2a518b3418",
+      "migrations_dir": "migrations/conversation"
     }
   ],
   "secrets": {

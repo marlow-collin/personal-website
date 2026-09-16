@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="color-scheme" content="light dark">
+  <title>Conversation Roulette</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main>
+    <section class="state" id="loadingState">
+      <p class="eyebrow">conversation roulette</p>
+      <h1>Gespräche werden gemischt …</h1>
+      <div class="loader" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
+
+    <section class="state" id="readyState" hidden>
+      <p class="eyebrow">conversation roulette</p>
+      <h1>Technischer Grundstand bereit.</h1>
+      <p id="readyCopy"></p>
+      <p class="note">Setup, Ziehlogik und finales Design folgen in den nächsten Iterationen.</p>
+    </section>
+
+    <section class="state" id="emptyState" hidden>
+      <p class="eyebrow">conversation roulette</p>
+      <h1>Noch keine aktiven Fragen.</h1>
+      <p>Die Verbindung funktioniert. Content wird später kontrolliert über den Adminbereich importiert.</p>
+    </section>
+
+    <section class="state" id="errorState" hidden>
+      <p class="eyebrow">conversation roulette</p>
+      <h1>Fragen konnten nicht geladen werden.</h1>
+      <p id="errorCopy">Bitte versuche es erneut.</p>
+      <button id="retryButton" type="button">Erneut versuchen</button>
+    </section>
+  </main>
+</body>
+</html>

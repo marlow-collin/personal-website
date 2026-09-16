@@ -1,6 +1,7 @@
 import { connect } from "cloudflare:sockets";
 import { handleDailyRequest } from "./daily/routes.js";
 import { handleCheckinRequest } from "./checkins/routes.js";
+import { handleConversationRequest } from "./conversation/routes.js";
 
 const THEMES = new Set(["soft-playful", "dark-elegant"]);
 const PUBLIC_FIELDS = `
@@ -430,6 +431,9 @@ export default {
   async fetch(request, env, ctx){
     const url = new URL(request.url);
     const path = url.pathname;
+    const conversationResponse = await handleConversationRequest(request, env);
+    if (conversationResponse) return conversationResponse;
+
     const dailyResponse = await handleDailyRequest(request, env);
     if (dailyResponse) return dailyResponse;
 
