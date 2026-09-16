@@ -7,34 +7,101 @@
   <meta name="color-scheme" content="light dark">
   <title>Conversation Roulette</title>
   <link rel="stylesheet" href="./styles.css">
-  <script src="./app.js" defer></script>
+  <script type="module" src="./app.js"></script>
 </head>
 <body>
-  <main>
-    <section class="state" id="loadingState">
+  <main class="shell">
+    <section class="state centered-state" id="loadingState">
       <p class="eyebrow">conversation roulette</p>
       <h1>Gespräche werden gemischt …</h1>
       <div class="loader" aria-hidden="true"><span></span><span></span><span></span></div>
     </section>
 
-    <section class="state" id="readyState" hidden>
-      <p class="eyebrow">conversation roulette</p>
-      <h1>Technischer Grundstand bereit.</h1>
-      <p id="readyCopy"></p>
-      <p class="note">Setup, Ziehlogik und finales Design folgen in den nächsten Iterationen.</p>
+    <section class="state setup-state" id="setupState" hidden>
+      <div class="panel">
+        <p class="eyebrow">conversation roulette</p>
+        <h1 id="setupHeading">Was passt gerade?</h1>
+
+        <form id="setupForm">
+          <fieldset>
+            <legend>Mit wem?</legend>
+            <div class="choice-row context-row">
+              <label class="choice-pill">
+                <input type="radio" name="context" value="general" checked>
+                <span>Allgemein</span>
+              </label>
+              <label class="choice-pill">
+                <input type="radio" name="context" value="friends">
+                <span>Freunde</span>
+              </label>
+              <label class="choice-pill">
+                <input type="radio" name="context" value="dating">
+                <span>Date</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <label class="group-toggle">
+            <input id="groupMode" type="checkbox">
+            <span>
+              <strong>Wir sind 3+ Personen</strong>
+              <small>Schaltet zusätzlich echte Gruppenfragen frei.</small>
+            </span>
+          </label>
+
+          <fieldset>
+            <legend>Kategorien</legend>
+            <div class="category-grid" id="categoryGrid"></div>
+          </fieldset>
+
+          <p class="setup-meta" id="setupMeta" aria-live="polite"></p>
+
+          <div class="setup-actions">
+            <button class="button primary" id="setupSubmit" type="submit" disabled>Start</button>
+            <button class="button ghost" id="setupCancel" type="button" hidden>Abbrechen</button>
+          </div>
+        </form>
+      </div>
     </section>
 
-    <section class="state" id="emptyState" hidden>
+    <section class="state question-state" id="questionState" hidden>
+      <header class="session-header">
+        <p class="eyebrow">conversation roulette</p>
+        <button class="text-button" id="changeSetupButton" type="button">Auswahl ändern</button>
+      </header>
+
+      <div class="question-wrap">
+        <p class="question-text" id="questionText" aria-live="polite"></p>
+        <p class="session-meta" id="sessionMeta"></p>
+      </div>
+
+      <div class="question-actions">
+        <button class="button secondary" id="deeperButton" type="button">Etwas tiefer</button>
+        <button class="button primary" id="nextButton" type="button">Nächste</button>
+      </div>
+    </section>
+
+    <section class="state centered-state" id="exhaustedState" hidden>
+      <p class="eyebrow">conversation roulette</p>
+      <h1>Für diese Auswahl ist erstmal alles durch.</h1>
+      <p>Du kannst deine Auswahl erweitern oder die Session-Historie zurücksetzen.</p>
+      <div class="stacked-actions">
+        <button class="button primary" id="exhaustedChangeButton" type="button">Auswahl ändern</button>
+        <button class="button secondary" id="resetSessionButton" type="button">Session neu starten</button>
+      </div>
+    </section>
+
+    <section class="state centered-state" id="emptyState" hidden>
       <p class="eyebrow">conversation roulette</p>
       <h1>Noch keine aktiven Fragen.</h1>
-      <p>Die Verbindung funktioniert. Content wird später kontrolliert über den Adminbereich importiert.</p>
+      <p>Der Content-Pool ist aktuell leer.</p>
     </section>
 
-    <section class="state" id="errorState" hidden>
+    <section class="state centered-state" id="errorState" hidden>
       <p class="eyebrow">conversation roulette</p>
       <h1>Fragen konnten nicht geladen werden.</h1>
       <p id="errorCopy">Bitte versuche es erneut.</p>
-      <button id="retryButton" type="button">Erneut versuchen</button>
+      <button class="button primary" id="retryButton" type="button">Erneut versuchen</button>
     </section>
   </main>
 </body>
