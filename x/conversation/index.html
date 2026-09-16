@@ -18,48 +18,53 @@
     </section>
 
     <section class="state setup-state" id="setupState" hidden>
-      <div class="panel">
-        <p class="eyebrow">conversation roulette</p>
-        <h1 id="setupHeading">Was passt gerade?</h1>
+      <div class="setup-panel">
+        <header class="setup-header">
+          <p class="eyebrow">conversation roulette</p>
+          <h1 id="setupHeading">Was passt gerade?</h1>
+        </header>
 
-        <form id="setupForm">
-          <fieldset>
-            <legend>Mit wem?</legend>
-            <div class="choice-row context-row">
-              <label class="choice-pill">
-                <input type="radio" name="context" value="general" checked>
-                <span>Allgemein</span>
-              </label>
-              <label class="choice-pill">
-                <input type="radio" name="context" value="friends">
-                <span>Freunde</span>
-              </label>
-              <label class="choice-pill">
-                <input type="radio" name="context" value="dating">
-                <span>Date</span>
-              </label>
-            </div>
-          </fieldset>
+        <form class="setup-form" id="setupForm">
+          <div class="setup-body">
+            <fieldset class="context-fieldset">
+              <legend>Mit wem?</legend>
+              <div class="choice-row context-row">
+                <label class="choice-pill">
+                  <input type="radio" name="context" value="general" checked>
+                  <span>Allgemein</span>
+                </label>
+                <label class="choice-pill">
+                  <input type="radio" name="context" value="friends">
+                  <span>Freunde</span>
+                </label>
+                <label class="choice-pill">
+                  <input type="radio" name="context" value="dating">
+                  <span>Date</span>
+                </label>
+              </div>
+            </fieldset>
 
-          <label class="group-toggle">
-            <input id="groupMode" type="checkbox">
-            <span>
-              <strong>Wir sind 3+ Personen</strong>
-              <small>Schaltet zusätzlich echte Gruppenfragen frei.</small>
-            </span>
-          </label>
+            <label class="group-toggle">
+              <input id="groupMode" type="checkbox">
+              <span>
+                <strong>3+ Personen</strong>
+                <small>Gruppenfragen freischalten</small>
+              </span>
+            </label>
 
-          <fieldset>
-            <legend>Kategorien</legend>
-            <div class="category-grid" id="categoryGrid"></div>
-          </fieldset>
-
-          <p class="setup-meta" id="setupMeta" aria-live="polite"></p>
-
-          <div class="setup-actions">
-            <button class="button primary" id="setupSubmit" type="submit" disabled>Start</button>
-            <button class="button ghost" id="setupCancel" type="button" hidden>Abbrechen</button>
+            <fieldset class="category-fieldset">
+              <legend>Kategorien</legend>
+              <div class="category-grid" id="categoryGrid"></div>
+            </fieldset>
           </div>
+
+          <footer class="setup-footer">
+            <p class="setup-meta" id="setupMeta" aria-live="polite"></p>
+            <div class="setup-actions">
+              <button class="button primary" id="setupSubmit" type="submit" disabled>Start</button>
+              <button class="button ghost" id="setupCancel" type="button" hidden>Abbrechen</button>
+            </div>
+          </footer>
         </form>
       </div>
     </section>
