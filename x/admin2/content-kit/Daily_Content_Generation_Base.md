@@ -2,7 +2,7 @@
 
 ## Auftrag
 
-Du arbeitest ausschließlich an **einer** Daily-Content-Kategorie. Lies zusätzlich die zugehörige Kategorie-Handoff-Datei vollständig. Sie definiert Kategorie, Payload-Schema, Quellenregeln, vorhandenen Bestand und besondere Qualitätsanforderungen.
+Du arbeitest ausschließlich an **einer** Daily-Content-Kategorie. Lies zusätzlich die zugehörige Kategorie-Handoff-Datei und den mitgelieferten Bestands-Export `Daily_Content_Existing_*.json` vollständig. Die Handoff definiert Kategorie, Payload-Schema, Quellenregeln und besondere Qualitätsanforderungen; der Bestands-Export ist die maßgebliche Quelle für aktuell bereits vorhandene Inhalte.
 
 Das Ziel ist **eine direkt über `/x/admin2/` validier- und importierbare UTF-8-JSON-Datei**. Kein SQL, keine Datenbank-IDs und kein zusätzlicher Fließtext in der finalen Datei.
 
@@ -146,9 +146,9 @@ Original und Übersetzung niemals vermischen. Übersetzungen als Übersetzung be
 
 ## Duplikate
 
-Prüfe gegen den in der Kategorie-Handoff genannten aktuellen Bestand. Keine exakten Duplikate und keine bloßen Umformulierungen bereits vorhandener Inhalte.
+Prüfe gegen den mitgelieferten `Daily_Content_Existing_*.json`-Export. Er enthält aktive und archivierte Einträge der Kategorie. Erstelle keine exakten Duplikate, keine bloßen Umformulierungen und keine semantisch sehr ähnlichen Varianten bereits vorhandener Inhalte.
 
-Der Importer erkennt exakte normalisierte Duplikate zusätzlich automatisch. Die semantische Prüfung ist deine Aufgabe.
+Der Bestands-Export ist nur eine Referenz zur Duplikatvermeidung und darf nicht als Importdatei zurückgegeben werden. Der Importer erkennt exakte normalisierte Duplikate zusätzlich automatisch. Die semantische Prüfung ist deine Aufgabe.
 
 `client_ref` soll pro Datei eindeutig und stabil lesbar sein, z. B.:
 

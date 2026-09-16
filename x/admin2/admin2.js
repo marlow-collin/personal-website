@@ -14,6 +14,8 @@ const handoffDownload=document.querySelector("[data-handoff-download]");
 const handoffName=document.querySelector("[data-handoff-name]");
 const copyPromptButton=document.querySelector("[data-copy-prompt]");
 const copyStatus=document.querySelector("[data-copy-status]");
+const existingDownload=document.querySelector("[data-existing-download]");
+const existingName=document.querySelector("[data-existing-name]");
 
 let currentDocument=null;
 let sourceFilename="admin2-paste.json";
@@ -52,18 +54,25 @@ function selectedGenerationCategory() {
   return generationCategories.find((category)=>category.slug===generationCategory.value) || generationCategories[0];
 }
 
+function existingExportFilename(category) {
+  const suffix=category.slug.split("-").filter(Boolean).map((part)=>part.charAt(0).toUpperCase()+part.slice(1)).join("_");
+  return `Daily_Content_Existing_${suffix}.json`;
+}
+
 function buildGenerationPrompt(category,count) {
-  return `Bitte lies zuerst vollständig die drei hochgeladenen Dateien \`Daily_Content_Generation_Base.md\`, \`${category.handoff}\` und \`Daily_Content_Import_Template.json\`.
+  const existingFile=existingExportFilename(category);
+  return `Bitte lies zuerst vollständig die vier hochgeladenen Dateien \`Daily_Content_Generation_Base.md\`, \`${category.handoff}\`, \`Daily_Content_Import_Template.json\` und \`${existingFile}\`.
 
 Arbeite anschließend die Kategorie-Handoff exakt ab und erstelle ${count} neue Einträge für „${category.label}“.
 
 Wichtig:
+- \`${existingFile}\` enthält den aktuellen Bestand dieser Kategorie aus D1, einschließlich aktiver und archivierter Einträge. Behandle diese Datei als maßgebliche Quelle für bereits vorhandene Inhalte.
+- Erstelle weder exakte Duplikate noch bloße Umformulierungen oder semantisch sehr ähnliche Varianten der vorhandenen Einträge.
 - Die gewünschte Zielmenge für diesen Auftrag ist ${count}. Diese Angabe hat Vorrang vor der Standardmenge von 50 aus der Basisdatei.
 - Halte dich strikt an das definierte Importformat und die kategoriespezifischen Regeln.
 - Recherchiere und verifiziere alle erforderlichen Fakten, Zitate, Zuschreibungen und Quellen sorgfältig.
 - Erfinde keine quellenpflichtigen Inhalte oder Quellen.
-- Vermeide exakte und semantische Duplikate so gut wie möglich.
-- Qualität ist wichtiger als das Erzwingen der Zielmenge. Wenn ${count} seriöse, wirklich unterschiedliche und regelkonforme Einträge nicht verantwortungsvoll möglich sind, liefere weniger und nenne vor der finalen Datei kurz den Grund.
+- Qualität ist wichtiger als das Erzwingen der Zielmenge. Wenn ${count} seriöse, wirklich unterschiedliche und regelkonforme neue Einträge unter Berücksichtigung des Bestands nicht verantwortungsvoll möglich sind, liefere weniger und nenne vor der finalen Datei kurz den Grund.
 - Erstelle am Ende eine vollständige UTF-8-JSON-Datei, die direkt über \`/x/admin2/\` validiert und importiert werden kann.
 - Gib mir die fertige JSON-Datei als Download aus.
 - Stelle keine Rückfrage, wenn die hochgeladenen Dateien alle notwendigen Angaben enthalten. Arbeite den Auftrag direkt ab.`;
@@ -76,6 +85,10 @@ function updateGenerationUi() {
   handoffDownload.href=path;
   handoffDownload.setAttribute("download",category.handoff);
   handoffName.textContent=category.handoff;
+  const existingFile=existingExportFilename(category);
+  existingDownload.href=`/x/api/daily/import/export/${encodeURIComponent(category.slug)}`;
+  existingDownload.setAttribute("download",existingFile);
+  existingName.textContent=existingFile;
   generationPrompt.value=buildGenerationPrompt(category,count);
   copyStatus.textContent="";
 }

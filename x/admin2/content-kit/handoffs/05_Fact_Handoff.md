@@ -21,13 +21,9 @@ Arbeite den Auftrag ohne weitere Konzeptdiskussion ab und liefere am Ende eine d
 
 ## Aktueller Bestand
 
-Aktuell existieren in D1 bereits diese drei Fact-Einträge und sie dürfen weder exakt noch semantisch erneut erzeugt werden:
+Der aktuelle Bestand wird **nicht statisch in dieser Handoff gepflegt**. Verwende die zusätzlich hochgeladene Datei `Daily_Content_Existing_Fact.json` als maßgebliche Referenz für alle bereits vorhandenen aktiven und archivierten Fact-Einträge.
 
-1. **Venus:** Die Venus braucht rund 243 Erdtage für eine Rotation um ihre Achse – länger als die rund 225 Erdtage für einen Umlauf um die Sonne.
-2. **Kraken:** Kraken haben drei Herzen; zwei Kiemenherzen versorgen die Kiemen, das systemische Herz den übrigen Körper.
-3. **Antarktika:** Die Antarktika ist trotz ihrer Eismassen eine Wüste, weil dort außergewöhnlich wenig Niederschlag fällt.
-
-Der temporäre Merkur-Test-Fact wurde wieder gelöscht und gehört **nicht** zum aktuellen Bestand.
+Prüfe neue Vorschläge gegen diesen Export und vermeide sowohl exakte Duplikate als auch bloße Umformulierungen oder semantisch sehr ähnliche Varianten.
 
 ## Quellenstatus
 

@@ -107,3 +107,33 @@ export async function commitImport(db, document, sourceFilename = "admin2-paste.
   await db.batch(statements);
   return { committed:true, ok:true, category:document.category, importId, imported:prepared.length, resolvedPoolMinimum:poolMin, warnings:preview.warnings };
 }
+
+
+export async function exportExistingContent(db, categorySlug) {
+  const result = await db.prepare(`
+    SELECT status, display_label, payload_schema_version, payload_json
+    FROM daily_content
+    WHERE category_slug = ?
+    ORDER BY CASE status WHEN 'active' THEN 0 ELSE 1 END, created_at, id
+  `).bind(categorySlug).all();
+
+  const entries = (result?.results || []).map((row) => ({
+    status: row.status,
+    display_label: row.display_label,
+    payload_schema_version: row.payload_schema_version,
+    payload: JSON.parse(row.payload_json)
+  }));
+
+  return {
+    format: "daily-content-existing-export",
+    format_version: 1,
+    category: categorySlug,
+    exported_at: new Date().toISOString(),
+    summary: {
+      total: entries.length,
+      active: entries.filter((entry) => entry.status === "active").length,
+      archived: entries.filter((entry) => entry.status === "archived").length
+    },
+    entries
+  };
+}
