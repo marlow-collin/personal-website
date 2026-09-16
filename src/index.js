@@ -1,5 +1,6 @@
 import { connect } from "cloudflare:sockets";
 import { handleDailyRequest } from "./daily/routes.js";
+import { handleCheckinRequest } from "./checkins/routes.js";
 
 const THEMES = new Set(["soft-playful", "dark-elegant"]);
 const PUBLIC_FIELDS = `
@@ -434,6 +435,8 @@ export default {
 
 
     try{
+      const checkinResponse = await handleCheckinRequest(request, env, ctx);
+      if(checkinResponse) return checkinResponse;
       // Dynamic public invitation HTML
       let m = path.match(/^\/x\/date\/([A-Za-z0-9_-]{20,80})\/?$/);
       if(m && request.method==="GET") return handlePublicPage(request,env,m[1]);

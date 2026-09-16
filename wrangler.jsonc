@@ -6,7 +6,6 @@
   "observability": {
     "enabled": true
   },
-
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
@@ -14,10 +13,10 @@
     "run_worker_first": [
       "/x/date/*",
       "/x/api/*",
-      "/x/admin/api/*"
+      "/x/admin/api/*",
+      "/x/admin3/api/*"
     ]
   },
-
   "d1_databases": [
     {
       "binding": "DB",
@@ -30,9 +29,14 @@
       "database_name": "personal-website-daily-content",
       "database_id": "2d2780c2-be82-4510-bf3e-dfcd00dd9793",
       "migrations_dir": "migrations/daily"
+    },
+    {
+      "binding": "CHECKIN_DB",
+      "database_name": "personal-website-personal-checkins",
+      "database_id": "6595dfba-3be7-40d5-9854-ebae02d57cb5",
+      "migrations_dir": "migrations/checkins"
     }
   ],
-
   "secrets": {
     "required": [
       "DATE_EMAIL_DESTINATION",
@@ -40,11 +44,9 @@
       "IONOS_SMTP_PASSWORD"
     ]
   },
-
   "compatibility_flags": [
     "nodejs_compat"
   ],
-
   "routes": [
     {
       "pattern": "marlow-rischmueller.com",

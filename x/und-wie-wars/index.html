@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f3eee7">
+  <title>Kurzer Check-in</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient__orb ambient__orb--one"></div>
+    <div class="ambient__orb ambient__orb--two"></div>
+    <div class="ambient__orb ambient__orb--three"></div>
+    <div class="ambient__grain"></div>
+  </div>
+
+  <main class="shell" id="app" aria-live="polite">
+    <section class="loading" id="loadingView" aria-label="Check-in wird geladen">
+      <span class="loading__dot"></span>
+    </section>
+
+    <section class="view view--question" id="questionView" hidden>
+      <div class="eyebrow">kurzer check-in</div>
+      <h1>Wie lief das Gespräch?</h1>
+      <p class="intro">Ehrliche Antwort erlaubt.</p>
+
+      <div class="choices" id="choices" role="group" aria-label="Wie lief das Gespräch?">
+        <button class="choice choice--good" type="button" data-answer="good">
+          <span class="choice__text">Ziemlich gut</span>
+          <span class="choice__mark" aria-hidden="true">✦</span>
+        </button>
+        <button class="choice choice--unsure" type="button" data-answer="unsure">
+          <span class="choice__text">Ehrlich? Keine Ahnung.</span>
+          <span class="choice__mark" aria-hidden="true">~</span>
+        </button>
+        <button class="choice choice--bad" type="button" data-answer="bad">
+          <span class="choice__text">Eher nicht so.</span>
+          <span class="choice__mark" aria-hidden="true">—</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="view view--result" id="resultView" hidden>
+      <div class="result-stage" id="resultStage">
+        <div class="result-visual" id="resultVisual" aria-hidden="true"></div>
+        <div class="eyebrow" id="resultEyebrow">okay.</div>
+        <h2 id="resultTitle"></h2>
+        <p class="result-copy" id="resultCopy"></p>
+        <p class="result-emphasis" id="resultEmphasis"></p>
+
+        <div class="analysis" id="analysisArea">
+          <button class="analysis__button" id="analysisButton" type="button">
+            Analysemodus ausschalten
+            <span aria-hidden="true">→</span>
+          </button>
+          <div class="analysis__done" id="analysisDone" hidden>
+            <div class="analysis__status">Analysemodus: aus <span aria-hidden="true">✓</span></div>
+            <p class="analysis__line">Für heute reicht’s. Du hast deinen Teil gemacht.</p>
+            <p class="analysis__tail" id="analysisTail"></p>
+          </div>
+        </div>
+
+        <button class="rethink" id="rethinkButton" type="button">doch anders eingeschätzt?</button>
+      </div>
+    </section>
+
+    <section class="view view--rethink" id="rethinkView" hidden>
+      <div class="eyebrow">nochmal kurz</div>
+      <h2>Wie würdest du es jetzt einschätzen?</h2>
+      <p class="intro">Du darfst deine Meinung ändern.</p>
+      <div class="choices choices--compact" id="rethinkChoices" role="group" aria-label="Neue Einschätzung">
+        <button class="choice choice--good" type="button" data-answer="good">
+          <span class="choice__text">Ziemlich gut</span>
+          <span class="choice__mark" aria-hidden="true">✦</span>
+        </button>
+        <button class="choice choice--unsure" type="button" data-answer="unsure">
+          <span class="choice__text">Ehrlich? Keine Ahnung.</span>
+          <span class="choice__mark" aria-hidden="true">~</span>
+        </button>
+        <button class="choice choice--bad" type="button" data-answer="bad">
+          <span class="choice__text">Eher nicht so.</span>
+          <span class="choice__mark" aria-hidden="true">—</span>
+        </button>
+      </div>
+      <button class="back" id="backButton" type="button">zurück</button>
+    </section>
+  </main>
+</body>
+</html>
