@@ -29,7 +29,7 @@ function checkinDb(env) {
 async function getCheckin(env, slug) {
   return checkinDb(env)
     .prepare(`
-      SELECT id, slug, title, mail_on_next_answer, mail_claim, created_at
+      SELECT id, slug, title, recipient_name, mail_on_next_answer, mail_claim, created_at
       FROM checkins
       WHERE slug = ?
     `)
@@ -68,6 +68,7 @@ async function getCurrentState(env, checkin) {
   return {
     slug: checkin.slug,
     title: checkin.title,
+    recipient_name: checkin.recipient_name || null,
     answer: latestAnswer?.value || null,
     analysis_off: analysisOff
   };
@@ -315,6 +316,7 @@ async function handlePublicEvent(request, env, ctx, slug) {
       state: {
         slug: checkin.slug,
         title: checkin.title,
+        recipient_name: checkin.recipient_name || null,
         answer: value,
         analysis_off: false
       }
@@ -363,6 +365,7 @@ async function handlePublicEvent(request, env, ctx, slug) {
       state: {
         slug: checkin.slug,
         title: checkin.title,
+        recipient_name: checkin.recipient_name || null,
         answer: latestAnswer.value,
         analysis_off: true
       }
@@ -392,7 +395,7 @@ async function adminSnapshot(env, checkin) {
 async function handleAdminList(env) {
   const result = await checkinDb(env)
     .prepare(`
-      SELECT id, slug, title, mail_on_next_answer, mail_claim, created_at
+      SELECT id, slug, title, recipient_name, mail_on_next_answer, mail_claim, created_at
       FROM checkins
       ORDER BY created_at ASC, id ASC
     `)
@@ -420,6 +423,38 @@ async function handleAdminDetail(env, slug) {
     checkin: await adminSnapshot(env, checkin),
     events: events.results || []
   });
+}
+
+async function handleAdminRecipientName(request, env, slug) {
+  const checkin = await getCheckin(env, slug);
+  if (!checkin) return json({ error: "Check-in nicht gefunden." }, 404);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Ungültige Anfrage." }, 400);
+  }
+
+  if (typeof body?.name !== "string") {
+    return json({ error: "name muss ein String sein." }, 400);
+  }
+
+  const name = body.name.trim().replace(/\s+/g, " ");
+  if (name.length > 60) {
+    return json({ error: "Der Name darf höchstens 60 Zeichen lang sein." }, 400);
+  }
+
+  await checkinDb(env)
+    .prepare(`
+      UPDATE checkins
+      SET recipient_name = ?
+      WHERE id = ?
+    `)
+    .bind(name || null, checkin.id)
+    .run();
+
+  return json({ ok: true, recipient_name: name || null });
 }
 
 async function handleAdminMailToggle(request, env, slug) {
@@ -490,6 +525,11 @@ export async function handleCheckinRequest(request, env, ctx) {
   match = path.match(/^\/x\/admin3\/api\/checkins\/([a-z0-9-]{1,80})\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "GET") {
     return handleAdminDetail(env, match[1]);
+  }
+
+  match = path.match(/^\/x\/admin3\/api\/checkins\/([a-z0-9-]{1,80})\/recipient-name\/?$/);
+  if (match && SLUG_RE.test(match[1]) && request.method === "POST") {
+    return handleAdminRecipientName(request, env, match[1]);
   }
 
   match = path.match(/^\/x\/admin3\/api\/checkins\/([a-z0-9-]{1,80})\/mail-next\/?$/);

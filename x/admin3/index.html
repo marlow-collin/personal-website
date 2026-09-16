@@ -52,6 +52,16 @@
           </div>
           <p class="panel-help" id="mailHelp">Wird nach der nächsten Antwort automatisch deaktiviert.</p>
         </section>
+
+        <section class="panel panel--name">
+          <div class="panel-label">Personalisierung</div>
+          <label class="panel-title" for="recipientName">Vorname auf der Startseite</label>
+          <form class="name-form" id="nameForm">
+            <input class="name-input" id="recipientName" name="recipientName" type="text" maxlength="60" autocomplete="off" placeholder="z. B. Anna">
+            <button class="secondary-button" id="saveNameButton" type="submit">Speichern</button>
+          </form>
+          <p class="panel-help panel-help--compact">Leer speichern entfernt den Namen wieder. Reveals bleiben unverändert.</p>
+        </section>
       </div>
 
       <section class="panel history-panel">

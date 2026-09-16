@@ -30,6 +30,7 @@
 
   const loadingView = document.querySelector("#loadingView");
   const questionView = document.querySelector("#questionView");
+  const questionTitle = document.querySelector("#questionTitle");
   const resultView = document.querySelector("#resultView");
   const rethinkView = document.querySelector("#rethinkView");
   const resultEyebrow = document.querySelector("#resultEyebrow");
@@ -45,6 +46,7 @@
 
   let currentAnswer = null;
   let analysisOff = false;
+  let recipientName = "";
   let requestSerial = 0;
   let writeQueue = Promise.resolve();
 
@@ -106,6 +108,9 @@
     currentAnswer = null;
     analysisOff = false;
     delete document.body.dataset.mood;
+    questionTitle.textContent = recipientName
+      ? `Wie lief das Gespräch, ${recipientName}?`
+      : "Wie lief das Gespräch?";
     showOnly(questionView);
   }
 
@@ -170,6 +175,7 @@
       const response = await fetch(API, { cache: "no-store" });
       if (!response.ok) throw new Error(`Check-in API ${response.status}`);
       const state = await response.json();
+      recipientName = typeof state.recipient_name === "string" ? state.recipient_name.trim() : "";
       if (state.answer && content[state.answer]) {
         renderResult(state.answer, state.analysis_off, { animate: false });
       } else {

@@ -102,8 +102,31 @@ h3 { font-size: 21px; font-weight: 580; }
 }
 .panel--state { min-height: 174px; }
 .panel--mail { min-height: 174px; }
+.panel--name { grid-column: 1 / -1; }
 .panel-title { font-size: 16px; font-weight: 590; letter-spacing: -.015em; }
 .panel-help { margin: 38px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.panel-help--compact { margin-top: 12px; }
+.name-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.name-input {
+  min-width: 0;
+  flex: 1 1 auto;
+  height: 42px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255,255,255,.035);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+}
+.name-input::placeholder { color: #686a64; }
+.name-input:focus { border-color: var(--line-strong); box-shadow: 0 0 0 3px rgba(255,255,255,.035); }
+.name-input:disabled { opacity: .6; }
 .state-answer {
   margin-top: 24px;
   font-size: clamp(26px, 6vw, 42px);
@@ -212,6 +235,8 @@ h3 { font-size: 21px; font-weight: 580; }
 @media (max-width: 620px) {
   .checkin-head, .danger-zone { align-items: flex-start; flex-direction: column; }
   .danger-button { width: 100%; }
+  .name-form { align-items: stretch; }
+  .name-form .secondary-button { flex: 0 0 auto; }
   .timeline-item { grid-template-columns: 10px minmax(0,1fr); }
   .timeline-time { grid-column: 2; }
 }

@@ -20,6 +20,9 @@
   const eventCount = document.querySelector("#eventCount");
   const mailSwitch = document.querySelector("#mailSwitch");
   const mailHelp = document.querySelector("#mailHelp");
+  const nameForm = document.querySelector("#nameForm");
+  const recipientNameInput = document.querySelector("#recipientName");
+  const saveNameButton = document.querySelector("#saveNameButton");
   const timeline = document.querySelector("#timeline");
   const resetButton = document.querySelector("#resetButton");
   const resetDialog = document.querySelector("#resetDialog");
@@ -79,6 +82,9 @@
     const checkin = data.checkin;
     title.textContent = checkin.title;
     slug.textContent = checkin.slug;
+    if (document.activeElement !== recipientNameInput) {
+      recipientNameInput.value = checkin.recipient_name || "";
+    }
 
     if (checkin.answer) {
       answer.textContent = labels[checkin.answer] || checkin.answer;
@@ -155,6 +161,30 @@
     refreshButton.disabled = true;
     await load({ quiet: true });
     refreshButton.disabled = false;
+  });
+
+  nameForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!current || saveNameButton.disabled) return;
+
+    const name = recipientNameInput.value.trim();
+    saveNameButton.disabled = true;
+    recipientNameInput.disabled = true;
+    try {
+      const data = await request(`${BASE}/recipient-name`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+      recipientNameInput.value = data.recipient_name || "";
+      showNotice(data.recipient_name ? `Vorname „${data.recipient_name}“ gespeichert.` : "Vorname entfernt.");
+      await load({ quiet: true });
+    } catch (error) {
+      showNotice(error.message, "error");
+    } finally {
+      saveNameButton.disabled = false;
+      recipientNameInput.disabled = false;
+    }
   });
 
   mailSwitch.addEventListener("click", async () => {
