@@ -161,11 +161,22 @@ function deeperIntensities(currentIntensity) {
   return ["deep"];
 }
 
-function selectQuestionFromCandidates(candidates, settings, state, rng) {
-  const targetCategory = chooseTargetCategory(candidates, settings, state, rng);
+function selectQuestionFromCandidates(candidates, settings, state, rng, { excludedCategories = [] } = {}) {
+  const excluded = new Set(excludedCategories);
+  const categoryCandidatesPool = excluded.size
+    ? candidates.filter((question) => question.categories.some((category) => settings.categories.includes(category) && !excluded.has(category)))
+    : candidates;
+
+  if (!categoryCandidatesPool.length) return null;
+
+  const targetSettings = excluded.size
+    ? { ...settings, categories: settings.categories.filter((category) => !excluded.has(category)) }
+    : settings;
+
+  const targetCategory = chooseTargetCategory(categoryCandidatesPool, targetSettings, state, rng);
   if (!targetCategory) return null;
 
-  const categoryCandidates = candidates.filter((question) => question.categories.includes(targetCategory));
+  const categoryCandidates = categoryCandidatesPool.filter((question) => question.categories.includes(targetCategory));
   const targetIntensity = chooseIntensity(categoryCandidates, state, rng);
   const finalCandidates = targetIntensity
     ? categoryCandidates.filter((question) => question.intensity === targetIntensity)
@@ -187,16 +198,54 @@ function registerDraw(selection, state) {
   return question;
 }
 
-export function drawNextQuestion(questions, settings, state, { deeper = false, rng = Math.random } = {}) {
-  const candidates = availableQuestions(questions, settings, state);
+export function hasAvailableWeirdQuestion(questions, settings, state) {
+  return questions.some((question) => (
+    questionAllowedBySituation(question, settings)
+    && question.categories.includes("chaotic")
+    && !state.seenQuestions.has(question.id)
+  ));
+}
+
+export function drawNextQuestion(questions, settings, state, { deeper = false, differentCategory = false, weird = false, rng = Math.random } = {}) {
+  const normalCandidates = availableQuestions(questions, settings, state);
+  const weirdCandidates = weird
+    ? questions.filter((question) => (
+        questionAllowedBySituation(question, settings)
+        && question.categories.includes("chaotic")
+        && !state.seenQuestions.has(question.id)
+      ))
+    : [];
+  const candidates = weird && weirdCandidates.length ? weirdCandidates : normalCandidates;
+
   if (!candidates.length) {
-    return { question: null, exhausted: true, usedDeeperFallback: false };
+    return { question: null, exhausted: true, usedDeeperFallback: false, usedDifferentCategoryFallback: false, usedWeirdFallback: false };
   }
 
   let selection = null;
   let usedDeeperFallback = false;
+  let usedDifferentCategoryFallback = false;
+  const usedWeirdFallback = Boolean(weird && !weirdCandidates.length);
 
-  if (deeper && state.currentQuestion) {
+  if (weird && weirdCandidates.length) {
+    const weirdSettings = settings.categories.includes("chaotic")
+      ? settings
+      : { ...settings, categories: ["chaotic"] };
+    selection = selectQuestionFromCandidates(weirdCandidates, weirdSettings, state, rng);
+  }
+
+  if (!selection && differentCategory && state.lastTargetCategory && settings.categories.length > 1) {
+    selection = selectQuestionFromCandidates(
+      normalCandidates,
+      settings,
+      state,
+      rng,
+      { excludedCategories: [state.lastTargetCategory] }
+    );
+
+    if (!selection) usedDifferentCategoryFallback = true;
+  }
+
+  if (!selection && deeper && state.currentQuestion) {
     const preferred = deeperIntensities(state.currentQuestion.intensity);
     const deeperCandidates = candidates.filter((question) => preferred.includes(question.intensity));
 
@@ -208,16 +257,18 @@ export function drawNextQuestion(questions, settings, state, { deeper = false, r
   }
 
   if (!selection) {
-    selection = selectQuestionFromCandidates(candidates, settings, state, rng);
+    selection = selectQuestionFromCandidates(normalCandidates.length ? normalCandidates : candidates, settings, state, rng);
   }
 
   if (!selection) {
-    return { question: null, exhausted: true, usedDeeperFallback };
+    return { question: null, exhausted: true, usedDeeperFallback, usedDifferentCategoryFallback, usedWeirdFallback };
   }
 
   return {
     question: registerDraw(selection, state),
     exhausted: false,
-    usedDeeperFallback
+    usedDeeperFallback,
+    usedDifferentCategoryFallback,
+    usedWeirdFallback
   };
 }

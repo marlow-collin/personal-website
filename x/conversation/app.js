@@ -10,6 +10,7 @@ import {
   countAvailableByCategory,
   createSessionState,
   drawNextQuestion,
+  hasAvailableWeirdQuestion,
   resetSessionState
 } from "./engine.js";
 
@@ -45,6 +46,8 @@ const questionText = document.querySelector("#questionText");
 const sessionMeta = document.querySelector("#sessionMeta");
 const nextButton = document.querySelector("#nextButton");
 const deeperButton = document.querySelector("#deeperButton");
+const differentCategoryButton = document.querySelector("#differentCategoryButton");
+const weirdButton = document.querySelector("#weirdButton");
 const changeSetupButton = document.querySelector("#changeSetupButton");
 const exhaustedChangeButton = document.querySelector("#exhaustedChangeButton");
 const resetSessionButton = document.querySelector("#resetSessionButton");
@@ -60,6 +63,35 @@ let settings = {
   allCategories: [...CONVERSATION_CATEGORIES]
 };
 let setupIsEditing = false;
+let weirdOfferAtDraw = randomWeirdOfferDraw(4, 7);
+
+function randomInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomWeirdOfferDraw(minOffset = 6, maxOffset = 10) {
+  return session.draws + randomInteger(minOffset, maxOffset);
+}
+
+function scheduleNextWeirdOffer({ initial = false } = {}) {
+  weirdOfferAtDraw = initial
+    ? randomInteger(4, 7)
+    : randomWeirdOfferDraw(6, 10);
+}
+
+function hideWeirdOfferAndReschedule() {
+  if (!weirdButton.hidden) scheduleNextWeirdOffer();
+  weirdButton.hidden = true;
+}
+
+function updateModifierVisibility() {
+  differentCategoryButton.hidden = settings.categories.length < 2;
+
+  const weirdEligible = session.draws >= weirdOfferAtDraw
+    && hasAvailableWeirdQuestion(questions, settings, session);
+  weirdButton.hidden = !weirdEligible;
+}
+
 
 function show(name) {
   for (const [key, element] of Object.entries(states)) {
@@ -164,17 +196,25 @@ function updateSessionMeta() {
 function showQuestion(question) {
   questionText.textContent = question.text;
   updateSessionMeta();
+  updateModifierVisibility();
   show("question");
 }
 
-function draw({ deeper = false } = {}) {
-  const result = drawNextQuestion(questions, settings, session, { deeper });
+function draw({ deeper = false, differentCategory = false, weird = false } = {}) {
+  if (!weird) hideWeirdOfferAndReschedule();
+
+  const result = drawNextQuestion(questions, settings, session, {
+    deeper,
+    differentCategory,
+    weird
+  });
 
   if (result.exhausted || !result.question) {
     show("exhausted");
     return;
   }
 
+  if (weird) scheduleNextWeirdOffer();
   showQuestion(result.question);
 }
 
@@ -194,6 +234,8 @@ function applySetup(event) {
 
 function resetCurrentSession() {
   resetSessionState(session);
+  weirdButton.hidden = true;
+  scheduleNextWeirdOffer({ initial: true });
   draw();
 }
 
@@ -231,6 +273,7 @@ async function loadQuestions() {
 
     questions = validQuestions;
     session = createSessionState();
+    scheduleNextWeirdOffer({ initial: true });
     settings = {
       context: "general",
       groupMode: false,
@@ -253,6 +296,8 @@ setupCancel.addEventListener("click", () => {
 });
 nextButton.addEventListener("click", () => draw());
 deeperButton.addEventListener("click", () => draw({ deeper: true }));
+differentCategoryButton.addEventListener("click", () => draw({ differentCategory: true }));
+weirdButton.addEventListener("click", () => draw({ weird: true }));
 changeSetupButton.addEventListener("click", () => openSetup({ editing: true }));
 exhaustedChangeButton.addEventListener("click", () => openSetup({ editing: true }));
 resetSessionButton.addEventListener("click", resetCurrentSession);
