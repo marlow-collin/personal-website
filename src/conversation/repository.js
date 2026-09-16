@@ -163,3 +163,36 @@ export async function getConversationAdminSummary(db) {
     }))
   };
 }
+
+export async function getQuestionById(db, id) {
+  const question = await db.prepare(`
+    SELECT id, text, intensity, min_participants, status, created_at, updated_at
+    FROM conversation_questions
+    WHERE id = ?
+    LIMIT 1
+  `).bind(id).first();
+  if (!question) return null;
+
+  const relations = await db.batch([
+    db.prepare(`
+      SELECT question_id, category
+      FROM conversation_question_categories
+      WHERE question_id = ?
+      ORDER BY category
+    `).bind(id),
+    db.prepare(`
+      SELECT question_id, topic
+      FROM conversation_question_topics
+      WHERE question_id = ?
+      ORDER BY topic
+    `).bind(id),
+    db.prepare(`
+      SELECT question_id, context
+      FROM conversation_question_contexts
+      WHERE question_id = ?
+      ORDER BY context
+    `).bind(id)
+  ]);
+
+  return attachRelations([question], relations, { includeAdminFields: true })[0] || null;
+}

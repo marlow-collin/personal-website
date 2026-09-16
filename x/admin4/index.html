@@ -37,6 +37,62 @@
       </dl>
     </section>
 
+    <section class="panel" aria-labelledby="questionsHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">content management</p>
+          <h2 id="questionsHeading">Fragenbestand</h2>
+        </div>
+        <div class="actions actions--flush">
+          <button id="newQuestionButton" type="button">Neue Frage</button>
+          <button id="refreshQuestionsButton" type="button" class="secondary">Bestand neu laden</button>
+        </div>
+      </div>
+
+      <div id="questionsStatus" class="status" role="status">Bestand wird geladen …</div>
+
+      <div class="filters" aria-label="Fragen filtern">
+        <label>
+          Suche
+          <input id="questionSearch" type="search" placeholder="Text oder ID">
+        </label>
+        <label>
+          Status
+          <select id="statusFilter"><option value="">Alle</option></select>
+        </label>
+        <label>
+          Kategorie
+          <select id="categoryFilter"><option value="">Alle</option></select>
+        </label>
+        <label>
+          Intensität
+          <select id="intensityFilter"><option value="">Alle</option></select>
+        </label>
+        <label>
+          Topic
+          <select id="topicFilter"><option value="">Alle</option></select>
+        </label>
+        <label>
+          Context
+          <select id="contextFilter">
+            <option value="">Alle</option>
+            <option value="__universal">universell</option>
+          </select>
+        </label>
+        <label>
+          Teilnehmer
+          <select id="participantsFilter">
+            <option value="">Alle</option>
+            <option value="3">nur 3+</option>
+            <option value="2">auch zu zweit</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="summary-row"><span id="questionsResultCount">0 Fragen</span></div>
+      <div id="questionsTable" class="table-wrap"></div>
+    </section>
+
     <section class="panel" aria-labelledby="generationHeading">
       <div class="section-heading">
         <div>
@@ -126,6 +182,56 @@
       <div id="importIssues"></div>
       <div id="importPreview"></div>
     </section>
+
+    <dialog id="questionDialog" class="editor-dialog">
+      <form id="questionForm" method="dialog" class="editor-form">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" id="editorEyebrow">question editor</p>
+            <h2 id="editorHeading">Frage bearbeiten</h2>
+          </div>
+          <button id="closeEditorButton" type="button" class="secondary">Schließen</button>
+        </div>
+
+        <p id="editorId" class="editor-id"></p>
+
+        <label for="editorText">Text</label>
+        <textarea id="editorText" class="editor-text" maxlength="600" required></textarea>
+
+        <div class="editor-grid">
+          <fieldset>
+            <legend>Kategorien</legend>
+            <div id="editorCategories" class="choice-grid"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Intensität</legend>
+            <select id="editorIntensity"></select>
+          </fieldset>
+          <fieldset>
+            <legend>Topics</legend>
+            <div id="editorTopics" class="choice-grid choice-grid--topics"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Contexts</legend>
+            <div id="editorContexts" class="choice-grid"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Teilnehmer</legend>
+            <label class="inline-choice"><input id="editorGroupOnly" type="checkbox"> nur für 3+ Personen</label>
+          </fieldset>
+          <fieldset>
+            <legend>Status</legend>
+            <select id="editorStatus"></select>
+          </fieldset>
+        </div>
+
+        <div id="editorStatusMessage" class="status">Noch keine Änderungen gespeichert.</div>
+        <div class="actions editor-actions">
+          <button id="saveQuestionButton" type="submit">Speichern</button>
+          <button id="deleteQuestionButton" type="button" class="danger" hidden>Endgültig löschen</button>
+        </div>
+      </form>
+    </dialog>
   </main>
 </body>
 </html>

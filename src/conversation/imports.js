@@ -3,16 +3,7 @@ import {
   textSimilarityScore,
   validateImportDocument
 } from "./import-validation.js";
-
-const encoder = new TextEncoder();
-
-async function sha256Hex(value) {
-  const bytes = encoder.encode(String(value));
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return [...new Uint8Array(digest)]
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
+import { questionContentHash } from "./content-hash.js";
 
 function rows(result) {
   return Array.isArray(result?.results) ? result.results : [];
@@ -31,7 +22,7 @@ async function prepareQuestions(validation) {
   return Promise.all(validation.questions.map(async (entry) => ({
     ...entry,
     normalizedText: normalizeQuestionText(entry.question.text),
-    contentHash: await sha256Hex(normalizeQuestionText(entry.question.text))
+    contentHash: await questionContentHash(entry.question.text)
   })));
 }
 

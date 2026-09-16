@@ -1,4 +1,11 @@
-import { CONVERSATION_SCHEMA_VERSION } from "./config.js";
+import {
+  CONVERSATION_CATEGORIES,
+  CONVERSATION_CONTEXTS,
+  CONVERSATION_INTENSITIES,
+  CONVERSATION_SCHEMA_VERSION,
+  CONVERSATION_STATUSES,
+  CONVERSATION_TOPICS
+} from "./config.js";
 import {
   buildFullExport,
   buildGenerationBrief,
@@ -8,7 +15,8 @@ import {
   commitConversationImport,
   validateConversationImport
 } from "./imports.js";
-import { getActiveQuestions, getConversationAdminSummary } from "./repository.js";
+import { getActiveQuestions, getAllQuestions, getConversationAdminSummary } from "./repository.js";
+import { createConversationQuestion, deleteConversationQuestion, updateConversationQuestion } from "./management.js";
 
 const PUBLIC_QUESTIONS_PATH = "/x/api/conversation/questions";
 const ADMIN_PREFIX = "/x/admin4/api/";
@@ -18,6 +26,7 @@ const ADMIN_IMPORT_COMMIT_PATH = "/x/admin4/api/import/commit";
 const ADMIN_EXPORT_FULL_PATH = "/x/admin4/api/export/full";
 const ADMIN_EXPORT_REVIEW_PATH = "/x/admin4/api/export/llm-review";
 const ADMIN_EXPORT_BRIEF_PATH = "/x/admin4/api/export/generation-brief";
+const ADMIN_QUESTIONS_PATH = "/x/admin4/api/questions";
 
 function securityHeaders() {
   return {
@@ -68,14 +77,46 @@ function getDb(env) {
   return env.CONVERSATION_DB || null;
 }
 
+async function readJsonBody(request) {
+  const contentType = request.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error("Content-Type must be application/json");
+  }
+  return request.json();
+}
+
 async function readImportDocument(request) {
   const contentType = request.headers.get("content-type") || "";
   if (!contentType.includes("application/json")) {
     throw new Error("Content-Type must be application/json");
   }
-  const body = await request.json();
+  const body = await readJsonBody(request);
   if (body && typeof body === "object" && body.document) return body.document;
   return body;
+}
+
+
+
+function adminSchema() {
+  return {
+    categories: CONVERSATION_CATEGORIES,
+    intensities: CONVERSATION_INTENSITIES,
+    topics: CONVERSATION_TOPICS,
+    contexts: CONVERSATION_CONTEXTS,
+    statuses: CONVERSATION_STATUSES
+  };
+}
+
+function questionIdFromPath(path) {
+  const prefix = `${ADMIN_QUESTIONS_PATH}/`;
+  if (!path.startsWith(prefix)) return "";
+  const value = path.slice(prefix.length);
+  if (!value || value.includes("/")) return "";
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return "";
+  }
 }
 
 export async function handleConversationRequest(request, env) {
@@ -121,6 +162,39 @@ export async function handleConversationRequest(request, env) {
         database: "connected",
         summary
       });
+    }
+
+
+    if (path === ADMIN_QUESTIONS_PATH) {
+      if (request.method === "GET") {
+        return json({
+          ok: true,
+          schemaVersion: CONVERSATION_SCHEMA_VERSION,
+          schema: adminSchema(),
+          questions: await getAllQuestions(db, { includeAdminFields: true })
+        });
+      }
+      if (request.method === "POST") {
+        const body = await readJsonBody(request);
+        const result = await createConversationQuestion(db, body?.question ?? body);
+        return json(result, result.ok ? 201 : 422);
+      }
+      return methodNotAllowed("GET, POST");
+    }
+
+    const questionId = questionIdFromPath(path);
+    if (questionId) {
+      if (request.method === "PATCH") {
+        const body = await readJsonBody(request);
+        const result = await updateConversationQuestion(db, questionId, body?.question ?? body);
+        if (result.notFound) return json(result, 404);
+        return json(result, result.ok ? 200 : 422);
+      }
+      if (request.method === "DELETE") {
+        const result = await deleteConversationQuestion(db, questionId);
+        return json(result, result.notFound ? 404 : result.ok ? 200 : 400);
+      }
+      return methodNotAllowed("PATCH, DELETE");
     }
 
     if (path === ADMIN_IMPORT_VALIDATE_PATH || path === ADMIN_IMPORT_COMMIT_PATH) {
