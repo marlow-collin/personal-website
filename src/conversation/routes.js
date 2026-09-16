@@ -1,9 +1,23 @@
 import { CONVERSATION_SCHEMA_VERSION } from "./config.js";
+import {
+  buildFullExport,
+  buildGenerationBrief,
+  buildLlmReviewExport
+} from "./exports.js";
+import {
+  commitConversationImport,
+  validateConversationImport
+} from "./imports.js";
 import { getActiveQuestions, getConversationAdminSummary } from "./repository.js";
 
 const PUBLIC_QUESTIONS_PATH = "/x/api/conversation/questions";
 const ADMIN_PREFIX = "/x/admin4/api/";
 const ADMIN_STATUS_PATH = "/x/admin4/api/status";
+const ADMIN_IMPORT_VALIDATE_PATH = "/x/admin4/api/import/validate";
+const ADMIN_IMPORT_COMMIT_PATH = "/x/admin4/api/import/commit";
+const ADMIN_EXPORT_FULL_PATH = "/x/admin4/api/export/full";
+const ADMIN_EXPORT_REVIEW_PATH = "/x/admin4/api/export/llm-review";
+const ADMIN_EXPORT_BRIEF_PATH = "/x/admin4/api/export/generation-brief";
 
 function securityHeaders() {
   return {
@@ -25,6 +39,17 @@ function json(data, status = 200, extraHeaders = {}) {
   });
 }
 
+function attachmentJson(data, filename) {
+  return new Response(JSON.stringify(data, null, 2), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${filename}"`,
+      ...securityHeaders()
+    }
+  });
+}
+
 function methodNotAllowed(allow) {
   return new Response(null, {
     status: 405,
@@ -41,6 +66,16 @@ function hasAccessIdentity(request) {
 
 function getDb(env) {
   return env.CONVERSATION_DB || null;
+}
+
+async function readImportDocument(request) {
+  const contentType = request.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error("Content-Type must be application/json");
+  }
+  const body = await request.json();
+  if (body && typeof body === "object" && body.document) return body.document;
+  return body;
 }
 
 export async function handleConversationRequest(request, env) {
@@ -76,10 +111,9 @@ export async function handleConversationRequest(request, env) {
     return json({ error: "Cloudflare Access authentication required" }, 403);
   }
 
-  if (path === ADMIN_STATUS_PATH) {
-    if (request.method !== "GET") return methodNotAllowed("GET");
-
-    try {
+  try {
+    if (path === ADMIN_STATUS_PATH) {
+      if (request.method !== "GET") return methodNotAllowed("GET");
       const summary = await getConversationAdminSummary(db);
       return json({
         ok: true,
@@ -87,10 +121,40 @@ export async function handleConversationRequest(request, env) {
         database: "connected",
         summary
       });
-    } catch (error) {
-      console.error("Conversation admin status failed", error);
-      return json({ error: "Conversation database could not be queried" }, 500);
     }
+
+    if (path === ADMIN_IMPORT_VALIDATE_PATH || path === ADMIN_IMPORT_COMMIT_PATH) {
+      if (request.method !== "POST") return methodNotAllowed("POST");
+      const document = await readImportDocument(request);
+      if (path === ADMIN_IMPORT_VALIDATE_PATH) {
+        return json(await validateConversationImport(db, document));
+      }
+      return json(await commitConversationImport(db, document));
+    }
+
+    if (path === ADMIN_EXPORT_FULL_PATH) {
+      if (request.method !== "GET") return methodNotAllowed("GET");
+      return attachmentJson(await buildFullExport(db), "Conversation_Content_Full_Export.json");
+    }
+
+    if (path === ADMIN_EXPORT_REVIEW_PATH) {
+      if (request.method !== "GET") return methodNotAllowed("GET");
+      return attachmentJson(await buildLlmReviewExport(db), "Conversation_Content_LLM_Review.json");
+    }
+
+    if (path === ADMIN_EXPORT_BRIEF_PATH) {
+      if (request.method !== "GET") return methodNotAllowed("GET");
+      return attachmentJson(
+        await buildGenerationBrief(db, url.searchParams.get("count")),
+        "Conversation_Generation_Brief.json"
+      );
+    }
+  } catch (error) {
+    console.error("Conversation admin request failed", error);
+    return json({
+      error: "Conversation admin request could not be processed",
+      detail: String(error?.message || error)
+    }, 400);
   }
 
   return json({ error: "Not found" }, 404);

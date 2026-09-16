@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="light dark">
   <title>Conversation Content – Admin</title>
   <link rel="stylesheet" href="./styles.css">
@@ -14,16 +15,16 @@
     <header>
       <p class="eyebrow">temporary admin · conversation roulette</p>
       <h1>Conversation Content</h1>
-      <p>Technischer Grundstand für die neue D1-Contentverwaltung. Import, Export und Bearbeitung folgen in den nächsten Iterationen.</p>
+      <p>D1-Bestand prüfen, LLM-Generation vorbereiten und neue JSON-Batches kontrolliert validieren und importieren.</p>
     </header>
 
     <section class="panel" aria-labelledby="databaseHeading">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">step 1</p>
+          <p class="eyebrow">status</p>
           <h2 id="databaseHeading">D1-Verbindung</h2>
         </div>
-        <button id="refreshButton" type="button">Neu prüfen</button>
+        <button id="refreshButton" type="button" class="secondary">Neu prüfen</button>
       </div>
 
       <div id="status" class="status" role="status">Prüfe Verbindung …</div>
@@ -32,12 +33,98 @@
         <div><dt>Gesamt</dt><dd id="totalCount">0</dd></div>
         <div><dt>Aktiv</dt><dd id="activeCount">0</dd></div>
         <div><dt>Archiviert</dt><dd id="archivedCount">0</dd></div>
+        <div><dt>3+ Personen</dt><dd id="groupCount">0</dd></div>
       </dl>
+    </section>
 
-      <details id="details" hidden>
-        <summary>Technische Antwort</summary>
-        <pre id="raw"></pre>
-      </details>
+    <section class="panel" aria-labelledby="generationHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">step 2a</p>
+          <h2 id="generationHeading">Neue Inhalte mit einem LLM vorbereiten</h2>
+        </div>
+      </div>
+
+      <p class="lead">Der Generation Brief wird live aus dem aktuellen D1-Bestand erzeugt. Der neue Chat soll damit gezielt Lücken schließen statt nur weitere zufällige Fragen zu erzeugen.</p>
+
+      <div class="generation-controls">
+        <label for="generationCount">
+          Gewünschte neue Fragen
+          <input id="generationCount" type="number" min="1" max="150" step="1" value="80" inputmode="numeric">
+          <small>1–150 pro Importdatei.</small>
+        </label>
+        <label for="generationNote">
+          Optionale Zusatzvorgabe
+          <input id="generationNote" type="text" maxlength="500" placeholder="z. B. mehr Dating-Kontext oder Fokus auf Travel">
+          <small>Leer lassen, wenn ausschließlich die statistischen Lücken ausgeglichen werden sollen.</small>
+        </label>
+      </div>
+
+      <h3>Dateien für den neuen Content-Chat</h3>
+      <div class="download-grid">
+        <a class="download-card" href="./content-kit/Conversation_Generation_Handoff_v1.md" download>
+          <strong>1. Generation-Handoff</strong>
+          <span>Conversation_Generation_Handoff_v1.md</span>
+        </a>
+        <a class="download-card" href="./content-kit/Conversation_Import_Template_v1.json" download>
+          <strong>2. Import-Template</strong>
+          <span>Conversation_Import_Template_v1.json</span>
+        </a>
+        <a class="download-card" id="reviewExportLink" href="/x/admin4/api/export/llm-review" download>
+          <strong>3. Aktueller D1-Bestand</strong>
+          <span>Conversation_Content_LLM_Review.json</span>
+        </a>
+        <a class="download-card" id="generationBriefLink" href="/x/admin4/api/export/generation-brief?count=80" download>
+          <strong>4. Generation Brief</strong>
+          <span>Conversation_Generation_Brief.json</span>
+        </a>
+        <a class="download-card secondary-download" href="./content-kit/Conversation_Import_Format_v1.md" download>
+          <strong>5. Format-Dokumentation</strong>
+          <span>Conversation_Import_Format_v1.md</span>
+        </a>
+        <a class="download-card secondary-download" href="/x/admin4/api/export/full" download>
+          <strong>Optional: Full Backup Export</strong>
+          <span>Conversation_Content_Full_Export.json</span>
+        </a>
+      </div>
+
+      <h3>Nachricht für den neuen Chat</h3>
+      <textarea id="generationPrompt" class="prompt-box" readonly></textarea>
+      <div class="actions">
+        <button id="copyPromptButton" type="button">Nachricht kopieren</button>
+        <span id="copyStatus" class="copy-status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="importHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">step 2b</p>
+          <h2 id="importHeading">JSON validieren und importieren</h2>
+        </div>
+      </div>
+
+      <label class="file-label">
+        JSON-Datei
+        <input id="fileInput" type="file" accept="application/json,.json">
+      </label>
+
+      <label for="jsonInput">Oder JSON einfügen</label>
+      <textarea id="jsonInput" class="json-input" spellcheck="false" placeholder='{"schemaVersion":1,"questions":[...]}'></textarea>
+
+      <div class="actions">
+        <button id="validateButton" type="button">Validieren</button>
+        <button id="commitButton" type="button" disabled>Importieren</button>
+        <button id="clearButton" type="button" class="secondary">Leeren</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="resultHeading" aria-live="polite">
+      <h2 id="resultHeading">Import-Ergebnis</h2>
+      <div id="importStatus" class="status">Noch nichts validiert.</div>
+      <div id="importSummary"></div>
+      <div id="importIssues"></div>
+      <div id="importPreview"></div>
     </section>
   </main>
 </body>

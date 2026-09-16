@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "questions": [
+    {
+      "text": "<Fragetext oder Gesprächsimpuls auf Deutsch>",
+      "categories": ["casual"],
+      "intensity": "light",
+      "topics": ["everyday"],
+      "contexts": [],
+      "minParticipants": null
+    }
+  ]
+}
