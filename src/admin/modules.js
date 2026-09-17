@@ -3,7 +3,7 @@ export const ADMIN_MODULES = Object.freeze([
     id: "daily",
     label: "Daily Content",
     description: "Content health and daily rotation management",
-    manageUrl: "/x/admin2/",
+    manageUrl: "/x/admin/daily/",
     siteUrl: "/x/daily/"
   }),
   Object.freeze({

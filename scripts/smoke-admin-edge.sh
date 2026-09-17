@@ -29,6 +29,11 @@ check_protected "/x/admin/date/" "/x/admin/date/"
 check_protected "/x/admin/checkins/" "/x/admin/checkins/"
 check_protected "/x/admin/api/checkins" "/x/admin/api/checkins"
 check_protected "/x/admin/api/overview" "/x/admin/api/overview"
+check_protected "/x/admin/daily/" "/x/admin/daily/"
+check_protected "/x/admin/daily/content/" "/x/admin/daily/content/"
+check_protected "/x/admin/daily/history/" "/x/admin/daily/history/"
+check_protected "/x/admin/daily/import/" "/x/admin/daily/import/"
+check_protected "/x/admin/api/daily/overview" "/x/admin/api/daily/overview"
 
 printf 'Result: %s passed, %s failed.\n' "$PASSED" "$FAILED"
 [ "$FAILED" -eq 0 ]
