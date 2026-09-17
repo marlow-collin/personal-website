@@ -178,6 +178,21 @@ require_text "src/admin/modules.js" '/x/admin3/' "Check-in legacy admin stays re
 require_text "src/admin/modules.js" '/x/admin4/' "Conversation legacy admin stays reachable during migration"
 require_text "x/admin/admin.js" 'URLSearchParams' "Date quick action can open the legacy create form"
 
+# Patch 05 Date Admin migration.
+require_file "x/admin/date/app.js"
+require_text "x/admin/date/index.html" '/x/admin/shared/admin.css' "Date Admin uses the shared Admin design"
+require_text "x/admin/date/index.html" '/x/admin/date/app.js' "Date Admin uses its module application"
+require_text "x/admin/date/index.html" 'Control Center' "Date Admin links back to the Control Center"
+require_text "x/admin/date/app.js" 'adminApi(`/date${path}`' "Date Admin uses the canonical Date API namespace"
+require_text "x/admin/date/app.js" 'URLSearchParams' "Date quick action still opens the create flow"
+require_text "x/admin/date/app.js" 'LocalQRCode.matrix' "Date QR generation is preserved"
+require_text "x/admin/date/app.js" 'reset' "Date reset action is preserved"
+require_text "x/admin/date/app.js" 'method:"DELETE"' "Date delete action is preserved"
+require_text "src/date/routes.js" '/x/admin/api/date/invitations' "Canonical Date Admin API path is registered"
+require_text "src/date/routes.js" 'Temporary legacy aliases' "Legacy Date API aliases remain until cleanup"
+require_text "x/admin/shared/admin.css" '.admin-dialog' "Shared Admin design includes module dialogs"
+require_text "x/admin/shared/admin.css" '.record-row' "Shared Admin design includes record rows"
+
 printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
 
 if [ "$FAIL" -ne 0 ]; then

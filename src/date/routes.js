@@ -250,15 +250,28 @@ export async function handleDateRequest(request, env, ctx) {
   match = path.match(new RegExp(`^/x/api/date/${TOKEN_PATTERN}/event/?$`));
   if (match && request.method === "POST") return handlePublicEvent(request, env, match[1], ctx);
 
-  // Legacy Date Admin API paths stay unchanged during Patch 03.
+  // Canonical Date Admin API namespace introduced in Patch 05.
+  if (path === "/x/admin/api/date/invitations" && request.method === "GET") return handleAdminList(env);
+  if (path === "/x/admin/api/date/invitations" && request.method === "POST") return handleAdminCreate(request, env);
+
+  // Temporary legacy aliases remain until the final cleanup patch.
   if (path === "/x/admin/api/invitations" && request.method === "GET") return handleAdminList(env);
   if (path === "/x/admin/api/invitations" && request.method === "POST") return handleAdminCreate(request, env);
+
+  match = path.match(new RegExp(`^/x/admin/api/date/invitations/${TOKEN_PATTERN}/?$`));
+  if (match && request.method === "GET") return handleAdminDetail(env, match[1]);
 
   match = path.match(new RegExp(`^/x/admin/api/invitations/${TOKEN_PATTERN}/?$`));
   if (match && request.method === "GET") return handleAdminDetail(env, match[1]);
 
+  match = path.match(new RegExp(`^/x/admin/api/date/invitations/${TOKEN_PATTERN}/reset/?$`));
+  if (match && request.method === "POST") return handleAdminReset(env, match[1]);
+
   match = path.match(new RegExp(`^/x/admin/api/invitations/${TOKEN_PATTERN}/reset/?$`));
   if (match && request.method === "POST") return handleAdminReset(env, match[1]);
+
+  match = path.match(new RegExp(`^/x/admin/api/date/invitations/${TOKEN_PATTERN}/?$`));
+  if (match && request.method === "DELETE") return handleAdminDelete(env, match[1]);
 
   match = path.match(new RegExp(`^/x/admin/api/invitations/${TOKEN_PATTERN}/?$`));
   if (match && request.method === "DELETE") return handleAdminDelete(env, match[1]);

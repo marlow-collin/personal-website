@@ -1,146 +1,71 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="theme-color" content="#111318">
-  <title>Date Invitations · Admin</title>
-  <link rel="stylesheet" href="/x/admin/admin.css">
+  <meta name="theme-color" content="#0b0d10">
+  <title>Date Invitations · Secret Layer</title>
+  <link rel="stylesheet" href="/x/admin/shared/admin.css">
 </head>
 <body>
-  <main class="admin-shell">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">Private Admin</p>
+  <main class="admin-shell admin-page">
+    <header class="page-header">
+      <div class="page-heading">
+        <a class="back-link" href="/x/admin/">← Control Center</a>
+        <p class="eyebrow">Secret Layer · Date</p>
         <h1>Date Invitations</h1>
+        <p class="lede">Create personal invitations and follow their progress.</p>
       </div>
-      <button class="primary" id="newInviteButton">+ Neue Einladung</button>
+      <button class="button button-primary" id="newInviteButton" type="button">New invitation</button>
     </header>
 
-    <section class="panel create-panel" id="createPanel" hidden>
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Erstellen</p>
-          <h2>Neue Einladung</h2>
-        </div>
-        <button class="icon-button" id="closeCreate" aria-label="Schließen">×</button>
+    <section class="admin-metrics" id="stats" aria-label="Invitation summary"></section>
+
+    <section class="workspace-card">
+      <div class="workspace-head">
+        <div><p class="eyebrow">Invitations</p><h2>All invitations</h2></div>
+        <button class="button button-secondary button-small" id="refreshButton" type="button">Refresh</button>
       </div>
-
-      <form id="createForm">
-        <label>
-          <span>Vorname</span>
-          <input name="first_name" maxlength="60" required autocomplete="off" placeholder="Sophie">
-        </label>
-
-        <label>
-          <span>Interne Notiz</span>
-          <input name="internal_label" maxlength="120" autocomplete="off" placeholder="z. B. Hinge">
-          <small>Nur im Adminbereich sichtbar.</small>
-        </label>
-
-        <label>
-          <span>Persönlicher Satz <em>optional</em></span>
-          <textarea name="personal_message" maxlength="240" rows="3" placeholder="Ich wollte dich etwas fragen."></textarea>
-          <small>Wenn leer: „Ich wollte dich etwas fragen.“</small>
-        </label>
-
-        <label>
-          <span>Abschlussnachricht <em>optional</em></span>
-          <textarea name="final_message" maxlength="240" rows="3" placeholder="Klingt nach einem ziemlich guten Plan ✨"></textarea>
-          <small>Wird auf der letzten Seite angezeigt.</small>
-        </label>
-
-        <fieldset>
-          <legend>Design</legend>
-          <div class="theme-grid">
-            <label class="theme-card">
-              <input type="radio" name="theme" value="soft-playful" checked>
-              <div class="theme-preview soft-preview">
-                <strong>Hey 👋</strong>
-                <span>Soft + Playful</span>
-              </div>
-            </label>
-            <label class="theme-card">
-              <input type="radio" name="theme" value="dark-elegant">
-              <div class="theme-preview dark-preview">
-                <strong>✦ Hey.</strong>
-                <span>Dark Elegant</span>
-              </div>
-            </label>
-          </div>
-        </fieldset>
-
-        <div class="form-actions">
-          <button type="button" class="secondary" id="cancelCreate">Abbrechen</button>
-          <button type="submit" class="primary">Einladung erstellen</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="stats" id="stats"></section>
-
-    <section class="panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Übersicht</p>
-          <h2>Einladungen</h2>
-        </div>
-        <button class="secondary small" id="refreshButton">Aktualisieren</button>
-      </div>
-      <div id="inviteList" class="invite-list">
-        <p class="muted">Lade Einladungen …</p>
-      </div>
+      <div class="record-list" id="inviteList"><div class="skeleton-line">Loading invitations…</div></div>
     </section>
   </main>
 
-  <dialog id="inviteDialog">
-    <div class="dialog-head">
-      <div>
-        <p class="eyebrow">Einladung</p>
-        <h2 id="dialogTitle">Details</h2>
+  <dialog class="admin-dialog" id="createDialog">
+    <form class="dialog-card" id="createForm">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Date · Create</p><h2>New invitation</h2></div>
+        <button class="icon-action" id="closeCreate" type="button" aria-label="Close">×</button>
       </div>
-      <button class="icon-button" id="closeDialog" aria-label="Schließen">×</button>
-    </div>
+      <div class="form-grid">
+        <label class="field"><span>First name</span><input name="first_name" maxlength="60" required autocomplete="off" placeholder="Sophie"></label>
+        <label class="field"><span>Internal note</span><input name="internal_label" maxlength="120" autocomplete="off" placeholder="e.g. Hinge"><small>Only visible in the admin area.</small></label>
+        <label class="field field-wide"><span>Personal line <em>optional</em></span><textarea name="personal_message" maxlength="240" rows="3" placeholder="Ich wollte dich etwas fragen."></textarea><small>Default is used when left empty.</small></label>
+        <label class="field field-wide"><span>Final message <em>optional</em></span><textarea name="final_message" maxlength="240" rows="3" placeholder="Klingt nach einem ziemlich guten Plan ✨"></textarea><small>Shown on the final page.</small></label>
+        <fieldset class="field field-wide theme-field"><legend>Design</legend><div class="theme-options">
+          <label class="theme-option"><input type="radio" name="theme" value="soft-playful" checked><span><strong>Soft + Playful</strong><small>Light, warm invitation</small></span></label>
+          <label class="theme-option"><input type="radio" name="theme" value="dark-elegant"><span><strong>Dark Elegant</strong><small>Dark, restrained invitation</small></span></label>
+        </div></fieldset>
+      </div>
+      <div class="dialog-actions"><button class="button button-secondary" id="cancelCreate" type="button">Cancel</button><button class="button button-primary" type="submit">Create invitation</button></div>
+    </form>
+  </dialog>
 
-    <div class="detail-grid" id="detailGrid"></div>
-
-    <div class="link-box">
-      <span>Persönlicher Link</span>
-      <code id="inviteUrl"></code>
-      <div class="button-row">
-        <button class="primary small" id="copyLink">Link kopieren</button>
-        <button class="secondary small" id="previewLink">Vorschau</button>
+  <dialog class="admin-dialog" id="inviteDialog">
+    <div class="dialog-card detail-dialog">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Date · Invitation</p><h2 id="dialogTitle">Details</h2></div>
+        <button class="icon-action" id="closeDialog" type="button" aria-label="Close">×</button>
       </div>
-    </div>
-
-    <div class="danger-section">
-      <h3>Verwaltung</h3>
-      <p class="muted">Fortschritt zurücksetzen behält den Link. Löschen entfernt die Einladung vollständig.</p>
-      <div class="button-row">
-        <button class="secondary small" id="resetProgress">Fortschritt zurücksetzen</button>
-        <button class="danger small" id="deleteInvite">Einladung löschen</button>
-      </div>
-    </div>
-
-    <div class="qr-section">
-      <div class="qr-head">
-        <h3>QR-Code</h3>
-        <button class="secondary small" id="toggleQr">Anzeigen</button>
-      </div>
-      <div class="qr-wrap" id="qrWrap" hidden>
-        <div id="qrPreview"></div>
-        <div class="button-row">
-          <button class="secondary small" id="downloadSvg">SVG herunterladen</button>
-          <button class="secondary small" id="downloadPng">PNG herunterladen</button>
-        </div>
-      </div>
+      <div class="detail-grid" id="detailGrid"></div>
+      <section class="detail-section"><p class="detail-label">Personal link</p><code class="link-code" id="inviteUrl"></code><div class="button-row"><button class="button button-primary button-small" id="copyLink" type="button">Copy link</button><button class="button button-secondary button-small" id="previewLink" type="button">Preview</button></div></section>
+      <section class="detail-section"><div class="section-inline"><div><p class="detail-label">QR code</p><p class="detail-help">Download the personal invitation link as SVG or PNG.</p></div><button class="button button-secondary button-small" id="toggleQr" type="button">Show</button></div><div class="qr-wrap" id="qrWrap" hidden><div class="qr-preview" id="qrPreview"></div><div class="button-row"><button class="button button-secondary button-small" id="downloadSvg" type="button">Download SVG</button><button class="button button-secondary button-small" id="downloadPng" type="button">Download PNG</button></div></div></section>
+      <section class="detail-section danger-zone"><p class="detail-label">Management</p><p class="detail-help">Reset keeps the link but clears progress. Delete permanently invalidates the invitation.</p><div class="button-row"><button class="button button-secondary button-small" id="resetProgress" type="button">Reset progress</button><button class="button button-danger button-small" id="deleteInvite" type="button">Delete invitation</button></div></section>
     </div>
   </dialog>
 
-  <div class="toast" id="toast" hidden></div>
-
+  <div class="admin-toast" id="toast" hidden></div>
   <script src="/x/admin/qrcode-local.js"></script>
-  <script src="/x/admin/admin.js"></script>
+  <script type="module" src="/x/admin/date/app.js"></script>
 </body>
 </html>
