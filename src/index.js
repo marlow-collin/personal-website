@@ -2,6 +2,8 @@ import { connect } from "cloudflare:sockets";
 import { handleDailyRequest } from "./daily/routes.js";
 import { handleCheckinRequest } from "./checkins/routes.js";
 import { handleConversationRequest } from "./conversation/routes.js";
+import { handleAdminRequest } from "./admin/routes.js";
+import { requireAdminApiAccess } from "./admin/access.js";
 
 const THEMES = new Set(["soft-playful", "dark-elegant"]);
 const PUBLIC_FIELDS = `
@@ -431,6 +433,16 @@ export default {
   async fetch(request, env, ctx){
     const url = new URL(request.url);
     const path = url.pathname;
+
+    // All current and future /x/admin/api/* requests pass through one guard.
+    // Cloudflare Access remains the outer protection layer; this is a consistent
+    // Worker-side second check for the Access-injected identity header.
+    const adminAccessResponse = requireAdminApiAccess(request);
+    if (adminAccessResponse) return adminAccessResponse;
+
+    const adminResponse = await handleAdminRequest(request, env);
+    if (adminResponse) return adminResponse;
+
     const conversationResponse = await handleConversationRequest(request, env);
     if (conversationResponse) return conversationResponse;
 

@@ -81,6 +81,21 @@ require_file "src/daily/routes.js"
 require_file "src/conversation/routes.js"
 require_file "src/checkins/routes.js"
 
+# Unified Admin backend foundation introduced by Patch 02.
+require_file "src/admin/access.js"
+require_file "src/admin/routes.js"
+require_file "src/admin/overview.js"
+require_file "scripts/smoke-admin-edge.sh"
+
+# Patch 02 Admin foundation wiring.
+require_text "src/index.js" 'from "./admin/routes.js"' "Admin router is imported by the Worker"
+require_text "src/index.js" 'from "./admin/access.js"' "Admin access guard is imported by the Worker"
+require_text "src/index.js" 'requireAdminApiAccess(request)' "Unified Admin API guard runs before admin routing"
+require_text "src/index.js" 'handleAdminRequest(request, env)' "Unified Admin router is called by the Worker"
+require_text "src/admin/access.js" 'cf-access-authenticated-user-email' "Admin guard checks the Cloudflare Access identity header"
+require_text "src/admin/routes.js" '/x/admin/api/overview' "Admin overview foundation route is registered"
+require_text "src/admin/overview.js" 'foundation-ready' "Admin overview foundation response is defined"
+
 # D1 bindings expected by the current implementation.
 require_text "wrangler.jsonc" '"binding": "DB"' "Date D1 binding is configured"
 require_text "wrangler.jsonc" '"binding": "DAILY_DB"' "Daily D1 binding is configured"
