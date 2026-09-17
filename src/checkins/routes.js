@@ -387,6 +387,11 @@ async function adminSnapshot(env, checkin) {
     ...state,
     mail_on_next_answer: Boolean(checkin.mail_on_next_answer),
     mail_pending: Boolean(checkin.mail_claim),
+    mail_configured: Boolean(
+      env.IONOS_SMTP_USER &&
+      env.IONOS_SMTP_PASSWORD &&
+      (env.CHECKIN_EMAIL_DESTINATION || env.DATE_EMAIL_DESTINATION)
+    ),
     event_count: Number(count?.count || 0),
     created_at: checkin.created_at
   };
@@ -518,26 +523,28 @@ export async function handleCheckinRequest(request, env, ctx) {
     return handlePublicEvent(request, env, ctx, match[1]);
   }
 
-  if (path === "/x/admin3/api/checkins" && request.method === "GET") {
+  // Canonical Check-ins Admin API. The legacy /x/admin3/api namespace stays
+  // available until the final cleanup patch so rollback remains straightforward.
+  if ((path === "/x/admin/api/checkins" || path === "/x/admin3/api/checkins") && request.method === "GET") {
     return handleAdminList(env);
   }
 
-  match = path.match(/^\/x\/admin3\/api\/checkins\/([a-z0-9-]{1,80})\/?$/);
+  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "GET") {
     return handleAdminDetail(env, match[1]);
   }
 
-  match = path.match(/^\/x\/admin3\/api\/checkins\/([a-z0-9-]{1,80})\/recipient-name\/?$/);
+  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/recipient-name\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "POST") {
     return handleAdminRecipientName(request, env, match[1]);
   }
 
-  match = path.match(/^\/x\/admin3\/api\/checkins\/([a-z0-9-]{1,80})\/mail-next\/?$/);
+  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/mail-next\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "POST") {
     return handleAdminMailToggle(request, env, match[1]);
   }
 
-  match = path.match(/^\/x\/admin3\/api\/checkins\/([a-z0-9-]{1,80})\/reset\/?$/);
+  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/reset\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "POST") {
     return handleAdminReset(env, match[1]);
   }

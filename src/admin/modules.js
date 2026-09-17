@@ -27,7 +27,7 @@ export const ADMIN_MODULES = Object.freeze([
     id: "checkins",
     label: "Personal Check-ins",
     description: "Responses, recipient and notification settings",
-    manageUrl: "/x/admin3/",
+    manageUrl: "/x/admin/checkins/",
     siteUrl: "/x/und-wie-wars/"
   }),
   Object.freeze({

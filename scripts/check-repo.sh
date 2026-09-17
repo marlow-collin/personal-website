@@ -174,7 +174,7 @@ require_text "src/admin/overview.js" 'conversation_missing_topic' "Conversation 
 require_text "src/admin/overview.js" 'status: "ready"' "Admin overview reports ready state"
 require_text "src/admin/modules.js" '/x/admin/date/' "Date admin is reachable from the Control Center"
 require_text "src/admin/modules.js" '/x/admin2/' "Daily legacy admin stays reachable during migration"
-require_text "src/admin/modules.js" '/x/admin3/' "Check-in legacy admin stays reachable during migration"
+require_text "src/admin/modules.js" '/x/admin/checkins/' "Check-ins now use the canonical Admin page"
 require_text "src/admin/modules.js" '/x/admin4/' "Conversation legacy admin stays reachable during migration"
 require_text "x/admin/admin.js" 'URLSearchParams' "Date quick action can open the legacy create form"
 
@@ -192,6 +192,25 @@ require_text "src/date/routes.js" '/x/admin/api/date/invitations' "Canonical Dat
 require_text "src/date/routes.js" 'Temporary legacy aliases' "Legacy Date API aliases remain until cleanup"
 require_text "x/admin/shared/admin.css" '.admin-dialog' "Shared Admin design includes module dialogs"
 require_text "x/admin/shared/admin.css" '.record-row' "Shared Admin design includes record rows"
+
+
+
+# Patch 06 Check-ins Admin migration.
+require_file "x/admin/checkins/index.html"
+require_file "x/admin/checkins/app.js"
+require_text "x/admin/checkins/index.html" '/x/admin/shared/admin.css' "Check-ins Admin uses the shared Admin design"
+require_text "x/admin/checkins/index.html" 'Control Center' "Check-ins Admin links back to the Control Center"
+require_text "x/admin/checkins/app.js" 'adminApi("/checkins")' "Check-ins Admin loads the canonical list endpoint"
+require_text "x/admin/checkins/app.js" 'current.checkin.slug' "Check-ins Admin addresses records dynamically by slug"
+require_absent_text "x/admin/checkins/app.js" 'const SLUG = "und-wie-wars"' "Check-ins Admin no longer hard-codes one slug"
+require_text "x/admin/checkins/app.js" '/recipient-name' "Check-ins recipient management is preserved"
+require_text "x/admin/checkins/app.js" '/mail-next' "Check-ins notification toggle is preserved"
+require_text "x/admin/checkins/app.js" '/reset' "Check-ins reset action is preserved"
+require_text "src/checkins/routes.js" '/x/admin/api/checkins' "Canonical Check-ins Admin API path is registered"
+require_text "src/checkins/routes.js" 'legacy /x/admin3/api namespace' "Legacy Check-ins API remains until cleanup"
+require_text "src/checkins/routes.js" 'mail_configured' "Check-ins Admin reports mail configuration state"
+require_text "x/admin/shared/admin.css" '.admin-switch' "Shared Admin design includes Check-in switches"
+require_text "docs/future/checkins.md" 'Check-in definition' "Future generic Check-in model remains documented"
 
 printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
 

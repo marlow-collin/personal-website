@@ -26,6 +26,8 @@ check_protected() {
 
 check_protected "/x/admin/" "/x/admin/"
 check_protected "/x/admin/date/" "/x/admin/date/"
+check_protected "/x/admin/checkins/" "/x/admin/checkins/"
+check_protected "/x/admin/api/checkins" "/x/admin/api/checkins"
 check_protected "/x/admin/api/overview" "/x/admin/api/overview"
 
 printf 'Result: %s passed, %s failed.\n' "$PASSED" "$FAILED"
