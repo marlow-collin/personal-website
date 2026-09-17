@@ -1,4 +1,4 @@
-import { buildAdminOverviewFoundation } from "./overview.js";
+import { buildAdminOverview } from "./overview.js";
 
 const ADMIN_API_PREFIX = "/x/admin/api/";
 const OVERVIEW_PATH = "/x/admin/api/overview";
@@ -40,10 +40,10 @@ export async function handleAdminRequest(request, env) {
 
   if (path === OVERVIEW_PATH) {
     if (request.method !== "GET") return methodNotAllowed("GET");
-    return json(buildAdminOverviewFoundation(env));
+    return json(await buildAdminOverview(request, env));
   }
 
-  // Existing Date admin routes still live in src/index.js during Patch 02.
-  // Returning null deliberately lets the legacy handler process them.
+  // Date, Daily, Check-in and Conversation admin endpoints are migrated in
+  // later patches. Returning null keeps their current handlers reachable.
   return null;
 }

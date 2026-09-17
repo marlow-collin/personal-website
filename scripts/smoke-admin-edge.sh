@@ -1,59 +1,32 @@
 #!/bin/sh
-# Read-only edge smoke checks for the Access-protected admin area.
-# No credentials are sent. The script verifies that anonymous requests are not public.
-
 set -u
 
-BASE_URL=${1:-https://marlow-rischmueller.com}
-BASE_URL=${BASE_URL%/}
-PASS=0
-FAIL=0
+BASE_URL="${1:-https://marlow-rischmueller.com}"
+BASE_URL="${BASE_URL%/}"
+PASSED=0
+FAILED=0
 
-pass() {
-  PASS=$((PASS + 1))
-  printf '✓ %s\n' "$1"
-}
+printf '\nRead-only admin edge smoke tests\n\nTarget: %s\n\n' "$BASE_URL"
 
-fail() {
-  FAIL=$((FAIL + 1))
-  printf '✗ %s\n' "$1" >&2
-}
-
-anonymous_status() {
-  curl -sS -o /dev/null \
-    --max-time 20 \
-    -w '%{http_code}' \
-    "$1"
-}
-
-expect_protected() {
-  path=$1
-  status=$(anonymous_status "$BASE_URL$path") || {
-    fail "$path could not be reached"
-    return
-  }
-
+check_protected() {
+  path="$1"
+  label="$2"
+  status="$(curl -sS -o /dev/null -w '%{http_code}' "$BASE_URL$path" || printf '000')"
   case "$status" in
     301|302|303|307|308|401|403)
-      pass "$path is protected for anonymous requests (HTTP $status)"
-      ;;
-    200)
-      fail "$path is publicly reachable (HTTP 200)"
+      printf '✓ %s is protected for anonymous requests (HTTP %s)\n\n' "$label" "$status"
+      PASSED=$((PASSED + 1))
       ;;
     *)
-      fail "$path returned unexpected HTTP $status"
+      printf '✗ %s unexpectedly returned HTTP %s\n\n' "$label" "$status"
+      FAILED=$((FAILED + 1))
       ;;
   esac
 }
 
-printf 'Read-only admin edge smoke tests\n'
-printf 'Target: %s\n\n' "$BASE_URL"
+check_protected "/x/admin/" "/x/admin/"
+check_protected "/x/admin/date/" "/x/admin/date/"
+check_protected "/x/admin/api/overview" "/x/admin/api/overview"
 
-expect_protected "/x/admin/"
-expect_protected "/x/admin/api/overview"
-
-printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
-
-if [ "$FAIL" -ne 0 ]; then
-  exit 1
-fi
+printf 'Result: %s passed, %s failed.\n' "$PASSED" "$FAILED"
+[ "$FAILED" -eq 0 ]

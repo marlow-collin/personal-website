@@ -116,7 +116,7 @@ require_text "src/index.js" 'requireAdminApiAccess(request)' "Unified Admin API 
 require_text "src/index.js" 'handleAdminRequest(request, env)' "Unified Admin router is called by the Worker"
 require_text "src/admin/access.js" 'cf-access-authenticated-user-email' "Admin guard checks the Cloudflare Access identity header"
 require_text "src/admin/routes.js" '/x/admin/api/overview' "Admin overview foundation route is registered"
-require_text "src/admin/overview.js" 'foundation-ready' "Admin overview foundation response is defined"
+require_text "src/admin/overview.js" 'export async function buildAdminOverview' "Admin overview builder is defined"
 
 # Patch 03 Date module wiring. Public behavior and legacy Date Admin URLs remain unchanged.
 require_text "src/index.js" 'from "./date/routes.js"' "Date router is imported by the Worker"
@@ -158,6 +158,25 @@ require_text ".assetsignore" 'wrangler.jsonc' "wrangler.jsonc is excluded from s
 # Internal roadmap documents introduced by Patch 01.
 require_file "docs/future/date-invitations.md"
 require_file "docs/future/checkins.md"
+
+# Patch 04 Control Center and temporary Date-admin relocation.
+require_file "src/admin/modules.js"
+require_file "x/admin/app.js"
+require_file "x/admin/shared/admin.css"
+require_file "x/admin/shared/api.js"
+require_file "x/admin/shared/shell.js"
+require_file "x/admin/date/index.html"
+require_text "x/admin/index.html" 'Secret Layer · Control Center' "Control Center replaces the old root Date admin page"
+require_text "x/admin/index.html" '/x/admin/app.js' "Control Center application script is loaded"
+require_text "src/admin/routes.js" 'await buildAdminOverview(request, env)' "Admin overview now loads live module data"
+require_text "src/admin/overview.js" 'daily_category_empty' "Daily empty-category attention rule is defined"
+require_text "src/admin/overview.js" 'conversation_missing_topic' "Conversation metadata attention rule is defined"
+require_text "src/admin/overview.js" 'status: "ready"' "Admin overview reports ready state"
+require_text "src/admin/modules.js" '/x/admin/date/' "Date admin is reachable from the Control Center"
+require_text "src/admin/modules.js" '/x/admin2/' "Daily legacy admin stays reachable during migration"
+require_text "src/admin/modules.js" '/x/admin3/' "Check-in legacy admin stays reachable during migration"
+require_text "src/admin/modules.js" '/x/admin4/' "Conversation legacy admin stays reachable during migration"
+require_text "x/admin/admin.js" 'URLSearchParams' "Date quick action can open the legacy create form"
 
 printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
 

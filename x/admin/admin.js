@@ -232,6 +232,11 @@
     }catch(err){ showToast(err.message); }
   });
 
+  if(new URLSearchParams(location.search).get("new") === "1") {
+    createPanel.hidden = false;
+    requestAnimationFrame(() => form.querySelector("input")?.focus());
+  }
+
   load().catch(err=>{
     list.innerHTML=`<p class="muted">${esc(err.message)}</p>`;
   });
