@@ -53,6 +53,23 @@ require_text() {
   fi
 }
 
+require_absent_text() {
+  file=$1
+  text=$2
+  label=$3
+
+  if [ ! -f "$ROOT/$file" ]; then
+    fail "$label (missing $file)"
+    return
+  fi
+
+  if grep -Fq -- "$text" "$ROOT/$file"; then
+    fail "$label"
+  else
+    pass "$label"
+  fi
+}
+
 printf 'Repository baseline checks\n'
 printf 'Root: %s\n\n' "$ROOT"
 
@@ -81,6 +98,11 @@ require_file "src/daily/routes.js"
 require_file "src/conversation/routes.js"
 require_file "src/checkins/routes.js"
 
+# Date backend extracted from the global Worker entry point in Patch 03.
+require_file "src/date/routes.js"
+require_file "src/date/repository.js"
+require_file "src/date/mail.js"
+
 # Unified Admin backend foundation introduced by Patch 02.
 require_file "src/admin/access.js"
 require_file "src/admin/routes.js"
@@ -95,6 +117,18 @@ require_text "src/index.js" 'handleAdminRequest(request, env)' "Unified Admin ro
 require_text "src/admin/access.js" 'cf-access-authenticated-user-email' "Admin guard checks the Cloudflare Access identity header"
 require_text "src/admin/routes.js" '/x/admin/api/overview' "Admin overview foundation route is registered"
 require_text "src/admin/overview.js" 'foundation-ready' "Admin overview foundation response is defined"
+
+# Patch 03 Date module wiring. Public behavior and legacy Date Admin URLs remain unchanged.
+require_text "src/index.js" 'from "./date/routes.js"' "Date router is imported by the Worker"
+require_text "src/index.js" 'handleDateRequest(request, env, ctx)' "Date router is called by the Worker"
+require_text "src/date/routes.js" '/x/admin/api/invitations' "Legacy Date admin API path is preserved"
+require_text "src/date/routes.js" '/x/api/date/' "Public Date API path is preserved"
+require_text "src/date/routes.js" '/x/date/' "Public Date page path is preserved"
+require_text "src/date/mail.js" 'from "cloudflare:sockets"' "Date SMTP implementation lives in the Date module"
+require_text "src/date/repository.js" 'FROM invitations WHERE token = ?' "Date repository owns invitation lookup"
+require_absent_text "src/index.js" 'from "cloudflare:sockets"' "Global Worker no longer owns SMTP transport"
+require_absent_text "src/index.js" 'INSERT INTO invitations' "Global Worker no longer owns Date persistence"
+require_absent_text "src/index.js" 'VALID_VALUES' "Global Worker no longer owns Date event rules"
 
 # D1 bindings expected by the current implementation.
 require_text "wrangler.jsonc" '"binding": "DB"' "Date D1 binding is configured"
