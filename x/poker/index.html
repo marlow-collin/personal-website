@@ -11,228 +11,63 @@
   <script type="module" src="./app.js"></script>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">PRIVATE TABLE TOOL</p>
-        <h1>Poker <span>Companion</span></h1>
-      </div>
-      <div class="live-dot" aria-label="Alles wird lokal im Browser berechnet"><span></span> local</div>
-    </header>
+<div class="app-shell">
+<header class="topbar"><div><p class="eyebrow">PRIVATE TABLE TOOL</p><h1>Poker <span>Companion</span></h1></div><div class="live-dot" aria-label="Keine Speicherung oder Übertragung"><span></span> local</div></header>
+<main class="main-content">
+<section class="tab-panel is-active" id="panel-hands" data-panel="hands" aria-labelledby="nav-hands">
+  <div class="section-intro"><p class="eyebrow">TEXAS HOLD’EM</p><h2>Was schlägt was?</h2><p>Entscheidend sind immer die besten fünf Karten aus deinen Handkarten und den Gemeinschaftskarten.</p></div>
+  <div class="rule-strip" role="note"><strong>Merke</strong><span>Farben brechen keinen Gleichstand. Gleiche beste fünf Karten = geteilter Pot.</span></div>
+  <div class="ranking-list" id="ranking-list"></div>
 
-    <main class="main-content">
-      <section class="tab-panel is-active" id="panel-hands" data-panel="hands" aria-labelledby="nav-hands">
-        <div class="section-intro">
-          <p class="eyebrow">TEXAS HOLD’EM</p>
-          <h2>Was schlägt was?</h2>
-          <p>Stärkste Hand zuerst. Entscheidend sind immer die besten fünf Karten aus deinen Hole Cards und dem Board.</p>
-        </div>
-        <div class="rule-strip" role="note">
-          <strong>Merke</strong>
-          <span>Suits brechen keinen Gleichstand. Gleiche beste fünf Karten = Split Pot.</span>
-        </div>
-        <div class="ranking-list" id="ranking-list"></div>
-      </section>
-
-      <section class="tab-panel" id="panel-setup" data-panel="setup" aria-labelledby="nav-setup" hidden>
-        <div class="section-intro">
-          <p class="eyebrow">TABLE SETUP</p>
-          <h2>Gib nur an, was du weißt.</h2>
-          <p>Leere Angaben werden sinnvoll geschätzt. Je mehr Constraints du einträgst, desto genauer wird der Vorschlag.</p>
-        </div>
-
-        <section class="surface setup-inputs" aria-labelledby="setup-basics-title">
-          <div class="surface-head">
-            <div>
-              <p class="eyebrow">BASIS</p>
-              <h3 id="setup-basics-title">Rahmen</h3>
-            </div>
-            <span class="soft-badge">Auto bei leer</span>
-          </div>
-
-          <div class="field-grid two-col">
-            <label class="field">
-              <span>Spieler</span>
-              <input id="setup-players" type="number" inputmode="numeric" min="2" max="10" value="6">
-              <small>2–10</small>
-            </label>
-            <label class="field">
-              <span>Spieldauer</span>
-              <div class="input-with-unit"><input id="setup-duration" type="number" inputmode="numeric" min="30" step="15" placeholder="Auto"><span>min</span></div>
-              <small>leer = ca. 180 min</small>
-            </label>
-            <label class="field">
-              <span>Starting Stack</span>
-              <input id="setup-stack" type="number" inputmode="numeric" min="1" placeholder="Auto">
-              <small>leer = ~100 BB</small>
-            </label>
-          </div>
-
-          <fieldset class="field-set">
-            <legend>Blind-Erhöhung</legend>
-            <div class="segmented" id="blind-mode-switch">
-              <button type="button" class="is-active" data-blind-mode="time" aria-pressed="true">Zeit</button>
-              <button type="button" data-blind-mode="rounds" aria-pressed="false">Runden</button>
-            </div>
-            <div class="mode-fields">
-              <div id="time-level-field">
-                <label class="field">
-                  <span>Leveldauer</span>
-                  <div class="input-with-unit"><input id="setup-level-minutes" type="number" inputmode="numeric" min="5" step="5" placeholder="20"><span>min</span></div>
-                </label>
-                <div class="quick-values" aria-label="Schnellauswahl Leveldauer">
-                  <button type="button" data-level-preset="15">15 min</button>
-                  <button type="button" data-level-preset="20">20 min</button>
-                  <button type="button" data-level-preset="30">30 min</button>
-                </div>
-              </div>
-              <label class="field" id="round-level-field" hidden>
-                <span>Komplette Tischrunden pro Level</span>
-                <div class="input-with-unit"><input id="setup-rounds" type="number" inputmode="numeric" min="1" max="10" placeholder="1"><span>Orbit</span></div>
-              </label>
-            </div>
-          </fieldset>
-        </section>
-
-        <section class="surface" aria-labelledby="chips-title">
-          <div class="surface-head">
-            <div>
-              <p class="eyebrow">CHIPS</p>
-              <h3 id="chips-title">Inventar</h3>
-            </div>
-            <button class="small-action" id="add-chip" type="button">+ Sorte</button>
-          </div>
-          <p class="helper-copy">Denomination reicht für einen idealen Vorschlag. Trägst du zusätzlich die vorhandene Anzahl ein, wird sie als harte Grenze berücksichtigt.</p>
-          <div class="chip-editor-head" aria-hidden="true"><span>Farbe</span><span>Wert</span><span>Anzahl</span><span></span></div>
-          <div class="chip-editor" id="chip-editor"></div>
-        </section>
-
-        <section class="setup-results" aria-live="polite">
-          <div class="metric-grid" id="setup-metrics"></div>
-          <section class="surface" aria-labelledby="distribution-title">
-            <div class="surface-head"><div><p class="eyebrow">PRO SPIELER</p><h3 id="distribution-title">Chip-Verteilung</h3></div></div>
-            <div class="distribution-list" id="distribution-list"></div>
-          </section>
-          <section class="surface" aria-labelledby="blind-plan-title">
-            <div class="surface-head"><div><p class="eyebrow">ABLAUF</p><h3 id="blind-plan-title">Blind-Plan</h3></div></div>
-            <div class="blind-table" id="blind-table"></div>
-          </section>
-          <section class="surface explanation-surface" aria-labelledby="setup-notes-title">
-            <div class="surface-head"><div><p class="eyebrow">WARUM SO?</p><h3 id="setup-notes-title">Annahmen & Hinweise</h3></div></div>
-            <div id="setup-notes"></div>
-          </section>
-        </section>
-      </section>
-
-      <section class="tab-panel" id="panel-odds" data-panel="odds" aria-labelledby="nav-odds" hidden>
-        <div class="section-intro">
-          <p class="eyebrow">ODDS + TENDENZ</p>
-          <h2>Deine Karten. Deine Lage.</h2>
-          <p>Equity wird lokal berechnet. Kleine Zustandsräume exakt, größere per Monte-Carlo-Simulation.</p>
-        </div>
-
-        <section class="surface card-input-surface">
-          <div class="surface-head"><div><p class="eyebrow">HERO</p><h3>Hole Cards</h3></div><span id="preflop-notation" class="soft-badge">2 Karten wählen</span></div>
-          <div class="card-slot-row hero-slots" id="hero-slots"></div>
-          <div class="preflop-strength" id="preflop-strength" hidden></div>
-        </section>
-
-        <section class="surface card-input-surface">
-          <div class="surface-head"><div><p class="eyebrow">BOARD</p><h3>Community Cards</h3></div><button class="small-action" id="clear-board" type="button">Leeren</button></div>
-          <div class="street-labels"><span>Flop</span><span>Turn</span><span>River</span></div>
-          <div class="board-slots" id="board-slots"></div>
-        </section>
-
-        <section class="surface opponents-surface">
-          <div class="surface-head"><div><p class="eyebrow">TABLE</p><h3>Gegner</h3></div></div>
-          <label class="field range-field">
-            <span><strong id="opponent-count-label">1</strong> Gegner</span>
-            <input id="opponent-count" type="range" min="1" max="8" value="1">
-          </label>
-          <details class="known-opponents" id="known-opponents-details">
-            <summary>Bekannte Gegnerkarten <span>optional</span></summary>
-            <p class="helper-copy">Du kannst null, eine oder zwei Karten je Gegner angeben. Alles Leere bleibt unbekannt.</p>
-            <div id="opponent-card-rows"></div>
-          </details>
-        </section>
-
-        <section class="odds-output" aria-live="polite">
-          <div class="odds-placeholder" id="odds-placeholder">
-            <span class="placeholder-card">A♠</span>
-            <p>Wähle beide Hole Cards. Danach startet die Berechnung automatisch.</p>
-          </div>
-          <div id="odds-results" hidden>
-            <div class="metric-grid odds-metrics" id="odds-metrics"></div>
-            <div class="calculation-meta" id="calculation-meta"></div>
-            <section class="surface" id="hand-analysis-surface">
-              <div class="surface-head"><div><p class="eyebrow">HAND</p><h3>Aktueller Stand</h3></div></div>
-              <div id="hand-analysis"></div>
-            </section>
-          </div>
-        </section>
-
-        <section class="surface decision-surface" aria-labelledby="decision-title">
-          <div class="surface-head">
-            <div><p class="eyebrow">ORIENTIERUNG</p><h3 id="decision-title">Entscheidungs-Tendenz</h3></div>
-            <span class="soft-badge">kein Solver</span>
-          </div>
-          <p class="helper-copy">Die Tendenz kombiniert Kartenstärke/Equity mit den Angaben, die du machst. Gegner-Ranges, Reads und Fold Equity fehlen weiterhin.</p>
-          <div class="field-grid two-col decision-fields">
-            <label class="field">
-              <span>Situation</span>
-              <select id="decision-situation">
-                <option value="unopened">Zu mir gecheckt / Pot ungeöffnet</option>
-                <option value="facing">Bet oder Raise vor mir</option>
-                <option value="check">Check ist möglich</option>
-              </select>
-            </label>
-            <label class="field">
-              <span>Position</span>
-              <select id="decision-position">
-                <option value="early">Early</option>
-                <option value="middle" selected>Middle</option>
-                <option value="late">Late / Button</option>
-                <option value="blinds">Blinds</option>
-              </select>
-            </label>
-            <label class="field">
-              <span>Pot Size</span>
-              <input id="decision-pot" type="number" inputmode="decimal" min="0" placeholder="optional">
-            </label>
-            <label class="field">
-              <span>Zu callen</span>
-              <input id="decision-call" type="number" inputmode="decimal" min="0" placeholder="optional">
-            </label>
-            <label class="field">
-              <span>Effective Stack</span>
-              <input id="decision-stack" type="number" inputmode="decimal" min="0" placeholder="optional">
-            </label>
-          </div>
-          <div class="decision-output" id="decision-output">
-            <p>Mit zwei Hole Cards erscheint hier zuerst eine Preflop-Tendenz.</p>
-          </div>
-        </section>
-      </section>
-    </main>
-
-    <nav class="bottom-nav" aria-label="Poker Companion Bereiche">
-      <button class="nav-item is-active" id="nav-hands" type="button" data-tab="hands" aria-current="page"><span class="nav-icon">≡</span><span>Hands</span></button>
-      <button class="nav-item" id="nav-setup" type="button" data-tab="setup"><span class="nav-icon">◎</span><span>Setup</span></button>
-      <button class="nav-item" id="nav-odds" type="button" data-tab="odds"><span class="nav-icon">%</span><span>Odds</span></button>
-    </nav>
-  </div>
-
-  <dialog class="card-picker" id="card-picker" aria-labelledby="picker-title">
-    <div class="picker-sheet">
-      <div class="picker-handle" aria-hidden="true"></div>
-      <div class="picker-head">
-        <div><p class="eyebrow">KARTE WÄHLEN</p><h2 id="picker-title">Rang</h2></div>
-        <button class="picker-close" id="picker-close" type="button" aria-label="Kartenauswahl schließen">×</button>
-      </div>
-      <div class="rank-picker" id="rank-picker"></div>
-      <div class="suit-picker" id="suit-picker" hidden></div>
-      <button class="clear-card-button" id="clear-card" type="button">Diesen Slot leeren</button>
+  <section class="surface rules-surface" aria-labelledby="flow-title">
+    <div class="surface-head"><div><p class="eyebrow">ABLAUF</p><h3 id="flow-title">Eine Hand Schritt für Schritt</h3></div></div>
+    <div class="table-flow" aria-label="Reihenfolge am Pokertisch">
+      <div class="seat dealer"><b>Dealer</b><span>Button</span></div><div class="flow-arrow">→</div><div class="seat sb"><b>Small Blind</b><span>SB</span></div><div class="flow-arrow">→</div><div class="seat bb"><b>Big Blind</b><span>BB</span></div><div class="flow-arrow">→</div><div class="seat"><b>Erste Action</b><span>preflop</span></div>
     </div>
-  </dialog>
-</body>
-</html>
+    <ol class="rule-steps">
+      <li><strong>Button & Blinds:</strong> Links vom Dealer/Button sitzt der Small Blind, daneben der Big Blind. Nach jeder Hand wandert der Button weiter.</li>
+      <li><strong>Handkarten:</strong> Ausgeteilt wird im Uhrzeigersinn, beginnend links vom Button. Jeder erhält erst eine, dann eine zweite Karte.</li>
+      <li><strong>Preflop:</strong> Die erste freiwillige Action kommt links vom Big Blind. Der Big Blind ist zuletzt dran, wenn vorher niemand erhöht hat – und darf dann checken oder selbst erhöhen.</li>
+      <li><strong>Flop:</strong> Drei Gemeinschaftskarten werden aufgedeckt. Jetzt beginnt der erste noch aktive Spieler links vom Button.</li>
+      <li><strong>Turn & River:</strong> Je eine weitere Gemeinschaftskarte; die Action beginnt wieder links vom Button.</li>
+      <li><strong>Showdown:</strong> Sind nach der letzten Setzrunde mehrere Spieler übrig, gewinnt die beste Fünf-Karten-Hand; Gleichstand teilt den Pot.</li>
+    </ol>
+    <details class="explain"><summary>Warum darf der Big Blind noch erhöhen?</summary><p>Der gepostete Big Blind ist der eröffnende Einsatz der Preflop-Runde. Haben alle vor ihm nur mitgegangen, hat der Big Blind seine Action noch nicht verbraucht: Er kann checken oder erhöhen. Nach einem Raise müssen die vorherigen Caller erneut entscheiden. Im No-Limit gibt es keine feste Obergrenze für die Anzahl der Raises.</p><p class="source-note">Quelle: Poker TDA 2026, Regeln 44–45, 50 und 53-B.</p></details>
+    <details class="explain"><summary>Heads-up: nur noch zwei Spieler</summary><p>Der Button ist gleichzeitig Small Blind und erhält die letzte Handkarte. Er handelt preflop zuerst. Ab dem Flop handelt der Big Blind zuerst und der Button zuletzt. Beim Start des Heads-up kann der Button angepasst werden, damit niemand zweimal hintereinander den Big Blind zahlen muss.</p><p class="source-note">Quelle: Poker TDA 2026, Regel 36-C.</p></details>
+    <p class="rules-link"><a href="https://www.pokertda.com/view-poker-tda-rules/" target="_blank" rel="noreferrer noopener">Offizielle Poker-TDA-Regeln 2026 ↗</a></p>
+  </section>
+</section>
+
+<section class="tab-panel" id="panel-setup" data-panel="setup" aria-labelledby="nav-setup" hidden>
+  <div class="section-intro"><p class="eyebrow">TABLE SETUP</p><h2>Plane euren Abend.</h2><p>Die bekannten Homegame-Werte sind voreingestellt. Reservechips sind ausdrücklich erlaubt – es muss nicht das ganze Set auf den Tisch.</p></div>
+  <section class="surface setup-inputs" aria-labelledby="setup-basics-title">
+    <div class="surface-head"><div><p class="eyebrow">BASIS</p><h3 id="setup-basics-title">Rahmen</h3></div><span class="soft-badge">Homegame</span></div>
+    <div class="field-grid two-col">
+      <label class="field"><span>Spieler</span><input id="setup-players" type="number" inputmode="numeric" min="2" max="10" value="6"><small>meist 5–6</small></label>
+      <label class="field"><span>Spieldauer</span><div class="input-with-unit"><input id="setup-duration" type="number" inputmode="numeric" min="30" step="15" value="300"><span>min</span></div><small>Referenz: ca. 5 Stunden</small></label>
+      <label class="field"><span>Starting Stack</span><input id="setup-stack" type="number" inputmode="numeric" min="1" value="2740"><small>bewährte Verteilung</small></label>
+    </div>
+    <fieldset class="field-set"><legend>Blind-Erhöhung</legend>
+      <div class="segmented" id="blind-mode-switch"><button type="button" class="is-active" data-blind-mode="rounds" aria-pressed="true">Runden</button><button type="button" data-blind-mode="time" aria-pressed="false">Zeit</button></div>
+      <div class="mode-fields">
+        <label class="field" id="round-level-field"><span>Volle Tischrunden pro Level</span><div class="input-with-unit"><input id="setup-rounds" type="number" inputmode="numeric" min="1" max="10" value="2"><span>Runden</span></div><small>Weniger Spieler = eine Runde wird automatisch kürzer.</small></label>
+        <div id="time-level-field" hidden><label class="field"><span>Leveldauer</span><div class="input-with-unit"><input id="setup-level-minutes" type="number" inputmode="numeric" min="5" step="5" value="20"><span>min</span></div></label><div class="quick-values"><button type="button" data-level-preset="15">15 min</button><button type="button" data-level-preset="20" class="is-active">20 min</button><button type="button" data-level-preset="30">30 min</button></div></div>
+      </div>
+    </fieldset>
+    <fieldset class="field-set"><legend>Spieltempo für Schätzungen</legend><div class="segmented" id="pace-switch"><button type="button" data-pace="regular" aria-pressed="false">Regulär · 2,5 min</button><button type="button" class="is-active" data-pace="relaxed" aria-pressed="true">Entspannt · 3,5 min</button></div><details class="explain compact"><summary>Was beeinflusst das Tempo?</summary><p>Es verändert nur Zeitprognosen. Bei rundenbasierten Blindlevels bleibt die Regel „nach X vollen Runden“ gleich; mit weniger Spielern werden diese Runden von selbst kürzer.</p></details></fieldset>
+  </section>
+  <section class="surface" aria-labelledby="chips-title"><div class="surface-head"><div><p class="eyebrow">CHIPS</p><h3 id="chips-title">Inventar</h3></div><button class="small-action" id="add-chip" type="button">+ Sorte</button></div><p class="helper-copy">Vorhandene Anzahl ist eine harte Obergrenze. Nicht verteilte Chips bleiben als Bank/Reserve.</p><div class="chip-editor-head"><span>Farbe</span><span>Wert</span><span>Anzahl</span><span></span></div><div class="chip-editor" id="chip-editor"></div></section>
+  <section class="setup-results" aria-live="polite"><div class="metric-grid" id="setup-metrics"></div><section class="surface"><div class="surface-head"><div><p class="eyebrow">PRO SPIELER</p><h3>Chip-Verteilung</h3></div></div><div class="distribution-list" id="distribution-list"></div></section><section class="surface"><div class="surface-head"><div><p class="eyebrow">ABLAUF</p><h3>Blind-Plan</h3></div></div><div class="blind-table" id="blind-table"></div></section><section class="surface explanation-surface"><div class="surface-head"><div><p class="eyebrow">WARUM SO?</p><h3>Annahmen & Hinweise</h3></div></div><div id="setup-notes"></div></section></section>
+</section>
+
+<section class="tab-panel" id="panel-starting" data-panel="starting" aria-labelledby="nav-starting" hidden>
+  <div class="section-intro"><p class="eyebrow">169 STARTHÄNDE</p><h2>Mathematische Rohstärke.</h2><p>Wähle eine Handklasse und die Zahl zufälliger Gegner. Alle Werte sind vorbereitet – auf deinem Gerät wird dafür nichts simuliert.</p></div>
+  <section class="surface"><div class="surface-head"><div><p class="eyebrow">GEGNER</p><h3>Wie viele Hände müssen geschlagen werden?</h3></div><span class="soft-badge" id="preflop-method">vorberechnet</span></div><div class="opponent-buttons" id="starting-opponents" aria-label="Gegnerzahl"></div><details class="explain compact"><summary>Warum ändern sich Equity und Rang?</summary><p>Mit jedem zusätzlichen Gegner muss deine Hand mehr andere Hände gleichzeitig schlagen. Dadurch sinkt die Equity fast aller Hände. Handtypen verlieren aber unterschiedlich stark, deshalb darf sich auch der mathematische Rang innerhalb der 169 Klassen verändern.</p></details></section>
+  <div class="starting-matrix-wrap"><div class="starting-matrix" id="starting-matrix" aria-label="169 Starthandklassen"></div></div>
+  <section class="surface starting-detail" id="starting-detail" aria-live="polite"></section>
+  <details class="surface explain glossary"><summary><strong>Begriffe kurz erklärt</strong></summary><dl><dt>Equity</dt><dd>Der erwartete Anteil am Pot über sehr viele gleichartige Situationen. Gewinne zählen voll, geteilte Pots anteilig.</dd><dt>suited (s)</dt><dd>Beide Handkarten haben dieselbe Farbe, z. B. A♠ K♠.</dd><dt>offsuit (o)</dt><dd>Die beiden Handkarten haben unterschiedliche Farben.</dd><dt>Pocket Pair</dt><dd>Zwei Handkarten mit demselben Rang, z. B. 8♠ 8♦.</dd></dl></details>
+</section>
+</main>
+<nav class="bottom-nav" aria-label="Poker Companion Bereiche"><button class="nav-item is-active" id="nav-hands" type="button" data-tab="hands" aria-current="page"><span class="nav-icon">≡</span><span>Hands</span></button><button class="nav-item" id="nav-setup" type="button" data-tab="setup"><span class="nav-icon">◎</span><span>Setup</span></button><button class="nav-item" id="nav-starting" type="button" data-tab="starting"><span class="nav-icon">▦</span><span>Starthände</span></button></nav>
+</div>
+</body></html>

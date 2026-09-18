@@ -150,7 +150,7 @@ self.onmessage = (event) => {
   const opponentMissing = opponents.map((hand) => 2 - hand.filter(Boolean).length);
   const drawCount = boardMissing + opponentMissing.reduce((sum, count) => sum + count, 0);
   const opponentCount = opponents.length;
-  const targetIterations = opponentCount <= 2 ? 30000 : opponentCount <= 4 ? 22000 : 14000;
+  const targetIterations = opponentCount <= 2 ? 50000 : opponentCount <= 4 ? 35000 : 25000;
   const chunk = 1000;
 
   let iteration = 0;

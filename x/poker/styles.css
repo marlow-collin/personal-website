@@ -381,3 +381,42 @@ button { touch-action: manipulation; }
   .hero-slots .card-slot { width: 72px; height: 96px; }
   .odds-metrics .metric-card strong { font-size: 21px; }
 }
+
+/* V2: rules, explanations and starting hands */
+.rules-surface { margin-top: 18px; }
+.table-flow { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding: 4px 0 10px; scrollbar-width: none; }
+.table-flow::-webkit-scrollbar { display: none; }
+.seat { flex: 0 0 auto; min-width: 92px; padding: 10px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface-soft); text-align: center; }
+.seat b { display: block; font-size: 11px; } .seat span { color: var(--muted); font-size: 9px; }
+.seat.dealer { border-color: color-mix(in srgb, var(--green) 35%, var(--line)); background: var(--green-soft); }
+.flow-arrow { color: var(--muted); font-weight: 800; }
+.rule-steps { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 10px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.rule-steps strong { color: var(--ink); }
+.explain { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 11px; }
+.explain summary { cursor: pointer; color: var(--green-strong); font-size: 12px; font-weight: 780; }
+.explain p { margin: 9px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.explain.compact { margin-top: 10px; }
+.source-note, .data-note { color: var(--muted); font-size: 10px !important; }
+.rules-link { margin: 14px 0 0; font-size: 11px; }
+.rules-link a { color: var(--green-strong); text-underline-offset: 3px; }
+
+.opponent-buttons { display: grid; grid-template-columns: repeat(8, minmax(0,1fr)); gap: 5px; }
+.opponent-buttons button { min-width: 0; min-height: 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-soft); color: var(--muted); font-weight: 800; cursor: pointer; }
+.opponent-buttons button.is-active { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); background: var(--green-soft); color: var(--green-strong); }
+.starting-matrix-wrap { width: 100%; overflow-x: auto; margin-top: 12px; padding-bottom: 4px; }
+.starting-matrix { display: grid; grid-template-columns: repeat(13, minmax(42px, 1fr)); gap: 3px; min-width: 585px; }
+.starting-cell { aspect-ratio: 1; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; padding: 3px 1px; display: grid; place-content: center; text-align: center; }
+.starting-cell strong { font-size: 10px; line-height: 1; } .starting-cell span { margin-top: 3px; color: var(--muted); font-size: 8px; }
+.starting-cell.is-selected { border-color: var(--green); background: var(--green-soft); box-shadow: inset 0 0 0 1px var(--green); }
+.starting-detail .detail-sub { margin: 3px 0 0; }
+.starting-detail .metric-grid { margin-top: 0; }
+.data-note { margin: 13px 0 0; line-height: 1.45; }
+.glossary { padding-top: 14px; }
+.glossary > summary { cursor: pointer; font-size: 13px; }
+.glossary dl { margin: 12px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; font-size: 11px; line-height: 1.45; }
+.glossary dt { font-weight: 800; color: var(--ink); } .glossary dd { margin: 0; color: var(--muted); }
+
+@media (max-width: 520px) {
+  .opponent-buttons { grid-template-columns: repeat(4, 1fr); }
+  .starting-matrix { min-width: 540px; }
+}

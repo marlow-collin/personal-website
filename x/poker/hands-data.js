@@ -20,8 +20,8 @@ export const HAND_RANKINGS = Object.freeze([
     name: "Four of a Kind",
     strength: "Vier gleiche Ränge",
     example: ["Qc", "Qd", "Qh", "Qs", "9d"],
-    build: "Vier Karten desselben Rangs plus eine fünfte Karte.",
-    tie: "Zuerst der Vierling, danach der Kicker."
+    build: "Vier Karten desselben Rangs plus eine Beikarte (Kicker).",
+    tie: "Zuerst der Vierling, danach die Beikarte (Kicker)."
   },
   {
     rank: 7,
@@ -36,7 +36,7 @@ export const HAND_RANKINGS = Object.freeze([
     name: "Flush",
     strength: "Fünf Karten derselben Farbe",
     example: ["Ah", "Jh", "8h", "5h", "2h"],
-    build: "Fünf gleiche Suits; sie müssen nicht aufeinanderfolgen.",
+    build: "Fünf Karten derselben Farbe; sie müssen nicht aufeinanderfolgen.",
     tie: "Die höchste Flush-Karte entscheidet, dann die nächste – bis alle fünf verglichen sind."
   },
   {
@@ -44,7 +44,7 @@ export const HAND_RANKINGS = Object.freeze([
     name: "Straight",
     strength: "Fünf aufeinanderfolgende Ränge",
     example: ["9s", "8d", "7c", "6h", "5s"],
-    build: "Fünf Ränge in Folge; Suits sind egal.",
+    build: "Fünf Ränge in Folge; Die Farben sind egal.",
     tie: "Nur die höchste Karte zählt. A–2–3–4–5 ist der niedrigste Straight."
   },
   {
@@ -53,15 +53,15 @@ export const HAND_RANKINGS = Object.freeze([
     strength: "Drei gleiche Ränge",
     example: ["7s", "7h", "7d", "Ac", "4c"],
     build: "Drilling plus zwei andere Karten.",
-    tie: "Zuerst der Drilling, danach die beiden Kicker in absteigender Reihenfolge."
+    tie: "Zuerst der Drilling, danach die beiden Beikarten (Kicker) in absteigender Reihenfolge."
   },
   {
     rank: 3,
     name: "Two Pair",
     strength: "Zwei verschiedene Paare",
     example: ["Ks", "Kh", "4d", "4c", "9s"],
-    build: "Zwei Paare plus ein Kicker.",
-    tie: "Höheres Paar, dann niedrigeres Paar, dann Kicker."
+    build: "Zwei Paare plus eine Beikarte (Kicker).",
+    tie: "Höheres Paar, dann niedrigeres Paar, dann die Beikarte (Kicker)."
   },
   {
     rank: 2,
@@ -69,7 +69,7 @@ export const HAND_RANKINGS = Object.freeze([
     strength: "Ein Paar",
     example: ["10s", "10h", "Ad", "7c", "3d"],
     build: "Zwei gleiche Ränge plus drei andere Karten.",
-    tie: "Paar-Rang zuerst; danach alle drei Kicker absteigend."
+    tie: "Paar-Rang zuerst; danach alle drei Beikarten (Kicker) absteigend."
   },
   {
     rank: 1,
