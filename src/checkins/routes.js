@@ -523,28 +523,27 @@ export async function handleCheckinRequest(request, env, ctx) {
     return handlePublicEvent(request, env, ctx, match[1]);
   }
 
-  // Canonical Check-ins Admin API. The legacy /x/admin3/api namespace stays
   // available until the final cleanup patch so rollback remains straightforward.
-  if ((path === "/x/admin/api/checkins" || path === "/x/admin3/api/checkins") && request.method === "GET") {
+  if (path === "/x/admin/api/checkins" && request.method === "GET") {
     return handleAdminList(env);
   }
 
-  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/?$/);
+  match = path.match(/^\/x\/admin\/api\/checkins\/([a-z0-9-]{1,80})\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "GET") {
     return handleAdminDetail(env, match[1]);
   }
 
-  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/recipient-name\/?$/);
+  match = path.match(/^\/x\/admin\/api\/checkins\/([a-z0-9-]{1,80})\/recipient-name\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "POST") {
     return handleAdminRecipientName(request, env, match[1]);
   }
 
-  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/mail-next\/?$/);
+  match = path.match(/^\/x\/admin\/api\/checkins\/([a-z0-9-]{1,80})\/mail-next\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "POST") {
     return handleAdminMailToggle(request, env, match[1]);
   }
 
-  match = path.match(/^\/x\/(?:admin\/api|admin3\/api)\/checkins\/([a-z0-9-]{1,80})\/reset\/?$/);
+  match = path.match(/^\/x\/admin\/api\/checkins\/([a-z0-9-]{1,80})\/reset\/?$/);
   if (match && SLUG_RE.test(match[1]) && request.method === "POST") {
     return handleAdminReset(env, match[1]);
   }

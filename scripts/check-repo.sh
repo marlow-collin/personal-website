@@ -20,6 +20,15 @@ fail() {
   printf '✗ %s\n' "$1" >&2
 }
 
+require_absent_path() {
+  path="$1"
+  if [ ! -e "$ROOT/$path" ]; then
+    pass "path absent: $path"
+  else
+    fail "path should be absent: $path"
+  fi
+}
+
 require_file() {
   if [ -f "$ROOT/$1" ]; then
     pass "file exists: $1"
@@ -89,9 +98,6 @@ require_file "x/und-wie-wars/index.html"
 
 # Current admin implementations are intentionally still part of the Patch 01 baseline.
 require_file "x/admin/index.html"
-require_file "x/admin2/index.html"
-require_file "x/admin3/index.html"
-require_file "x/admin4/index.html"
 
 # Existing server modules that later patches build on.
 require_file "src/daily/routes.js"
@@ -140,8 +146,6 @@ require_text "wrangler.jsonc" '"binding": "CONVERSATION_DB"' "Conversation D1 bi
 require_text "wrangler.jsonc" '"/x/date/*"' "Date routes run Worker first"
 require_text "wrangler.jsonc" '"/x/api/*"' "Public API routes run Worker first"
 require_text "wrangler.jsonc" '"/x/admin/api/*"' "Date admin API runs Worker first"
-require_text "wrangler.jsonc" '"/x/admin3/api/*"' "Legacy Check-in admin API is still registered"
-require_text "wrangler.jsonc" '"/x/admin4/api/*"' "Legacy Conversation admin API is still registered"
 
 # Secret-layer indexing/privacy baseline.
 require_text "_headers" '/x/*' "Secret-layer header rule exists"
@@ -173,9 +177,7 @@ require_text "src/admin/overview.js" 'daily_category_empty' "Daily empty-categor
 require_text "src/admin/overview.js" 'conversation_missing_topic' "Conversation metadata attention rule is defined"
 require_text "src/admin/overview.js" 'status: "ready"' "Admin overview reports ready state"
 require_text "src/admin/modules.js" '/x/admin/date/' "Date admin is reachable from the Control Center"
-require_file "x/admin2/index.html"
 require_text "src/admin/modules.js" '/x/admin/checkins/' "Check-ins now use the canonical Admin page"
-require_file "x/admin4/index.html"
 require_text "x/admin/admin.js" 'URLSearchParams' "Date quick action can open the legacy create form"
 
 # Patch 05 Date Admin migration.
@@ -207,7 +209,6 @@ require_text "x/admin/checkins/app.js" '/recipient-name' "Check-ins recipient ma
 require_text "x/admin/checkins/app.js" '/mail-next' "Check-ins notification toggle is preserved"
 require_text "x/admin/checkins/app.js" '/reset' "Check-ins reset action is preserved"
 require_text "src/checkins/routes.js" '/x/admin/api/checkins' "Canonical Check-ins Admin API path is registered"
-require_text "src/checkins/routes.js" 'legacy /x/admin3/api namespace' "Legacy Check-ins API remains until cleanup"
 require_text "src/checkins/routes.js" 'mail_configured' "Check-ins Admin reports mail configuration state"
 require_text "x/admin/shared/admin.css" '.admin-switch' "Shared Admin design includes Check-in switches"
 require_text "docs/future/checkins.md" 'Check-in definition' "Future generic Check-in model remains documented"
@@ -240,13 +241,11 @@ require_text "src/daily/admin-repository.js" 'setDailyContentStatus' "Daily admi
 require_text "src/daily/admin-repository.js" 'listDailyHistory' "Daily admin repository owns history queries"
 require_text "x/admin/daily/content/app.js" 'Rotation counter:' "Daily editor exposes times_shown as read-only system metadata"
 require_text "x/admin/daily/import/app.js" '/x/admin/api/daily/import/export/' "Daily import uses unified admin export API"
-require_text "x/admin/daily/import/app.js" '/x/admin2/content-kit/' "Daily import keeps the existing content generation kit"
 require_text "x/admin/daily/history/index.html" 'current state of the referenced content' "Daily history documents current-state preview behavior"
 require_text "scripts/smoke-admin-edge.sh" '/x/admin/daily/' "Admin smoke protects Daily overview"
 require_text "scripts/smoke-admin-edge.sh" '/x/admin/api/daily/overview' "Admin smoke protects Daily API"
 require_text "src/daily/routes.js" 'const API_PREFIX = "/x/api/daily/"' "Public Daily API namespace remains unchanged"
 require_text "src/daily/routes.js" 'activateDailyCategory' "Daily rotation engine remains wired"
-require_file "x/admin2/index.html"
 require_text "src/daily/routes.js" 'IMPORT_VALIDATE = "/x/api/daily/import/validate"' "Legacy Daily import API remains available"
 
 
@@ -254,7 +253,6 @@ require_text "src/daily/routes.js" 'IMPORT_VALIDATE = "/x/api/daily/import/valid
 require_file "x/daily/shared/render-content.js"
 require_text "x/daily/assets/js/category.js" 'renderDailyContentMarkup' "Live Daily page uses the shared category renderer"
 require_text "x/admin/daily/history/app.js" 'renderDailyContentMarkup' "Daily history uses the same category renderer as the live page"
-require_text "x/admin/daily/history/index.html" '/x/daily/assets/css/category.css' "Daily history loads the live category visual styles"
 require_text "x/admin/daily/history/app.js" 'Preview uses the current version' "Daily history explains current-content preview semantics"
 require_text "x/admin/daily/history/index.html" 'Technical details' "Raw JSON is secondary technical detail"
 
@@ -269,18 +267,31 @@ require_file "x/admin/conversation/categories/app.js"
 require_file "x/admin/conversation/import/index.html"
 require_file "x/admin/conversation/import/app.js"
 require_text "src/admin/modules.js" 'manageUrl: "/x/admin/conversation/"' "Control Center routes Conversation to unified admin"
-require_text "src/conversation/routes.js" 'CANONICAL_ADMIN_PREFIX = "/x/admin/api/conversation/"' "Canonical Conversation Admin API namespace is registered"
-require_text "src/conversation/routes.js" 'LEGACY_ADMIN_PREFIX = "/x/admin4/api/"' "Legacy Conversation Admin API remains available"
+require_text "src/conversation/routes.js" 'ADMIN_PREFIX = "/x/admin/api/conversation/"' "Canonical Conversation Admin API namespace is registered"
 require_text "x/admin/conversation/library/app.js" '/conversation/questions' "Conversation Library uses canonical Admin API"
 require_text "x/admin/conversation/library/app.js" 'data-delete' "Conversation Library retains hard delete for mistakes and duplicates"
 require_text "x/admin/conversation/import/app.js" '/conversation/import/validate' "Conversation Import uses canonical validation API"
 require_text "x/admin/conversation/import/app.js" '/conversation/import/commit' "Conversation Import uses canonical commit API"
-require_text "x/admin/conversation/import/index.html" '/x/admin4/content-kit/' "Conversation generation kit remains available"
 require_text "x/admin/conversation/import/index.html" '/conversation/export/llm-review' "Conversation review export uses canonical API"
 require_text "x/admin/conversation/categories/app.js" 'light","medium","deep' "Conversation Categories reports intensity distribution"
-require_file "x/admin4/index.html"
 require_text "scripts/smoke-admin-edge.sh" '/x/admin/conversation/' "Admin smoke protects Conversation overview"
 require_text "scripts/smoke-admin-edge.sh" '/x/admin/api/conversation/status' "Admin smoke protects Conversation API"
+
+require_text "x/admin/daily/history/app.js" '/x/daily/assets/css/category.css' "Daily history preview loads the live category visual styles in isolation"
+
+# Patch 09 — final admin cleanup
+require_absent_path "x/admin2"
+require_absent_path "x/admin3"
+require_absent_path "x/admin4"
+require_file "x/admin/daily/content-kit/Daily_Content_Generation_Base.md"
+require_file "x/admin/conversation/content-kit/Conversation_Generation_Handoff_v1.md"
+require_text "x/admin/daily/import/app.js" '/x/admin/daily/content-kit/' "Daily Import uses canonical content-kit path"
+require_text "x/admin/conversation/import/index.html" '/x/admin/conversation/content-kit/' "Conversation Import uses canonical content-kit path"
+require_absent_text "src/checkins/routes.js" '/x/admin3/' "Check-ins legacy Admin API removed"
+require_absent_text "src/conversation/routes.js" '/x/admin4/' "Conversation legacy Admin API removed"
+require_absent_text "wrangler.jsonc" '/x/admin3/api/*' "Legacy admin3 worker-first rule removed"
+require_absent_text "wrangler.jsonc" '/x/admin4/api/*' "Legacy admin4 worker-first rule removed"
+require_text "wrangler.jsonc" '/x/admin/api/*' "Unified Admin API remains worker-first"
 
 printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
 

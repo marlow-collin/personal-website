@@ -19,15 +19,14 @@ import { getActiveQuestions, getAllQuestions, getConversationAdminSummary } from
 import { createConversationQuestion, deleteConversationQuestion, updateConversationQuestion } from "./management.js";
 
 const PUBLIC_QUESTIONS_PATH = "/x/api/conversation/questions";
-const LEGACY_ADMIN_PREFIX = "/x/admin4/api/";
-const CANONICAL_ADMIN_PREFIX = "/x/admin/api/conversation/";
-const ADMIN_STATUS_PATH = "/x/admin4/api/status";
-const ADMIN_IMPORT_VALIDATE_PATH = "/x/admin4/api/import/validate";
-const ADMIN_IMPORT_COMMIT_PATH = "/x/admin4/api/import/commit";
-const ADMIN_EXPORT_FULL_PATH = "/x/admin4/api/export/full";
-const ADMIN_EXPORT_REVIEW_PATH = "/x/admin4/api/export/llm-review";
-const ADMIN_EXPORT_BRIEF_PATH = "/x/admin4/api/export/generation-brief";
-const ADMIN_QUESTIONS_PATH = "/x/admin4/api/questions";
+const ADMIN_PREFIX = "/x/admin/api/conversation/";
+const ADMIN_STATUS_PATH = "/x/admin/api/conversation/status";
+const ADMIN_IMPORT_VALIDATE_PATH = "/x/admin/api/conversation/import/validate";
+const ADMIN_IMPORT_COMMIT_PATH = "/x/admin/api/conversation/import/commit";
+const ADMIN_EXPORT_FULL_PATH = "/x/admin/api/conversation/export/full";
+const ADMIN_EXPORT_REVIEW_PATH = "/x/admin/api/conversation/export/llm-review";
+const ADMIN_EXPORT_BRIEF_PATH = "/x/admin/api/conversation/export/generation-brief";
+const ADMIN_QUESTIONS_PATH = "/x/admin/api/conversation/questions";
 
 function securityHeaders() {
   return {
@@ -122,13 +121,10 @@ function questionIdFromPath(path) {
 
 export async function handleConversationRequest(request, env) {
   const url = new URL(request.url);
-  const requestPath = url.pathname;
-  const path = requestPath.startsWith(CANONICAL_ADMIN_PREFIX)
-    ? `${LEGACY_ADMIN_PREFIX}${requestPath.slice(CANONICAL_ADMIN_PREFIX.length)}`
-    : requestPath;
+  const path = url.pathname;
 
   const isPublicRoute = path === PUBLIC_QUESTIONS_PATH;
-  const isAdminRoute = path.startsWith(LEGACY_ADMIN_PREFIX) || path.startsWith(CANONICAL_ADMIN_PREFIX);
+  const isAdminRoute = path.startsWith(ADMIN_PREFIX);
   if (!isPublicRoute && !isAdminRoute) return null;
 
   const db = getDb(env);
