@@ -105,8 +105,16 @@ function findDistribution(chips, players, target) {
   return best;
 }
 
-function deriveTargetStack(inputStack) {
-  return inputStack || DEFAULT_STACK;
+function autoStartingStack({ players, duration, openingBb, chips }) {
+  const desiredBB = clamp(Math.round(130 + ((duration || DEFAULT_DURATION) - 180) / 4), 100, 220);
+  const desired = Math.max(openingBb * 80, openingBb * desiredBB);
+  const inventoryValue = chips.reduce((sum, chip) => sum + (chip.count == null ? 0 : chip.value * chip.count), 0);
+  const hasCompleteInventory = chips.length && chips.every((chip) => chip.count != null);
+  const reserveFactor = 0.72; // bewusst genügend große Chips für spätere Color-ups zurückhalten
+  const inventoryCap = hasCompleteInventory ? Math.floor((inventoryValue * reserveFactor) / players) : desired;
+  const cap = Math.max(openingBb * 60, Math.min(desired, inventoryCap));
+  const unit = openingBb >= 10 ? 100 : 50;
+  return Math.max(openingBb * 60, Math.round(cap / unit) * unit);
 }
 
 function autoRoundsPerLevel(duration, players, minutesPerHand) {
@@ -121,18 +129,17 @@ const BLIND_LADDER = Object.freeze([
   [3000, 6000], [5000, 10000], [10000, 20000]
 ]);
 
-function chooseBlindStart(stack, duration) {
-  // 5/10 bei ~2.740 Chips sind bereits ca. 274 BB und damit für ~5h sehr tief.
-  // Kleinere Starts sind deshalb nur für bewusst sehr lange Abende vorgesehen.
-  if (duration >= 480 && stack >= 1500) return 1; // 2/5
-  return 2; // 5/10
+function chooseBlindStart(duration, allowSmallBlinds) {
+  if (!allowSmallBlinds) return 2; // 5/10
+  if ((duration || DEFAULT_DURATION) >= 480) return 0; // 1/2 bei bewusst langen Abenden
+  return 1; // 2/5 als praktischer kleiner Start
 }
 
-function buildBlindSchedule({ stack, players, duration, mode, levelMinutes, roundsPerLevel, minutesPerHand }) {
+function buildBlindSchedule({ players, duration, mode, levelMinutes, roundsPerLevel, minutesPerHand, allowSmallBlinds }) {
   const estimatedMinutesPerHand = minutesPerHand || DEFAULT_MINUTES_PER_HAND;
   const estimatedLevelMinutes = mode === "rounds" ? players * roundsPerLevel * estimatedMinutesPerHand : levelMinutes;
   const levelCount = duration ? clamp(Math.ceil(duration / Math.max(5, estimatedLevelMinutes)), 5, 12) : 9;
-  const startIndex = chooseBlindStart(stack, duration || DEFAULT_DURATION);
+  const startIndex = chooseBlindStart(duration || DEFAULT_DURATION, allowSmallBlinds);
   const levels = Array.from({ length: levelCount }, (_, i) => {
     const pair = BLIND_LADDER[Math.min(startIndex + i, BLIND_LADDER.length - 1)];
     return {
@@ -172,14 +179,18 @@ export function planPokerSetup(input = {}) {
   }
   chips.sort((a, b) => a.value - b.value);
 
+  const allowSmallBlinds = input.allowSmallBlinds === true;
+  const startIndex = chooseBlindStart(duration || DEFAULT_DURATION, allowSmallBlinds);
+  const openingPair = BLIND_LADDER[startIndex];
   const requestedStack = asPositiveInt(input.startingStack);
-  const targetStack = deriveTargetStack(requestedStack);
-  let distribution = findDistribution(chips, players, targetStack);
-  const referenceCounts = new Map([[1, 0], [5, 16], [10, 16], [25, 8], [100, 8], [500, 3], [1000, 0]]);
-  const canUseReference = targetStack === DEFAULT_STACK && chips.every((chip) => !referenceCounts.has(chip.value) || chip.count == null || referenceCounts.get(chip.value) * players <= chip.count) && [5,10,25,100,500].every((value) => chips.some((chip) => chip.value === value));
-  if (canUseReference) {
-    const counts = chips.map((chip) => referenceCounts.get(chip.value) || 0);
-    distribution = { counts, value: DEFAULT_STACK, distance: 0, score: 0 };
+  const eligibleChips = allowSmallBlinds ? chips : chips.filter((chip) => chip.value >= 5);
+  const autoStack = autoStartingStack({ players, duration: duration || DEFAULT_DURATION, openingBb: openingPair[1], chips: eligibleChips });
+  const targetStack = requestedStack || autoStack;
+  const eligibleDistribution = findDistribution(eligibleChips, players, targetStack);
+  let distribution = null;
+  if (eligibleDistribution) {
+    const byId = new Map(eligibleChips.map((chip, index) => [chip.id, eligibleDistribution.counts[index] || 0]));
+    distribution = { ...eligibleDistribution, counts: chips.map((chip) => byId.get(chip.id) || 0) };
   }
   const actualStack = distribution?.value || targetStack;
   const knownInventory = chips.some((chip) => chip.count != null);
@@ -195,25 +206,25 @@ export function planPokerSetup(input = {}) {
   const totalReserveValue = perPlayer.reduce((sum, chip) => sum + (chip.reserve == null ? 0 : chip.reserve * chip.value), 0);
   const smallest = chips[0]?.value || 25;
   const blindSchedule = buildBlindSchedule({
-    stack: actualStack,
     players,
     duration: duration || DEFAULT_DURATION,
     mode,
     levelMinutes,
     roundsPerLevel,
-    smallest,
-    minutesPerHand
+    minutesPerHand,
+    allowSmallBlinds
   });
 
   const assumptions = [];
   if (!input.players) assumptions.push(`${DEFAULT_PLAYERS} Spieler als Standard angenommen.`);
   if (!duration) assumptions.push(`${DEFAULT_DURATION} Minuten als Planungsziel angenommen.`);
-  if (!requestedStack) assumptions.push(`${DEFAULT_STACK.toLocaleString("de-DE")} Chips Starting Stack automatisch aus eurem bewährten Chipset gewählt.`);
+  if (!requestedStack) assumptions.push(`${actualStack.toLocaleString("de-DE")} Chips Starting Stack automatisch aus Spielerzahl, Dauer, Startblinds und verfügbarem Inventar geplant.`);
   if (!Array.isArray(input.chips) || !input.chips.some((chip) => asPositiveInt(chip.value))) assumptions.push(`Standard-Denominations ${DEFAULT_DENOMS.join(" / ")} angenommen.`);
   if (!completeInventory) assumptions.push(`Leere Chip-Anzahlen gelten als unbekannt/unbegrenzt; Reserve ist dafür nicht berechenbar.`);
   if (mode === "rounds") assumptions.push(`${requestedRounds ? "Vorgabe" : "Automatisch geplant"}: Blindwechsel nach ${roundsPerLevel} vollen Tischrunden. Bei ${players} Spielern sind das ${players * roundsPerLevel} Hände pro Level; mit weniger Spielern wird ein Level automatisch kürzer.`);
   assumptions.push(`Zeitprognose: ca. ${String(minutesPerHand).replace(".", ",")} Minuten pro Hand (${minutesPerHand > 3 ? "Entspannt" : "Regulär"}).`);
-  assumptions.push(`Nicht verteilte Chips bleiben bewusst als Bank/Reserve verfügbar.`);
+  assumptions.push(allowSmallBlinds ? `Kleine Blindstufen sind aktiv: 1er-Chips dürfen im Startstack genutzt und später ausgewechselt werden.` : `Kleine Blindstufen sind aus: Start frühestens bei 5/10; 1er-Chips bleiben in der Bank.`);
+  assumptions.push(`Nicht verteilte Chips bleiben bewusst als Bank/Reserve für spätere Color-ups verfügbar.`);
 
   const warnings = [];
   if (requestedStack && distribution && distribution.value !== requestedStack) {
@@ -221,6 +232,25 @@ export function planPokerSetup(input = {}) {
   }
   for (const chip of perPlayer) {
     if (chip.count != null && chip.perPlayer === 0 && chip.count > 0) warnings.push(`Denomination ${chip.value.toLocaleString("de-DE")} kann bei ${players} Spielern nicht sinnvoll gleich verteilt werden.`);
+  }
+
+  const colorUps = [];
+  const usedValues = perPlayer.filter((chip) => chip.perPlayer > 0).map((chip) => chip.value).sort((a, b) => a - b);
+  const canMakeWith = (amount, values) => {
+    const possible = Array(amount + 1).fill(false); possible[0] = true;
+    for (let sum = 1; sum <= amount; sum += 1) possible[sum] = values.some((value) => sum >= value && possible[sum - value]);
+    return possible[amount];
+  };
+  for (const value of usedValues) {
+    const higherValues = chips.filter((chip) => chip.value > value).map((chip) => chip.value);
+    if (!higherValues.length) continue;
+    for (let i = 0; i < blindSchedule.levels.length - 1; i += 1) {
+      const future = blindSchedule.levels.slice(i + 1);
+      if (future.length && future.every((level) => canMakeWith(level.sb, higherValues) && canMakeWith(level.bb, higherValues))) {
+        colorUps.push({ value, afterSb: blindSchedule.levels[i].sb, afterBb: blindSchedule.levels[i].bb });
+        break;
+      }
+    }
   }
 
   return {
@@ -233,6 +263,7 @@ export function planPokerSetup(input = {}) {
     minutesPerHand,
     targetStack,
     requestedStack,
+    allowSmallBlinds,
     startingStack: actualStack,
     exactStackMatch: !requestedStack || actualStack === requestedStack,
     perPlayer,
@@ -242,6 +273,7 @@ export function planPokerSetup(input = {}) {
     openingBlinds: blindSchedule.levels[0],
     blindLevels: blindSchedule.levels,
     estimatedLevelMinutes: blindSchedule.estimatedLevelMinutes,
+    colorUps,
     assumptions,
     warnings
   };
