@@ -249,6 +249,15 @@ require_text "src/daily/routes.js" 'activateDailyCategory' "Daily rotation engin
 require_file "x/admin2/index.html"
 require_text "src/daily/routes.js" 'IMPORT_VALIDATE = "/x/api/daily/import/validate"' "Legacy Daily import API remains available"
 
+
+# Patch 07 correction — visual Daily history preview
+require_file "x/daily/shared/render-content.js"
+require_text "x/daily/assets/js/category.js" 'renderDailyContentMarkup' "Live Daily page uses the shared category renderer"
+require_text "x/admin/daily/history/app.js" 'renderDailyContentMarkup' "Daily history uses the same category renderer as the live page"
+require_text "x/admin/daily/history/index.html" '/x/daily/assets/css/category.css' "Daily history loads the live category visual styles"
+require_text "x/admin/daily/history/app.js" 'Preview uses the current version' "Daily history explains current-content preview semantics"
+require_text "x/admin/daily/history/index.html" 'Technical details' "Raw JSON is secondary technical detail"
+
 printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
 
 if [ "$FAIL" -ne 0 ]; then
