@@ -19,7 +19,8 @@ import { getActiveQuestions, getAllQuestions, getConversationAdminSummary } from
 import { createConversationQuestion, deleteConversationQuestion, updateConversationQuestion } from "./management.js";
 
 const PUBLIC_QUESTIONS_PATH = "/x/api/conversation/questions";
-const ADMIN_PREFIX = "/x/admin4/api/";
+const LEGACY_ADMIN_PREFIX = "/x/admin4/api/";
+const CANONICAL_ADMIN_PREFIX = "/x/admin/api/conversation/";
 const ADMIN_STATUS_PATH = "/x/admin4/api/status";
 const ADMIN_IMPORT_VALIDATE_PATH = "/x/admin4/api/import/validate";
 const ADMIN_IMPORT_COMMIT_PATH = "/x/admin4/api/import/commit";
@@ -121,10 +122,13 @@ function questionIdFromPath(path) {
 
 export async function handleConversationRequest(request, env) {
   const url = new URL(request.url);
-  const path = url.pathname;
+  const requestPath = url.pathname;
+  const path = requestPath.startsWith(CANONICAL_ADMIN_PREFIX)
+    ? `${LEGACY_ADMIN_PREFIX}${requestPath.slice(CANONICAL_ADMIN_PREFIX.length)}`
+    : requestPath;
 
   const isPublicRoute = path === PUBLIC_QUESTIONS_PATH;
-  const isAdminRoute = path.startsWith(ADMIN_PREFIX);
+  const isAdminRoute = path.startsWith(LEGACY_ADMIN_PREFIX) || path.startsWith(CANONICAL_ADMIN_PREFIX);
   if (!isPublicRoute && !isAdminRoute) return null;
 
   const db = getDb(env);

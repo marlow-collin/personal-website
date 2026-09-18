@@ -10,7 +10,7 @@ export const ADMIN_MODULES = Object.freeze([
     id: "conversation",
     label: "Conversation Roulette",
     description: "Question library and content health",
-    manageUrl: "/x/admin4/",
+    manageUrl: "/x/admin/conversation/",
     siteUrl: "/x/conversation/"
   }),
   Object.freeze({

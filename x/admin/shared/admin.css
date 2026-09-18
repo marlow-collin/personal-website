@@ -93,6 +93,6 @@ h3{margin:0;font-size:1.08rem;letter-spacing:-.015em;font-weight:600}
 /* Patch 07 correction — visual Daily history preview */
 .daily-history-preview{margin-top:14px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#f6f1e8;color:#191714}.daily-history-preview__head{display:flex;align-items:center;gap:12px;margin-bottom:14px}.daily-history-preview__head .daily-category__icon{flex:0 0 auto}.daily-history-preview__head h3{color:inherit}.daily-history-preview .daily-content{color:inherit}.history-raw{margin-top:14px;color:var(--muted);font-size:.75rem}.history-raw summary{cursor:pointer}
 
-/* Patch 07c — isolate live Daily visuals from the dark Admin shell */
-.daily-history-preview{margin-top:14px;padding:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
-.daily-history-preview__frame{display:block;width:100%;min-height:320px;border:0;background:#f6f1e8}
+/* Conversation Admin — Patch 08 */
+.conversation-toolbar{grid-template-columns:1fr}.conversation-editor-grid{display:grid;gap:12px}.conversation-editor fieldset{margin:0;padding:12px;border:1px solid var(--line);border-radius:12px}.conversation-editor legend{padding:0 5px;color:var(--muted);font-size:.72rem}.admin-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.admin-check{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.76rem}.conversation-editor textarea{min-height:110px}.muted-line{padding:0 17px 14px;color:var(--muted);font-size:.78rem;line-height:1.55}.muted-line:last-child{padding-bottom:17px}
+@media(min-width:900px){.conversation-toolbar{grid-template-columns:minmax(210px,1.5fr) repeat(5,minmax(110px,1fr))}.conversation-editor-grid{grid-template-columns:1fr 1fr}.conversation-editor{width:min(760px,calc(100% - 28px))}}

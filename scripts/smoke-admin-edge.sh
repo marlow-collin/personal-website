@@ -34,6 +34,11 @@ check_protected "/x/admin/daily/content/" "/x/admin/daily/content/"
 check_protected "/x/admin/daily/history/" "/x/admin/daily/history/"
 check_protected "/x/admin/daily/import/" "/x/admin/daily/import/"
 check_protected "/x/admin/api/daily/overview" "/x/admin/api/daily/overview"
+check_protected "/x/admin/conversation/" "/x/admin/conversation/"
+check_protected "/x/admin/conversation/library/" "/x/admin/conversation/library/"
+check_protected "/x/admin/conversation/categories/" "/x/admin/conversation/categories/"
+check_protected "/x/admin/conversation/import/" "/x/admin/conversation/import/"
+check_protected "/x/admin/api/conversation/status" "/x/admin/api/conversation/status"
 
 printf 'Result: %s passed, %s failed.\n' "$PASSED" "$FAILED"
 [ "$FAILED" -eq 0 ]

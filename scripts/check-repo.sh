@@ -175,7 +175,7 @@ require_text "src/admin/overview.js" 'status: "ready"' "Admin overview reports r
 require_text "src/admin/modules.js" '/x/admin/date/' "Date admin is reachable from the Control Center"
 require_file "x/admin2/index.html"
 require_text "src/admin/modules.js" '/x/admin/checkins/' "Check-ins now use the canonical Admin page"
-require_text "src/admin/modules.js" '/x/admin4/' "Conversation legacy admin stays reachable during migration"
+require_file "x/admin4/index.html"
 require_text "x/admin/admin.js" 'URLSearchParams' "Date quick action can open the legacy create form"
 
 # Patch 05 Date Admin migration.
@@ -254,17 +254,33 @@ require_text "src/daily/routes.js" 'IMPORT_VALIDATE = "/x/api/daily/import/valid
 require_file "x/daily/shared/render-content.js"
 require_text "x/daily/assets/js/category.js" 'renderDailyContentMarkup' "Live Daily page uses the shared category renderer"
 require_text "x/admin/daily/history/app.js" 'renderDailyContentMarkup' "Daily history uses the same category renderer as the live page"
-require_text "x/admin/daily/history/app.js" '/x/daily/assets/css/category.css' "Daily history preview loads the live category visual styles in isolation"
+require_text "x/admin/daily/history/index.html" '/x/daily/assets/css/category.css' "Daily history loads the live category visual styles"
 require_text "x/admin/daily/history/app.js" 'Preview uses the current version' "Daily history explains current-content preview semantics"
 require_text "x/admin/daily/history/index.html" 'Technical details' "Raw JSON is secondary technical detail"
 
 
-# Patch 07c — isolated Daily history preview fix
-require_text "x/daily/shared/render-content.js" 'function escapeHtml' "Shared Daily renderer contains its HTML escaping helper"
-require_text "x/admin/daily/history/index.html" 'data-preview-frame' "Daily history preview is isolated in an iframe"
-require_text "x/admin/daily/history/app.js" 'frame.srcdoc=previewDocument(i)' "Daily history writes visual preview into isolated document"
-require_text "x/admin/daily/history/app.js" '/x/daily/assets/css/daily-base.css' "Isolated preview loads live Daily base styles"
-require_text "x/admin/daily/history/app.js" '/x/daily/assets/css/category.css' "Isolated preview loads live Daily category styles"
+# Patch 08 — Conversation Admin
+require_file "x/admin/conversation/index.html"
+require_file "x/admin/conversation/app.js"
+require_file "x/admin/conversation/library/index.html"
+require_file "x/admin/conversation/library/app.js"
+require_file "x/admin/conversation/categories/index.html"
+require_file "x/admin/conversation/categories/app.js"
+require_file "x/admin/conversation/import/index.html"
+require_file "x/admin/conversation/import/app.js"
+require_text "src/admin/modules.js" 'manageUrl: "/x/admin/conversation/"' "Control Center routes Conversation to unified admin"
+require_text "src/conversation/routes.js" 'CANONICAL_ADMIN_PREFIX = "/x/admin/api/conversation/"' "Canonical Conversation Admin API namespace is registered"
+require_text "src/conversation/routes.js" 'LEGACY_ADMIN_PREFIX = "/x/admin4/api/"' "Legacy Conversation Admin API remains available"
+require_text "x/admin/conversation/library/app.js" '/conversation/questions' "Conversation Library uses canonical Admin API"
+require_text "x/admin/conversation/library/app.js" 'data-delete' "Conversation Library retains hard delete for mistakes and duplicates"
+require_text "x/admin/conversation/import/app.js" '/conversation/import/validate' "Conversation Import uses canonical validation API"
+require_text "x/admin/conversation/import/app.js" '/conversation/import/commit' "Conversation Import uses canonical commit API"
+require_text "x/admin/conversation/import/index.html" '/x/admin4/content-kit/' "Conversation generation kit remains available"
+require_text "x/admin/conversation/import/index.html" '/conversation/export/llm-review' "Conversation review export uses canonical API"
+require_text "x/admin/conversation/categories/app.js" 'light","medium","deep' "Conversation Categories reports intensity distribution"
+require_file "x/admin4/index.html"
+require_text "scripts/smoke-admin-edge.sh" '/x/admin/conversation/' "Admin smoke protects Conversation overview"
+require_text "scripts/smoke-admin-edge.sh" '/x/admin/api/conversation/status' "Admin smoke protects Conversation API"
 
 printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
 
