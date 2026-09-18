@@ -1,3 +1,5 @@
+import { handlePokerLiveRequest } from "./poker-live/routes.js";
+export { PokerLiveSession } from "./poker-live/session.js";
 import { handleDailyRequest } from "./daily/routes.js";
 import { handleCheckinRequest } from "./checkins/routes.js";
 import { handleConversationRequest } from "./conversation/routes.js";
@@ -51,6 +53,9 @@ export default {
 
       const dateResponse = await handleDateRequest(request, env, ctx);
       if (dateResponse) return dateResponse;
+
+      const pokerLiveResponse = await handlePokerLiveRequest(request, env);
+      if (pokerLiveResponse) return pokerLiveResponse;
 
       // Everything else falls through to the existing static site.
       return serveStatic(request, env);

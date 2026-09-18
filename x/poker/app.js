@@ -45,7 +45,8 @@ $("#setup-small-blinds").addEventListener("change", (event) => { allowSmallBlind
 $$("[data-level-preset]").forEach((button) => button.addEventListener("click", () => { $("#setup-level-minutes").value = button.dataset.levelPreset; $$("[data-level-preset]").forEach((candidate) => candidate.classList.toggle("is-active", candidate === button)); calculateSetup(); }));
 function setupInput() { return { players: $("#setup-players").value, durationMinutes: $("#setup-duration").value, startingStack: $("#setup-stack").value, blindMode, levelMinutes: $("#setup-level-minutes").value, roundsPerLevel: $("#setup-rounds").value, pace, allowSmallBlinds, chips: chipRows.map((chip) => ({ ...chip })) }; }
 function metricCard(label, value, detail = "") { return `<div class="metric-card"><span>${label}</span><strong>${value}</strong>${detail ? `<small>${detail}</small>` : ""}</div>`; }
-function calculateSetup() { syncChipRowsFromDom(); renderSetupPlan(planPokerSetup(setupInput())); }
+let latestSetupPlan = null;
+function calculateSetup() { syncChipRowsFromDom(); latestSetupPlan = planPokerSetup(setupInput()); renderSetupPlan(latestSetupPlan); }
 function renderSetupPlan(plan) {
   const opening = plan.openingBlinds;
   $("#setup-metrics").innerHTML = [metricCard("Starting Stack", formatNumber(plan.startingStack), plan.requestedStack ? (plan.exactStackMatch ? "wie gewählt" : "nächster sinnvoller Wert") : "automatisch geplant"), metricCard("Opening Blinds", `${formatNumber(opening.sb)} / ${formatNumber(opening.bb)}`, `Starttiefe · ~${Math.round(plan.startingStack / opening.bb)} BB`), metricCard("Spieler", String(plan.players), `${formatNumber(plan.startingStack * plan.players)} Chips im Spiel`), metricCard("Blindwechsel", plan.blindMode === "rounds" ? `alle ${plan.roundsPerLevel} ${plan.roundsPerLevel === 1 ? "Runde" : "Runden"}` : `alle ${formatNumber(plan.levelMinutes)} min`, plan.blindMode === "rounds" ? ($("#setup-rounds").value.trim() ? "manuell gewählt" : "automatisch ermittelt") : "zeitbasiert"), metricCard("Bank / Reserve", plan.totalReserveValue == null ? "teilw. offen" : formatNumber(plan.totalReserveValue), "bewusst nicht verteilt")].join("");
@@ -82,3 +83,21 @@ function renderStartingDetail() { if(!selectedStarting){$("#starting-detail").in
 function renderStarting(){ renderStartingCards(); renderOpponentButtons(); renderStartingDetail(); renderMatrix(); }
 
 renderRankings(); renderChipEditor(); calculateSetup(); renderStarting();
+
+
+// V3 live session preparation
+const livePrepare = document.querySelector("#prepare-live");
+const liveSetup = document.querySelector("#live-setup");
+if (livePrepare && liveSetup) {
+  livePrepare.addEventListener("click", () => {
+    const plan = latestSetupPlan || planPokerSetup(setupInput());
+    liveSetup.hidden = false;
+    liveSetup.innerHTML = `<div class="live-prep"><p><strong>${plan.players} Spieler · ${plan.openingBlinds.sb}/${plan.openingBlinds.bb} · ${plan.roundsPerLevel} ${plan.roundsPerLevel===1?'Runde':'Runden'} pro Level</strong></p><div class="live-player-inputs">${Array.from({length:plan.players},(_,i)=>`<label class="field"><span>Sitz ${i+1}</span><input data-live-player value="Spieler ${i+1}" maxlength="30"></label>`).join('')}</div><label class="field"><span>Erster Dealer</span><select id="live-dealer">${Array.from({length:plan.players},(_,i)=>`<option value="${i+1}">Sitz ${i+1}</option>`).join('')}</select></label><button class="small-action" id="create-live" type="button">Turnier starten</button><p class="helper-copy" id="live-create-status"></p></div>`;
+    document.querySelector('#create-live').addEventListener('click', async () => {
+      const status=document.querySelector('#live-create-status'); status.textContent='Session wird erstellt …';
+      const players=[...document.querySelectorAll('[data-live-player]')].map(x=>x.value.trim()||'Spieler');
+      const blindLevels=plan.blindLevels.map(x=>({sb:x.sb,bb:x.bb}));
+      try { const r=await fetch('/x/poker/live/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({players,dealerSeat:Number(document.querySelector('#live-dealer').value),roundsPerLevel:plan.roundsPerLevel,blindLevels})}); const d=await r.json(); if(!r.ok)throw new Error(d.error||'Session konnte nicht erstellt werden.'); location.href=d.controllerUrl; } catch(e){ status.textContent=e.message; }
+    });
+  });
+}

@@ -13,9 +13,19 @@
     "run_worker_first": [
       "/x/date/*",
       "/x/api/*",
-      "/x/admin/api/*"
+      "/x/admin/api/*",
+      "/x/poker/live/api/*"
     ]
   },
+
+  "durable_objects": {
+    "bindings": [
+      { "name": "POKER_LIVE", "class_name": "PokerLiveSession" }
+    ]
+  },
+  "migrations": [
+    { "tag": "poker-live-v1", "new_sqlite_classes": ["PokerLiveSession"] }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
