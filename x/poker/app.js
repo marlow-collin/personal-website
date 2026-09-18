@@ -99,7 +99,7 @@ if (livePrepare && liveSetup) {
       const status=document.querySelector('#live-create-status'); status.textContent='Session wird erstellt …';
       const players=[...document.querySelectorAll('[data-live-player]')].map(x=>x.value.trim()||'Spieler');
       const blindLevels=plan.blindLevels.map(x=>({sb:x.sb,bb:x.bb}));
-      try { const r=await fetch('/x/poker/live/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({players,dealerSeat:document.querySelector('#live-random-dealer').checked?Math.floor(Math.random()*plan.players)+1:Number(document.querySelector('#live-dealer').value),roundsPerLevel:plan.roundsPerLevel,blindLevels})}); const d=await r.json(); if(!r.ok)throw new Error(d.error||'Session konnte nicht erstellt werden.'); location.href=d.controllerUrl; } catch(e){ status.textContent=e.message; }
+      try { const r=await fetch('/x/poker/live/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({players,dealerSeat:document.querySelector('#live-random-dealer').checked?Math.floor(Math.random()*plan.players)+1:Number(document.querySelector('#live-dealer').value),roundsPerLevel:plan.roundsPerLevel,blindLevels,colorUps:plan.colorUps})}); const d=await r.json(); if(!r.ok)throw new Error(d.error||'Session konnte nicht erstellt werden.'); location.href=d.controllerUrl; } catch(e){ status.textContent=e.message; }
     });
   });
 }
