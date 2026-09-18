@@ -27,5 +27,5 @@ export function cancelElimination(s,id){ s.pendingEliminations=s.pendingEliminat
 export function startNextLevel(s){ if(s.status!=='level-change') throw new Error('Level ist noch nicht abgeschlossen.'); if(s.level>=s.blindLevels.length) s.blindLevels.push({sb:s.blindLevels.at(-1).sb*2,bb:s.blindLevels.at(-1).bb*2}); s.level+=1;s.round=1;s.roundSeenBigBlind=[];s.status='running';markBigBlind(s);log(s,`Level ${s.level} gestartet`);return s; }
 export function togglePause(s){ if(s.status==='paused'){s.status='running';log(s,'Pause beendet');} else if(s.status==='running'){s.status='paused';log(s,'Pause gestartet');} return s; }
 export function setOverlay(s,overlay){s.overlay=overlay||null;return s;}
-export function setDisplayMode(s,mode){s.displayMode=mode==='minimal'?'minimal':'table';return s;}
+export function setDisplayMode(s,mode){s.displayMode=['table','broadcast','minimal'].includes(mode)?mode:'table';return s;}
 export function publicState(s){ const {controllerToken,...safe}=s; return {...safe,currentBlinds:s.blindLevels[Math.min(s.level-1,s.blindLevels.length-1)],nextBlinds:s.blindLevels[s.level]||null}; }
