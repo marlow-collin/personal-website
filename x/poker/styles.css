@@ -433,3 +433,6 @@ button { touch-action: manipulation; }
 
 /* V3 live setup */
 .live-start-surface{margin-top:14px}.live-start-button{width:100%;min-height:46px}.live-prep{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.live-player-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.live-prep select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:0 10px}@media(max-width:520px){.live-player-inputs{grid-template-columns:1fr}}
+
+/* V3.2.1 live entry */
+.live-entry-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.live-display-button{text-decoration:none;display:grid;place-items:center;text-align:center}.live-random-dealer{margin:14px 0}.live-prep #live-dealer-field[hidden]{display:none}@media(max-width:520px){.live-entry-actions{grid-template-columns:1fr}}
