@@ -436,3 +436,8 @@ button { touch-action: manipulation; }
 
 /* V3.2.1 live entry */
 .live-entry-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.live-display-button{text-decoration:none;display:grid;place-items:center;text-align:center}.live-random-dealer{margin:14px 0}.live-prep #live-dealer-field[hidden]{display:none}@media(max-width:520px){.live-entry-actions{grid-template-columns:1fr}}
+
+/* V3.2.2: high-contrast switches */
+.toggle-control{background:#626a64;border:2px solid #858d87;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.toggle-input:checked+.toggle-control{background:#0b7544;border-color:#9ce3ba;box-shadow:0 0 0 2px rgba(11,117,68,.2)}
+@media(prefers-color-scheme:dark){.toggle-control{background:#4e5751;border-color:#a5aea8}.toggle-input:checked+.toggle-control{background:#45b978;border-color:#c4f3d7}.toggle-input:checked+.toggle-control::after{background:#07150d}}
