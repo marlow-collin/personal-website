@@ -61,3 +61,41 @@
 .display-table{border:2px solid #314139;background:radial-gradient(ellipse at center,#132019 0 55%,#0c120f 56% 100%);box-shadow:inset 0 0 0 clamp(8px,.7vw,15px) #0a0f0c,0 24px 80px rgba(0,0,0,.26)}.display-table .live-seat{border:2px solid #2b3832;background:#111815;box-shadow:0 14px 36px rgba(0,0,0,.3)}.display-table .role-badge{background:#f1f5f2;color:#07100b}.display-table .table-center{color:#b9c4be}
 @media (min-width:1400px) and (orientation:landscape){.display-body{font-family:Arial,Helvetica,sans-serif}.display-main{min-height:0}.display-table{width:min(74vw,1320px)!important;max-height:61vh}.display-table .seat-name{font-weight:900}.display-assist.ranks-panel{padding:clamp(30px,2vw,46px)}.display-assist.ranks-panel .rank-name{font-size:clamp(24px,1.35vw,31px)}.display-broadcast.has-assist .display-layout{grid-template-columns:minmax(0,2fr) minmax(520px,1fr)}.display-broadcast.has-assist .broadcast-board{grid-template-columns:minmax(0,1fr) minmax(220px,.42fr);gap:24px}.display-broadcast.has-assist .broadcast-table{min-height:49vh}}
 @media(max-width:1000px),(orientation:portrait){.broadcast-board{grid-template-columns:1fr}.broadcast-table{min-height:44vh}.broadcast-side{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr}.broadcast-side strong{font-size:clamp(24px,5vw,42px)}.view-switch{grid-template-columns:1fr}.display-broadcast .display-topline,.display-broadcast .display-footer{display:flex}}
+
+/* V3.2.6: fixed-viewport display + long-distance broadcast legibility */
+.display-body.display-connected{height:100vh;height:100dvh;overflow:hidden}
+.display-connected .display-shell{height:100vh;height:100dvh;min-height:0;overflow:hidden;padding:clamp(18px,2.2vh,42px) clamp(24px,3vw,68px)}
+.display-connected .display-layout{height:100%;min-height:0;overflow:hidden}
+.display-connected .display-main{height:100%;min-height:0;overflow:hidden}
+.display-connected .display-assist{min-height:0;max-height:100%;overflow:hidden}
+.display-connected .display-table{max-height:min(56vh,calc(100dvh - 300px));margin:clamp(12px,1.6vh,28px) auto}
+.display-connected .broadcast-board,.display-connected .minimal-board{min-height:0;height:100%;overflow:hidden}
+.display-connected .broadcast-table{min-height:0;height:100%}
+
+/* Keep every seat card inside the broadcast table and make roles readable from 5–8 m. */
+.broadcast-table{overflow:hidden}
+.broadcast-table .live-seat{min-width:clamp(150px,10.5vw,230px);max-width:clamp(180px,12.5vw,270px);padding:clamp(14px,1.05vw,22px);border-width:3px;border-radius:20px}
+.broadcast-table .seat-name{font-family:Arial,Helvetica,sans-serif;font-size:clamp(28px,1.75vw,40px);font-weight:900;line-height:1.02;letter-spacing:-.02em}
+.broadcast-table .seat-badges{gap:8px;margin-top:9px;min-height:clamp(46px,3vw,64px)}
+.broadcast-table .role-badge{min-width:clamp(54px,3.4vw,76px);height:clamp(50px,3.1vw,70px);padding:0 12px;border:3px solid rgba(255,255,255,.18);font-family:Arial,Helvetica,sans-serif;font-size:clamp(22px,1.4vw,32px);font-weight:900;box-shadow:0 5px 18px rgba(0,0,0,.3)}
+.broadcast-table .role-badge.dead{background:#303934;color:#f2f5f3}
+.broadcast-table .live-seat small{font-size:clamp(15px,.95vw,21px)}
+
+@media (min-width:1400px) and (orientation:landscape){
+  .display-connected .broadcast-board{padding:0;grid-template-columns:minmax(0,1.72fr) minmax(300px,.58fr);gap:clamp(28px,2.2vw,48px)}
+  .display-connected .broadcast-center strong{font-size:clamp(105px,7.5vw,170px)}
+  .display-connected .broadcast-side strong{font-size:clamp(48px,3vw,70px)}
+  .display-connected .broadcast-side span{font-size:clamp(19px,1.1vw,27px)}
+  .display-connected.display-broadcast.has-assist .display-layout{grid-template-columns:minmax(0,2fr) minmax(500px,1fr)}
+  .display-connected.display-broadcast.has-assist .broadcast-board{grid-template-columns:minmax(0,1fr) minmax(235px,.44fr)}
+  .display-connected.display-broadcast.has-assist .broadcast-table .live-seat{min-width:clamp(132px,8vw,185px);max-width:200px;padding:12px}
+  .display-connected.display-broadcast.has-assist .broadcast-table .seat-name{font-size:clamp(23px,1.35vw,31px)}
+  .display-connected.display-broadcast.has-assist .broadcast-table .role-badge{min-width:48px;height:46px;font-size:20px}
+}
+
+@media (max-height:800px) and (orientation:landscape){
+  .display-connected .display-shell{padding-top:14px;padding-bottom:14px}
+  .display-connected .broadcast-table .live-seat{padding:9px 12px}
+  .display-connected .broadcast-table .seat-name{font-size:clamp(20px,1.5vw,30px)}
+  .display-connected .broadcast-table .role-badge{min-width:42px;height:40px;font-size:18px}
+}
