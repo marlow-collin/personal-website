@@ -5,9 +5,18 @@ const activeAt = (s, seat) => s.players.find(p => p.seat === seat && p.status ==
 function nextActiveSeat(s, from) { let seat=from; for(let i=0;i<s.players.length;i++){ seat=nextSeat(seat,s.players.length); if(activeAt(s,seat)) return seat; } return null; }
 function prevActiveSeat(s, from) { let seat=from; for(let i=0;i<s.players.length;i++){ seat=prevSeat(seat,s.players.length); if(activeAt(s,seat)) return seat; } return null; }
 function rolesFromDealer(s, dealerSeat){ const count=activePlayers(s).length; if(count===2){ const button=activeAt(s,dealerSeat)?dealerSeat:nextActiveSeat(s,dealerSeat); return {buttonSeat:button,smallBlindSeat:button,bigBlindSeat:nextActiveSeat(s,button)}; } const button=dealerSeat; const sb=nextActiveSeat(s,button); return {buttonSeat:button,smallBlindSeat:sb,bigBlindSeat:nextActiveSeat(s,sb)}; }
-function nextRolesDeadButton(s){ const count=activePlayers(s).length; if(count===2){ let bb=nextActiveSeat(s,s.bigBlindSeat); // never give the same player BB twice when HU begins
+function nextRolesDeadButton(s){ const count=activePlayers(s).length; if(count===2){ let bb=nextActiveSeat(s,s.bigBlindSeat); // Heads-up: nobody may receive the BB twice in a row.
     if(bb===s.bigBlindSeat) bb=nextActiveSeat(s,bb); const button=nextActiveSeat(s,bb); return {buttonSeat:button,smallBlindSeat:button,bigBlindSeat:bb}; }
-  const bb=nextActiveSeat(s,s.bigBlindSeat); const sb=prevActiveSeat(s,bb); const button=prevSeat(sb,s.players.length); return {buttonSeat:button,smallBlindSeat:sb,bigBlindSeat:bb}; }
+  // TDA dead-button method: the BIG BLIND is the anchor and advances to the next active player.
+  // SB and button are the two PHYSICAL seats immediately before that BB seat; they are not
+  // compressed to the previous active players. Therefore the SB can be dead (null), and the
+  // button can legitimately sit on an eliminated/empty seat. This is the key difference from
+  // a forward-moving button and prevents a player from skipping the BB.
+  const bb=nextActiveSeat(s,s.bigBlindSeat);
+  const nominalSb=prevSeat(bb,s.players.length);
+  const sb=activeAt(s,nominalSb)?nominalSb:null;
+  const button=prevSeat(nominalSb,s.players.length);
+  return {buttonSeat:button,smallBlindSeat:sb,bigBlindSeat:bb}; }
 function normalizeRoundSeen(s){ const activeIds=new Set(activePlayers(s).map(p=>p.id)); s.roundSeenBigBlind=(s.roundSeenBigBlind||[]).filter(id=>activeIds.has(id)); }
 function markBigBlind(s){ normalizeRoundSeen(s); const bb=s.players.find(p=>p.seat===s.bigBlindSeat); if(bb && !s.roundSeenBigBlind.includes(bb.id)) s.roundSeenBigBlind.push(bb.id); const activeIds=activePlayers(s).map(p=>p.id); if(activeIds.length && activeIds.every(id=>s.roundSeenBigBlind.includes(id))){ s.round += 1; s.roundSeenBigBlind=[]; if(s.round>s.roundsPerLevel){ s.status='level-change'; } } }
 export function createSession(input){ const players=(input.players||[]).map((name,i)=>({id:`p${i+1}`,name:String(name||`Spieler ${i+1}`).slice(0,30),seat:i+1,status:'active'})); if(players.length<2) throw new Error('Mindestens zwei Spieler erforderlich.'); const dealer=Math.max(1,Math.min(players.length,Number(input.dealerSeat)||1)); const s={version:1,status:'running',players,level:1,round:1,hand:1,roundsPerLevel:Math.max(1,Number(input.roundsPerLevel)||2),blindLevels:input.blindLevels||[{sb:5,bb:10}],pendingEliminations:[],roundSeenBigBlind:[],overlay:null,displayMode:'table',eventLog:[],createdAt:Date.now()}; Object.assign(s,rolesFromDealer(s,dealer)); markBigBlind(s); log(s,'Turnier gestartet'); return s; }
