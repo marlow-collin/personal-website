@@ -109,43 +109,40 @@ function deriveTargetStack(inputStack) {
   return inputStack || DEFAULT_STACK;
 }
 
-function buildBlindSchedule({ stack, players, duration, mode, levelMinutes, roundsPerLevel, smallest, minutesPerHand }) {
-  const opening = Math.abs(stack - DEFAULT_STACK) <= 5 && smallest <= 5 ? { sb: 5, bb: 10 } : chooseOpeningBlinds(stack, [{ value: smallest }]);
+function autoRoundsPerLevel(duration, players, minutesPerHand) {
+  const oneRoundMinutes = Math.max(1, players * minutesPerHand);
+  // Etwa 8–10 Blindstufen sind für einen privaten Freezeout gut handhabbar.
+  return clamp(Math.round((duration || DEFAULT_DURATION) / (9 * oneRoundMinutes)), 1, 4);
+}
+
+const BLIND_LADDER = Object.freeze([
+  [1, 2], [2, 5], [5, 10], [10, 25], [25, 50], [50, 100],
+  [100, 200], [200, 400], [400, 800], [800, 1600], [1500, 3000],
+  [3000, 6000], [5000, 10000], [10000, 20000]
+]);
+
+function chooseBlindStart(stack, duration) {
+  // 5/10 bei ~2.740 Chips sind bereits ca. 274 BB und damit für ~5h sehr tief.
+  // Kleinere Starts sind deshalb nur für bewusst sehr lange Abende vorgesehen.
+  if (duration >= 480 && stack >= 1500) return 1; // 2/5
+  return 2; // 5/10
+}
+
+function buildBlindSchedule({ stack, players, duration, mode, levelMinutes, roundsPerLevel, minutesPerHand }) {
   const estimatedMinutesPerHand = minutesPerHand || DEFAULT_MINUTES_PER_HAND;
-  const estimatedLevelMinutes = mode === "rounds"
-    ? players * roundsPerLevel * estimatedMinutesPerHand
-    : levelMinutes;
-  const levelCount = duration
-    ? clamp(Math.ceil(duration / Math.max(5, estimatedLevelMinutes)), 5, 18)
-    : 9;
-
-  // Für rundenbasierte Homegames entsteht Beschleunigung bereits dadurch, dass
-  // volle Tischrunden mit weniger Spielern weniger Hände benötigen. Keine künstliche
-  // Ausscheidungskurve in die Blindfolge einrechnen.
-  const targetEndBB = Math.max(opening.bb * 12, stack / 8);
-  const factor = levelCount > 1
-    ? clamp((targetEndBB / opening.bb) ** (1 / (levelCount - 1)), 1.28, 1.65)
-    : 1.5;
-
-  const levels = [];
-  let previousBB = 0;
-  for (let i = 0; i < levelCount; i += 1) {
-    let bb = roundToChipFriendly(opening.bb * (factor ** i), smallest);
-    if (bb <= previousBB) bb = roundToChipFriendly(previousBB + smallest, smallest);
-    let sb = roundToChipFriendly(bb / 2, smallest);
-    if (sb >= bb) sb = Math.max(smallest, bb - smallest);
-    previousBB = bb;
-    levels.push({
-      level: i + 1,
-      sb,
-      bb,
+  const estimatedLevelMinutes = mode === "rounds" ? players * roundsPerLevel * estimatedMinutesPerHand : levelMinutes;
+  const levelCount = duration ? clamp(Math.ceil(duration / Math.max(5, estimatedLevelMinutes)), 5, 12) : 9;
+  const startIndex = chooseBlindStart(stack, duration || DEFAULT_DURATION);
+  const levels = Array.from({ length: levelCount }, (_, i) => {
+    const pair = BLIND_LADDER[Math.min(startIndex + i, BLIND_LADDER.length - 1)];
+    return {
+      level: i + 1, sb: pair[0], bb: pair[1],
       startsAtMinutes: mode === "time" ? i * levelMinutes : null,
       startsAfterRounds: mode === "rounds" ? i * roundsPerLevel : null,
       estimatedStartsAtMinutes: mode === "rounds" ? Math.round(i * estimatedLevelMinutes) : null
-    });
-  }
-
-  return { levels, estimatedLevelMinutes, factor };
+    };
+  });
+  return { levels, estimatedLevelMinutes };
 }
 
 export function planPokerSetup(input = {}) {
@@ -153,8 +150,9 @@ export function planPokerSetup(input = {}) {
   const duration = asPositiveInt(input.durationMinutes) || null;
   const mode = input.blindMode === "time" ? "time" : "rounds";
   const levelMinutes = clamp(asPositiveInt(input.levelMinutes) || DEFAULT_LEVEL_MINUTES, 5, 90);
-  const roundsPerLevel = clamp(asPositiveInt(input.roundsPerLevel) || DEFAULT_ROUNDS_PER_LEVEL, 1, 10);
   const minutesPerHand = input.pace === "regular" ? 2.5 : DEFAULT_MINUTES_PER_HAND;
+  const requestedRounds = asPositiveInt(input.roundsPerLevel);
+  const roundsPerLevel = clamp(requestedRounds || autoRoundsPerLevel(duration || DEFAULT_DURATION, players, minutesPerHand), 1, 10);
 
   let chips = Array.isArray(input.chips) ? input.chips
     .map((chip, index) => ({
@@ -210,10 +208,10 @@ export function planPokerSetup(input = {}) {
   const assumptions = [];
   if (!input.players) assumptions.push(`${DEFAULT_PLAYERS} Spieler als Standard angenommen.`);
   if (!duration) assumptions.push(`${DEFAULT_DURATION} Minuten als Planungsziel angenommen.`);
-  if (!requestedStack) assumptions.push(`${DEFAULT_STACK.toLocaleString("de-DE")} Chips als bewährter Homegame-Starting-Stack angenommen.`);
+  if (!requestedStack) assumptions.push(`${DEFAULT_STACK.toLocaleString("de-DE")} Chips Starting Stack automatisch aus eurem bewährten Chipset gewählt.`);
   if (!Array.isArray(input.chips) || !input.chips.some((chip) => asPositiveInt(chip.value))) assumptions.push(`Standard-Denominations ${DEFAULT_DENOMS.join(" / ")} angenommen.`);
   if (!completeInventory) assumptions.push(`Leere Chip-Anzahlen gelten als unbekannt/unbegrenzt; Reserve ist dafür nicht berechenbar.`);
-  if (mode === "rounds") assumptions.push(`Standard: Blindwechsel nach ${roundsPerLevel} vollen Tischrunden. Bei ${players} Spielern sind das ${players * roundsPerLevel} Hände pro Level; mit weniger Spielern wird ein Level automatisch kürzer.`);
+  if (mode === "rounds") assumptions.push(`${requestedRounds ? "Vorgabe" : "Automatisch geplant"}: Blindwechsel nach ${roundsPerLevel} vollen Tischrunden. Bei ${players} Spielern sind das ${players * roundsPerLevel} Hände pro Level; mit weniger Spielern wird ein Level automatisch kürzer.`);
   assumptions.push(`Zeitprognose: ca. ${String(minutesPerHand).replace(".", ",")} Minuten pro Hand (${minutesPerHand > 3 ? "Entspannt" : "Regulär"}).`);
   assumptions.push(`Nicht verteilte Chips bleiben bewusst als Bank/Reserve verfügbar.`);
 

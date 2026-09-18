@@ -34,7 +34,7 @@
     </ol>
     <details class="explain"><summary>Warum darf der Big Blind noch erhöhen?</summary><p>Der gepostete Big Blind ist der eröffnende Einsatz der Preflop-Runde. Haben alle vor ihm nur mitgegangen, hat der Big Blind seine Action noch nicht verbraucht: Er kann checken oder erhöhen. Nach einem Raise müssen die vorherigen Caller erneut entscheiden. Im No-Limit gibt es keine feste Obergrenze für die Anzahl der Raises.</p><p class="source-note">Quelle: Poker TDA 2026, Regeln 44–45, 50 und 53-B.</p></details>
     <details class="explain"><summary>Heads-up: nur noch zwei Spieler</summary><p>Der Button ist gleichzeitig Small Blind und erhält die letzte Handkarte. Er handelt preflop zuerst. Ab dem Flop handelt der Big Blind zuerst und der Button zuletzt. Beim Start des Heads-up kann der Button angepasst werden, damit niemand zweimal hintereinander den Big Blind zahlen muss.</p><p class="source-note">Quelle: Poker TDA 2026, Regel 36-C.</p></details>
-    <p class="rules-link"><a href="https://www.pokertda.com/view-poker-tda-rules/" target="_blank" rel="noreferrer noopener">Offizielle Poker-TDA-Regeln 2026 ↗</a></p>
+    <div class="rules-links"><a href="https://www.pokerstars.com/de/poker/games/texas-holdem/" target="_blank" rel="noreferrer noopener">PokerStars · Texas Hold’em Regeln ↗</a><a href="https://www.pokertda.com/view-poker-tda-rules/" target="_blank" rel="noreferrer noopener">Poker TDA · Turnierregeln 2026 ↗</a></div>
   </section>
 </section>
 
@@ -45,12 +45,12 @@
     <div class="field-grid two-col">
       <label class="field"><span>Spieler</span><input id="setup-players" type="number" inputmode="numeric" min="2" max="10" value="6"><small>meist 5–6</small></label>
       <label class="field"><span>Spieldauer</span><div class="input-with-unit"><input id="setup-duration" type="number" inputmode="numeric" min="30" step="15" value="300"><span>min</span></div><small>Referenz: ca. 5 Stunden</small></label>
-      <label class="field"><span>Starting Stack</span><input id="setup-stack" type="number" inputmode="numeric" min="1" value="2740"><small>bewährte Verteilung</small></label>
+      <label class="field"><span>Starting Stack <em>optional</em></span><input id="setup-stack" type="number" inputmode="numeric" min="1" placeholder="automatisch"><small>Leer lassen = automatisch passend planen</small></label>
     </div>
     <fieldset class="field-set"><legend>Blind-Erhöhung</legend>
       <div class="segmented" id="blind-mode-switch"><button type="button" class="is-active" data-blind-mode="rounds" aria-pressed="true">Runden</button><button type="button" data-blind-mode="time" aria-pressed="false">Zeit</button></div>
       <div class="mode-fields">
-        <label class="field" id="round-level-field"><span>Volle Tischrunden pro Level</span><div class="input-with-unit"><input id="setup-rounds" type="number" inputmode="numeric" min="1" max="10" value="2"><span>Runden</span></div><small>Weniger Spieler = eine Runde wird automatisch kürzer.</small></label>
+        <label class="field" id="round-level-field"><span>Volle Tischrunden pro Level</span><div class="input-with-unit"><input id="setup-rounds" type="number" inputmode="numeric" min="1" max="10" placeholder="auto"><span>Runden</span></div><small>Leer lassen = aus Spielerzahl und gewünschter Dauer ableiten.</small></label>
         <div id="time-level-field" hidden><label class="field"><span>Leveldauer</span><div class="input-with-unit"><input id="setup-level-minutes" type="number" inputmode="numeric" min="5" step="5" value="20"><span>min</span></div></label><div class="quick-values"><button type="button" data-level-preset="15">15 min</button><button type="button" data-level-preset="20" class="is-active">20 min</button><button type="button" data-level-preset="30">30 min</button></div></div>
       </div>
     </fieldset>
@@ -61,13 +61,15 @@
 </section>
 
 <section class="tab-panel" id="panel-starting" data-panel="starting" aria-labelledby="nav-starting" hidden>
-  <div class="section-intro"><p class="eyebrow">169 STARTHÄNDE</p><h2>Mathematische Rohstärke.</h2><p>Wähle eine Handklasse und die Zahl zufälliger Gegner. Alle Werte sind vorbereitet – auf deinem Gerät wird dafür nichts simuliert.</p></div>
+  <div class="section-intro"><p class="eyebrow">169 STARTHÄNDE</p><h2>Mathematische Rohstärke.</h2><p>Wähle zuerst deine beiden konkreten Handkarten oder tippe später direkt eine Klasse in der Matrix an.</p></div>
+  <section class="surface card-input-surface"><div class="surface-head"><div><p class="eyebrow">DU</p><h3>Deine Handkarten</h3></div><span id="starting-notation" class="soft-badge">2 Karten wählen</span></div><div class="card-slot-row hero-slots" id="starting-card-slots"></div></section>
   <section class="surface"><div class="surface-head"><div><p class="eyebrow">GEGNER</p><h3>Wie viele Hände müssen geschlagen werden?</h3></div><span class="soft-badge" id="preflop-method">vorberechnet</span></div><div class="opponent-buttons" id="starting-opponents" aria-label="Gegnerzahl"></div><details class="explain compact"><summary>Warum ändern sich Equity und Rang?</summary><p>Mit jedem zusätzlichen Gegner muss deine Hand mehr andere Hände gleichzeitig schlagen. Dadurch sinkt die Equity fast aller Hände. Handtypen verlieren aber unterschiedlich stark, deshalb darf sich auch der mathematische Rang innerhalb der 169 Klassen verändern.</p></details></section>
-  <div class="starting-matrix-wrap"><div class="starting-matrix" id="starting-matrix" aria-label="169 Starthandklassen"></div></div>
   <section class="surface starting-detail" id="starting-detail" aria-live="polite"></section>
+  <div class="starting-matrix-wrap"><div class="starting-matrix" id="starting-matrix" aria-label="169 Starthandklassen"></div></div>
   <details class="surface explain glossary"><summary><strong>Begriffe kurz erklärt</strong></summary><dl><dt>Equity</dt><dd>Der erwartete Anteil am Pot über sehr viele gleichartige Situationen. Gewinne zählen voll, geteilte Pots anteilig.</dd><dt>suited (s)</dt><dd>Beide Handkarten haben dieselbe Farbe, z. B. A♠ K♠.</dd><dt>offsuit (o)</dt><dd>Die beiden Handkarten haben unterschiedliche Farben.</dd><dt>Pocket Pair</dt><dd>Zwei Handkarten mit demselben Rang, z. B. 8♠ 8♦.</dd></dl></details>
 </section>
 </main>
 <nav class="bottom-nav" aria-label="Poker Companion Bereiche"><button class="nav-item is-active" id="nav-hands" type="button" data-tab="hands" aria-current="page"><span class="nav-icon">≡</span><span>Hands</span></button><button class="nav-item" id="nav-setup" type="button" data-tab="setup"><span class="nav-icon">◎</span><span>Setup</span></button><button class="nav-item" id="nav-starting" type="button" data-tab="starting"><span class="nav-icon">▦</span><span>Starthände</span></button></nav>
 </div>
+<dialog class="card-picker" id="starting-card-picker" aria-labelledby="starting-picker-title"><div class="picker-sheet"><div class="picker-handle"></div><div class="picker-head"><div><p class="eyebrow">KARTE WÄHLEN</p><h2 id="starting-picker-title">Rang + Farbe</h2></div><button class="picker-close" id="starting-picker-close" type="button">×</button></div><p class="helper-copy">Rang und Farbe können in beliebiger Reihenfolge gewählt werden.</p><div class="rank-picker" id="starting-rank-picker"></div><div class="suit-picker" id="starting-suit-picker"></div><button class="clear-card-button" id="starting-clear-card" type="button">Diesen Slot leeren</button></div></dialog>
 </body></html>

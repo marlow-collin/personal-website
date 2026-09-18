@@ -2,25 +2,24 @@ import { FULL_DECK, compareRankVectors, evaluateBest } from "./poker-engine.js";
 
 let activeJob = 0;
 
-function choose(n, k) {
-  if (k < 0 || k > n) return 0;
-  if (k === 0 || k === n) return 1;
-  let result = 1;
+function chooseBigInt(n, k) {
+  if (k < 0 || k > n) return 0n;
+  if (k === 0 || k === n) return 1n;
   const kk = Math.min(k, n - k);
-  for (let i = 1; i <= kk; i += 1) result = result * (n - kk + i) / i;
-  return Math.round(result);
+  let result = 1n;
+  for (let i = 1; i <= kk; i += 1) result = result * BigInt(n - kk + i) / BigInt(i);
+  return result;
 }
 
 function estimateStates(remainingCount, boardMissing, opponents) {
-  let states = 1;
+  let states = 1n;
   let remaining = remainingCount;
-  states *= choose(remaining, boardMissing);
+  states *= chooseBigInt(remaining, boardMissing);
   remaining -= boardMissing;
   for (const opponent of opponents) {
     const missing = 2 - opponent.filter(Boolean).length;
-    states *= choose(remaining, missing);
+    states *= chooseBigInt(remaining, missing);
     remaining -= missing;
-    if (!Number.isFinite(states) || states > 1e9) return states;
   }
   return states;
 }
@@ -109,7 +108,7 @@ function statsPayload(stats, mode, iterations, estimatedStates, done = true, tok
     token,
     mode,
     iterations,
-    estimatedStates,
+    estimatedStates: estimatedStates.toString(),
     win: stats.win / total,
     tie: stats.tie / total,
     loss: stats.loss / total,
@@ -135,7 +134,7 @@ self.onmessage = (event) => {
   const deck = FULL_DECK.filter((card) => !known.has(card));
   const boardMissing = 5 - board.length;
   const estimatedStates = estimateStates(deck.length, boardMissing, opponents);
-  const exactThreshold = 140000;
+  const exactThreshold = 140000n;
   const stats = { total: 0, win: 0, tie: 0, loss: 0, share: 0 };
 
   if (estimatedStates <= exactThreshold) {

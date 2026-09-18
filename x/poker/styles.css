@@ -420,3 +420,5 @@ button { touch-action: manipulation; }
   .opponent-buttons { grid-template-columns: repeat(4, 1fr); }
   .starting-matrix { min-width: 540px; }
 }
+
+.rules-links{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1rem}.rules-links a{display:inline-flex;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;text-decoration:none;font-weight:650}.field em{font-style:normal;font-size:.72rem;font-weight:500;opacity:.65}.starting-detail{scroll-margin-top:1rem}
