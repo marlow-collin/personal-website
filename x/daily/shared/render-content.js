@@ -1,5 +1,11 @@
 // Shared Daily category renderer. Used by the live Daily page and Admin history preview.
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+  })[char]);
+}
+
 function translationBlock(payload, labelText = "Deutsch") {
   if (!payload?.translation_de) return "";
   return `<div class="daily-subsection daily-translation"><p class="daily-kicker">${labelText}</p><p>${escapeHtml(payload.translation_de)}</p></div>`;

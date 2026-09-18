@@ -254,9 +254,17 @@ require_text "src/daily/routes.js" 'IMPORT_VALIDATE = "/x/api/daily/import/valid
 require_file "x/daily/shared/render-content.js"
 require_text "x/daily/assets/js/category.js" 'renderDailyContentMarkup' "Live Daily page uses the shared category renderer"
 require_text "x/admin/daily/history/app.js" 'renderDailyContentMarkup' "Daily history uses the same category renderer as the live page"
-require_text "x/admin/daily/history/index.html" '/x/daily/assets/css/category.css' "Daily history loads the live category visual styles"
+require_text "x/admin/daily/history/app.js" '/x/daily/assets/css/category.css' "Daily history preview loads the live category visual styles in isolation"
 require_text "x/admin/daily/history/app.js" 'Preview uses the current version' "Daily history explains current-content preview semantics"
 require_text "x/admin/daily/history/index.html" 'Technical details' "Raw JSON is secondary technical detail"
+
+
+# Patch 07c — isolated Daily history preview fix
+require_text "x/daily/shared/render-content.js" 'function escapeHtml' "Shared Daily renderer contains its HTML escaping helper"
+require_text "x/admin/daily/history/index.html" 'data-preview-frame' "Daily history preview is isolated in an iframe"
+require_text "x/admin/daily/history/app.js" 'frame.srcdoc=previewDocument(i)' "Daily history writes visual preview into isolated document"
+require_text "x/admin/daily/history/app.js" '/x/daily/assets/css/daily-base.css' "Isolated preview loads live Daily base styles"
+require_text "x/admin/daily/history/app.js" '/x/daily/assets/css/category.css' "Isolated preview loads live Daily category styles"
 
 printf '\nResult: %d passed, %d failed.\n' "$PASS" "$FAIL"
 
