@@ -20,11 +20,13 @@
 
   "durable_objects": {
     "bindings": [
-      { "name": "POKER_LIVE", "class_name": "PokerLiveSession" }
+      { "name": "POKER_LIVE", "class_name": "PokerLiveSession" },
+      { "name": "POKER_LIVE_REGISTRY", "class_name": "PokerLiveRegistry" }
     ]
   },
   "migrations": [
-    { "tag": "poker-live-v1", "new_sqlite_classes": ["PokerLiveSession"] }
+    { "tag": "poker-live-v1", "new_sqlite_classes": ["PokerLiveSession"] },
+    { "tag": "poker-live-v2-registry", "new_sqlite_classes": ["PokerLiveRegistry"] }
   ],
   "d1_databases": [
     {

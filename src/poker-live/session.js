@@ -3,7 +3,7 @@ const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:
 export class PokerLiveSession {
   constructor(state,env){this.state=state;this.env=env;this.sockets=new Set();}
   async load(){return await this.state.storage.get('session');}
-  async save(s){await this.state.storage.put('session',s);this.broadcast(s);return s;}
+  async save(s){s.updatedAt=Date.now();await this.state.storage.put('session',s);this.broadcast(s);return s;}
   broadcast(s){const msg=JSON.stringify({type:'state',state:publicState(s)});for(const ws of this.sockets){try{ws.send(msg)}catch{this.sockets.delete(ws)}}}
   async fetch(request){const url=new URL(request.url);let s=await this.load();
     if(request.method==='POST'&&url.pathname.endsWith('/init')){if(s)return json({error:'Session existiert bereits.'},409);const body=await request.json();s=createSession(body.setup);s.controllerToken=body.controllerToken;await this.save(s);return json({state:publicState(s)});}

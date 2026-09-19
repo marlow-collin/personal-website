@@ -40,8 +40,8 @@ export const ADMIN_MODULES = Object.freeze([
   Object.freeze({
     id: "poker",
     label: "Poker Companion",
-    description: "Client-side · No configuration required",
-    manageUrl: null,
+    description: "Live tournament sessions and Poker Companion",
+    manageUrl: "/x/admin/poker/",
     siteUrl: "/x/poker/"
   })
 ]);

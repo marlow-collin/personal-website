@@ -241,6 +241,26 @@ async function checkinsOverview(env, mailConfigured) {
   return { module, attention };
 }
 
+async function pokerOverview(env) {
+  const module = moduleBase("poker");
+  const id = env.POKER_LIVE_REGISTRY.idFromName("poker-sessions");
+  const stub = env.POKER_LIVE_REGISTRY.get(id);
+  const response = await stub.fetch(new Request("https://registry/list"));
+  if (!response.ok) throw new Error("Poker session registry unavailable.");
+  const data = await response.json();
+  const sessions = data.sessions || [];
+  const live = sessions.filter((session) => ["running", "paused", "level-change"].includes(session.status)).length;
+  const finished = sessions.filter((session) => session.status === "finished").length;
+  module.status = live ? "healthy" : "neutral";
+  module.metrics = [
+    { label: "Live", value: live },
+    { label: "Tracked", value: sessions.length },
+    { label: "Finished", value: finished }
+  ];
+  module.summary = `${live} live · ${sessions.length} tracked`;
+  return { module, attention: [] };
+}
+
 function staticModule(id) {
   const module = moduleBase(id);
   module.status = "neutral";
@@ -287,7 +307,7 @@ export async function buildAdminOverview(request, env) {
     conversation: () => conversationOverview(env),
     checkins: () => checkinsOverview(env, mailConfigured),
     decide: () => staticModule("decide"),
-    poker: () => staticModule("poker")
+    poker: () => pokerOverview(env)
   };
 
   const results = await Promise.all(

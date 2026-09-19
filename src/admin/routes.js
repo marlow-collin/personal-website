@@ -22,6 +22,15 @@ function json(data, status = 200) {
   });
 }
 
+
+async function pokerRegistryList(env) {
+  const id = env.POKER_LIVE_REGISTRY.idFromName("poker-sessions");
+  const stub = env.POKER_LIVE_REGISTRY.get(id);
+  const response = await stub.fetch(new Request("https://registry/list"));
+  if (!response.ok) throw new Error("Poker session registry unavailable.");
+  return response.json();
+}
+
 function methodNotAllowed(allow) {
   return new Response(null, {
     status: 405,
@@ -41,6 +50,11 @@ export async function handleAdminRequest(request, env) {
   if (path === OVERVIEW_PATH) {
     if (request.method !== "GET") return methodNotAllowed("GET");
     return json(await buildAdminOverview(request, env));
+  }
+
+  if (path === "/x/admin/api/poker/sessions") {
+    if (request.method !== "GET") return methodNotAllowed("GET");
+    return json(await pokerRegistryList(env));
   }
 
   // Date, Daily, Check-in and Conversation admin endpoints are migrated in

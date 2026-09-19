@@ -1,5 +1,6 @@
 import { handlePokerLiveRequest } from "./poker-live/routes.js";
 export { PokerLiveSession } from "./poker-live/session.js";
+export { PokerLiveRegistry } from "./poker-live/registry.js";
 import { handleDailyRequest } from "./daily/routes.js";
 import { handleCheckinRequest } from "./checkins/routes.js";
 import { handleConversationRequest } from "./conversation/routes.js";
