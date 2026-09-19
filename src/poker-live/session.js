@@ -8,6 +8,8 @@ export class PokerLiveSession {
   async fetch(request){const url=new URL(request.url);let s=await this.load();
     if(request.method==='POST'&&url.pathname.endsWith('/init')){if(s)return json({error:'Session existiert bereits.'},409);const body=await request.json();s=createSession(body.setup);s.controllerToken=body.controllerToken;await this.save(s);return json({state:publicState(s)});}
     if(!s)return json({error:'Session nicht gefunden.'},404);
+    if(request.method==='POST'&&url.pathname.endsWith('/admin-delete')&&request.headers.get('X-Poker-Admin-Internal')==='1'){await this.state.storage.deleteAll();for(const ws of this.sockets){try{ws.close(1000,'Session gelöscht')}catch{}}this.sockets.clear();return json({ok:true});}
+    if(request.method==='POST'&&url.pathname.endsWith('/admin-recover')&&request.headers.get('X-Poker-Admin-Internal')==='1'){const body=await request.json().catch(()=>({}));if(!body.controllerToken)return json({error:'Token fehlt.'},400);s.controllerToken=String(body.controllerToken);await this.save(s);return json({state:publicState(s)});}
     const token=request.headers.get('X-Poker-Controller');const controller=token&&token===s.controllerToken;
     if(request.headers.get('Upgrade')==='websocket'){const pair=new WebSocketPair();const client=pair[0],server=pair[1];server.accept();this.sockets.add(server);server.send(JSON.stringify({type:'state',state:publicState(s),controller:Boolean(controller)}));server.addEventListener('close',()=>this.sockets.delete(server));return new Response(null,{status:101,webSocket:client});}
     if(request.method==='GET')return json({state:publicState(s),controller:Boolean(controller)});
