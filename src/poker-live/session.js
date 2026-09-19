@@ -1,4 +1,4 @@
-import { createSession, completeHand, eliminatePlayer, cancelElimination, startNextLevel, togglePause, correctRoles, undoLast, setOverlay, setDisplayMode, publicState } from './engine.js';
+import { createSession, completeHand, eliminatePlayer, cancelElimination, startNextLevel, togglePause, finishSession, correctRoles, undoLast, setOverlay, setDisplayMode, publicState } from './engine.js';
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow, noarchive, nosnippet'}});
 export class PokerLiveSession {
   constructor(state,env){this.state=state;this.env=env;this.sockets=new Set();}
@@ -13,6 +13,7 @@ export class PokerLiveSession {
     if(request.method==='GET')return json({state:publicState(s),controller:Boolean(controller)});
     if(request.method!=='POST'||!controller)return json({error:'Controller-Berechtigung erforderlich.'},403);
     const action=url.pathname.split('/').pop();const body=await request.json().catch(()=>({}));
-    try{if(action==='next-hand')completeHand(s);else if(action==='eliminate')eliminatePlayer(s,body.playerId);else if(action==='cancel-elimination')cancelElimination(s,body.playerId);else if(action==='next-level')startNextLevel(s);else if(action==='pause')togglePause(s);else if(action==='correct-roles')correctRoles(s,body);else if(action==='undo')undoLast(s);else if(action==='overlay')setOverlay(s,body.overlay);else if(action==='display-mode')setDisplayMode(s,body.mode);else return json({error:'Unbekannte Aktion.'},404);await this.save(s);return json({state:publicState(s)});}catch(e){return json({error:e.message},400)}
+    const actionId=String(body._actionId||'');s.recentActionIds||(s.recentActionIds=[]);if(actionId&&s.recentActionIds.includes(actionId))return json({state:publicState(s)});
+    try{if(action==='next-hand')completeHand(s);else if(action==='eliminate')eliminatePlayer(s,body.playerId);else if(action==='cancel-elimination')cancelElimination(s,body.playerId);else if(action==='next-level')startNextLevel(s);else if(action==='pause')togglePause(s);else if(action==='finish')finishSession(s);else if(action==='correct-roles')correctRoles(s,body);else if(action==='undo')undoLast(s);else if(action==='overlay')setOverlay(s,body.overlay);else if(action==='display-mode')setDisplayMode(s,body.mode);else return json({error:'Unbekannte Aktion.'},404);if(actionId){s.recentActionIds.push(actionId);s.recentActionIds=s.recentActionIds.slice(-30)}await this.save(s);return json({state:publicState(s)});}catch(e){return json({error:e.message},400)}
   }
 }
