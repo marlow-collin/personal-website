@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f3f5ef">
+  <title>WhatsApp Chat Analyzer</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./report.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero" id="import-view">
+      <div class="hero-mark" aria-hidden="true">WA</div>
+      <p class="eyebrow">LOCAL PERSONAL DATA LAB</p>
+      <h1>WhatsApp Chat<br><span>Analyzer</span></h1>
+      <p class="lede">Mach aus einem exportierten WhatsApp-Chat eine detaillierte, lokale Statistik. Einzel- und Gruppenchats werden unterstützt.</p>
+
+      <div class="privacy-card">
+        <span class="lock" aria-hidden="true">⌾</span>
+        <div><strong>Deine Datei verlässt dieses Gerät nicht.</strong><p>Kein Upload · keine Speicherung · keine Analytics · keine externe API</p></div>
+      </div>
+
+      <label class="file-drop" id="file-drop">
+        <input id="file-input" type="file" accept=".txt,text/plain">
+        <span class="file-icon" aria-hidden="true">TXT</span>
+        <span><strong>WhatsApp .txt auswählen</strong><small>oder Datei hier ablegen</small></span>
+      </label>
+      <p class="support-copy">V1 analysiert ausschließlich den Text-Export. Mediendateien und ZIP-Archive werden nicht geöffnet.</p>
+      <p class="error" id="import-error" role="alert" hidden></p>
+    </section>
+
+    <section class="loading-view" id="loading-view" hidden aria-live="polite">
+      <div class="loader"></div><h2>Chat wird lokal analysiert …</h2><p id="loading-status">Format wird erkannt.</p>
+    </section>
+
+    <section class="review-view" id="review-view" hidden>
+      <button class="back-link" id="review-back" type="button">← Andere Datei</button>
+      <p class="eyebrow">IMPORT CHECK</p><h1>Chat erkannt.</h1>
+      <div class="review-grid" id="review-grid"></div>
+      <div class="warning-card" id="date-warning" hidden>
+        <strong>Datumsformat ist nicht eindeutig.</strong><p>Bitte bestätige, wie Datumsangaben wie <span id="ambiguous-example"></span> gelesen werden sollen.</p>
+        <div class="choice-row"><button type="button" data-date-order="DMY">Tag / Monat / Jahr</button><button type="button" data-date-order="MDY">Monat / Tag / Jahr</button></div>
+      </div>
+      <div class="diagnostics" id="diagnostics"></div>
+      <button class="primary" id="analyze-button" type="button">Analyse öffnen →</button>
+    </section>
+
+    <section class="dashboard" id="dashboard" hidden>
+      <header class="dash-head">
+        <div><p class="eyebrow">WHATSAPP ANALYSIS</p><h1 id="chat-title">Chat analysis</h1><p id="chat-subtitle"></p></div>
+        <div class="head-actions"><button class="ghost" id="report-button" type="button">PDF Report</button><button class="ghost danger" id="clear-button" type="button">Daten löschen</button></div>
+      </header>
+
+      <section class="filter-bar" aria-label="Zeitraumfilter">
+        <div><span class="filter-label">ZEITRAUM</span><strong id="range-label">Gesamter Zeitraum</strong><small id="range-dates"></small></div>
+        <button class="filter-button" id="filter-button" type="button">Ändern</button>
+      </section>
+
+      <nav class="section-nav" aria-label="Analysebereiche">
+        <a href="#overview">Overview</a><a href="#activity">Aktivität</a><a href="#timing">Zeiten</a><a href="#conversation">Dynamik</a><a href="#language">Text & Emoji</a><a href="#participants">Personen</a>
+      </nav>
+
+      <section class="analysis-section" id="overview"><div class="section-title"><p class="eyebrow">01 · OVERVIEW</p><h2>Auf einen Blick</h2></div><div class="kpi-grid" id="kpi-grid"></div><div class="panel" id="share-panel"><div class="panel-head"><h3>Nachrichtenanteile</h3></div><div id="share-chart"></div></div></section>
+
+      <section class="analysis-section" id="activity"><div class="section-title"><p class="eyebrow">02 · ACTIVITY</p><h2>Aktivität über Zeit</h2></div><div class="panel"><div class="panel-head"><h3>Nachrichtenverlauf</h3><div class="segmented" id="granularity"><button data-granularity="day">Tag</button><button data-granularity="week">Woche</button><button data-granularity="month" class="active">Monat</button></div></div><div class="chart-scroll"><svg class="line-chart" id="activity-chart" role="img" aria-label="Nachrichten über Zeit"></svg></div></div><div class="panel"><div class="panel-head"><h3>Kalender</h3><span class="muted">Nachrichten pro Tag</span></div><div id="calendar-heatmap" class="calendar"></div></div><div class="record-grid" id="activity-records"></div></section>
+
+      <section class="analysis-section" id="timing"><div class="section-title"><p class="eyebrow">03 · TIMING</p><h2>Wann wird geschrieben?</h2></div><div class="two-col"><div class="panel"><div class="panel-head"><h3>Uhrzeit</h3></div><div id="hour-chart" class="bar-chart"></div></div><div class="panel"><div class="panel-head"><h3>Wochentage</h3></div><div id="weekday-chart" class="bar-chart horizontal"></div></div></div><div class="panel"><div class="panel-head"><h3>Stunde × Wochentag</h3><span class="muted">Dunkler = mehr Nachrichten</span></div><div id="hour-weekday" class="matrix-wrap"></div></div></section>
+
+      <section class="analysis-section" id="conversation"><div class="section-title"><p class="eyebrow">04 · CONVERSATION</p><h2>Gesprächsdynamik</h2></div><div class="method-note"><strong>Session-Definition</strong><p>Eine neue aktive Phase beginnt nach mindestens <button id="gap-button" class="inline-control" type="button">6 Stunden</button> ohne Nachricht. Sprecherwechsel messen den Abstand bis zur nächsten Nachricht einer anderen Person – nicht eine semantische Antwort.</p></div><div class="kpi-grid compact" id="conversation-kpis"></div><div class="panel" id="starter-panel"><div class="panel-head"><h3>Wer startet neue aktive Phasen?</h3></div><div id="starter-chart"></div></div></section>
+
+      <section class="analysis-section" id="language"><div class="section-title"><p class="eyebrow">05 · LANGUAGE</p><h2>Text & Emoji</h2></div><div class="language-controls"><label>Stopwords <select id="stopword-select"><option value="de">Deutsch</option><option value="en">English</option><option value="none">Keine</option></select></label></div><div class="two-col"><div class="panel"><div class="panel-head"><h3>Häufigste Wörter</h3></div><div id="word-chart" class="rank-list"></div></div><div class="panel"><div class="panel-head"><h3>Emoji</h3></div><div id="emoji-chart" class="rank-list emoji-list"></div></div></div><div class="two-col"><div class="panel"><div class="panel-head"><h3>Wiederkehrende Phrasen</h3><span class="muted">2–3 Wörter</span></div><div id="phrase-list" class="rank-list"></div></div><div class="panel"><div class="panel-head"><h3>Links & Anhänge</h3></div><div id="content-stats"></div></div></div></section>
+
+      <section class="analysis-section" id="participants"><div class="section-title"><p class="eyebrow">06 · PARTICIPANTS</p><h2>Personen</h2></div><div id="participant-cards" class="participant-cards"></div></section>
+
+      <footer class="privacy-footer"><strong>🔒 Lokal verarbeitet</strong><p>Die ausgewählte Datei und alle daraus berechneten Ergebnisse befinden sich nur im Arbeitsspeicher dieses Tabs und werden beim Neuladen verworfen.</p></footer>
+    </section>
+  </main>
+
+  <dialog id="filter-dialog"><form method="dialog" class="dialog-card"><div class="dialog-head"><div><p class="eyebrow">ZEITRAUM</p><h2>Analyse eingrenzen</h2></div><button value="cancel" class="icon-button" aria-label="Schließen">×</button></div><div class="preset-grid" id="preset-grid"></div><div class="month-pick"><label>Bestimmter Monat<input type="month" id="range-month"></label><button type="button" class="ghost" id="apply-month">Monat auswählen</button></div><div class="custom-range"><label>Von<input type="date" id="range-start"></label><label>Bis<input type="date" id="range-end"></label></div><button type="button" class="primary" id="apply-range">Zeitraum anwenden</button></form></dialog>
+
+  <dialog id="gap-dialog"><form method="dialog" class="dialog-card small"><div class="dialog-head"><div><p class="eyebrow">SESSION GAP</p><h2>Neue aktive Phase</h2></div><button value="cancel" class="icon-button" aria-label="Schließen">×</button></div><p class="muted">Nach wie vielen Stunden ohne Nachricht soll eine neue Gesprächsphase beginnen?</p><div class="gap-options" id="gap-options"></div></form></dialog>
+
+  <dialog id="report-dialog"><form method="dialog" class="dialog-card"><div class="dialog-head"><div><p class="eyebrow">LOCAL PDF</p><h2>Report erstellen</h2></div><button value="cancel" class="icon-button" aria-label="Schließen">×</button></div><fieldset><legend>Stil</legend><label class="radio-card"><input type="radio" name="report-style" value="analytical" checked><span><strong>Analytical</strong><small>Sachlich, klar und methodisch sauber.</small></span></label><label class="radio-card"><input type="radio" name="report-style" value="serious"><span><strong>Unnecessarily Serious</strong><small>Dieselben Fakten, unangemessen dramatisch präsentiert.</small></span></label><label class="radio-card"><input type="radio" name="report-style" value="bureaucracy"><span><strong>Maximum Bureaucracy</strong><small>Kommunikationsprüfung mit maximalem Behördencharme.</small></span></label></fieldset><fieldset><legend>Personen</legend><label class="check-row"><input type="checkbox" id="report-anonymize"><span>Namen als Person A, Person B … anonymisieren</span></label></fieldset><div class="report-summary"><span>Zeitraum</span><strong id="report-range"></strong></div><p class="privacy-inline">🔒 Das PDF wird vollständig auf diesem Gerät erzeugt.</p><button type="button" class="primary" id="generate-report">PDF lokal erzeugen</button><p id="report-status" class="muted" role="status"></p></form></dialog>
+</body>
+</html>
