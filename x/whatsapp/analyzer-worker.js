@@ -3,7 +3,7 @@ const DE_STOP=new Set('aber alle allem allen aller alles als also am an andere a
 const EN_STOP=new Set('a about after again all am an and any are as at be because been before being below between both but by can did do does doing down during each few for from further had has have having he her here hers herself him himself his how i if in into is it its itself just me more most my myself no nor not of off on once only or other our ours ourselves out over own same she should so some such than that the their theirs them themselves then there these they this those through to too under until up very was we were what when where which while who whom why will with you your yours yourself yourselves'.split(' '));
 const EMOJI_RE=/\p{Extended_Pictographic}/u,URL_RE=/https?:\/\/[^\s<>]+|www\.[^\s<>]+/giu;
 let rawText='',parsed=null,multiFiles=[],multiParsed=[],multiCombined=null;
-postMessage({type:'ready',version:'1.5.1'});
+postMessage({type:'ready',version:'1.5.2'});
 self.onmessage=async e=>{const m=e.data||{};try{
  if(m.type==='parse'){rawText=m.file?await m.file.text():(m.text||'');parsed=parseChat(rawText,m.dateOrder);postMessage({type:'parsed',data:summary(parsed)});}
  else if(m.type==='reparse'){parsed=parseChat(rawText,m.dateOrder);postMessage({type:'parsed',data:summary(parsed)});}
