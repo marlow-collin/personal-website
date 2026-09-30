@@ -25,3 +25,7 @@
   .review-view .review-actions{position:sticky;bottom:0;background:var(--bg);padding:10px 0 max(4px,env(safe-area-inset-bottom));z-index:4}
   .review-view .review-actions .primary{margin-top:0;min-height:50px}
 }
+
+/* Single-chat interactive activity chart */
+.chart-hit{fill:transparent;pointer-events:all;cursor:crosshair;touch-action:pan-y}.chart-crosshair{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4;pointer-events:none}.chart-focus-dot{fill:var(--surface);stroke:var(--accent);stroke-width:3;pointer-events:none}.chart-tooltip{pointer-events:none}.chart-tooltip rect{fill:var(--ink);opacity:.96}.chart-tooltip text{fill:var(--bg);font-size:11px;font-weight:700;text-anchor:middle}.record small{display:block;color:var(--muted);font-size:11px;line-height:1.35;margin-top:5px}
+@media(max-width:720px){.chart-hit{cursor:default}.chart-tooltip text{font-size:10px}}
