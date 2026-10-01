@@ -29,3 +29,15 @@
 /* Single-chat interactive activity chart */
 .chart-hit{fill:transparent;pointer-events:all;cursor:crosshair;touch-action:pan-y}.chart-crosshair{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4;pointer-events:none}.chart-focus-dot{fill:var(--surface);stroke:var(--accent);stroke-width:3;pointer-events:none}.chart-tooltip{pointer-events:none}.chart-tooltip rect{fill:var(--ink);opacity:.96}.chart-tooltip text{fill:var(--bg);font-size:11px;font-weight:700;text-anchor:middle}.record small{display:block;color:var(--muted);font-size:11px;line-height:1.35;margin-top:5px}
 @media(max-width:720px){.chart-hit{cursor:default}.chart-tooltip text{font-size:10px}}
+
+/* Interactive timing/calendar details */
+.calendar,.matrix-wrap{position:relative}
+.interactive-cell{cursor:crosshair;touch-action:pan-y;outline:none}
+.cal-day.interactive-cell{color:var(--ink)}
+.interactive-cell.scrub-active{outline:2px solid var(--accent);outline-offset:1px;z-index:2}
+.data-tip{position:absolute;z-index:8;transform:translate(-50%,-100%);max-width:min(280px,calc(100% - 16px));padding:7px 9px;border-radius:8px;background:var(--ink);color:var(--bg);font-size:11px;font-weight:700;line-height:1.25;white-space:nowrap;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.14)}
+.weekday-row{grid-template-columns:35px 1fr minmax(92px,auto)}
+.weekday-row strong{display:flex;flex-direction:column;align-items:flex-end;gap:1px;line-height:1.1}
+.weekday-row strong>span{font-size:11px}
+.weekday-row strong small{font-size:9px;color:var(--muted);font-weight:500}
+@media(max-width:720px){.interactive-cell{cursor:default}.data-tip{font-size:10px}.weekday-row{grid-template-columns:30px 1fr minmax(90px,auto)}}
