@@ -307,6 +307,7 @@ export async function buildAdminOverview(request, env) {
     conversation: () => conversationOverview(env),
     checkins: () => checkinsOverview(env, mailConfigured),
     decide: () => staticModule("decide"),
+    whatsapp: () => staticModule("whatsapp"),
     poker: () => pokerOverview(env)
   };
 

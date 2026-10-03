@@ -38,6 +38,13 @@ export const ADMIN_MODULES = Object.freeze([
     siteUrl: "/x/decide/"
   }),
   Object.freeze({
+    id: "whatsapp",
+    label: "WhatsApp Analyse",
+    description: "Lokale Einzel- und Multi-Chat-Analyse ohne Server-Upload",
+    manageUrl: null,
+    siteUrl: "/x/whatsapp/"
+  }),
+  Object.freeze({
     id: "poker",
     label: "Poker Companion",
     description: "Live tournament sessions and Poker Companion",
