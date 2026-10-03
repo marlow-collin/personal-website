@@ -49,3 +49,8 @@
 .stopword-lists{padding-top:12px;display:grid;gap:12px}
 .word-list{margin:.4rem 0 0;font-size:12px;line-height:1.7;color:var(--muted);overflow-wrap:anywhere}
 @media(max-width:720px){.full-chart .linechart,.full-chart .hour-chart{min-width:0}.full-chart .chart-scroll{overflow-x:hidden}}
+
+/* V1.5 confirmed alias normalization */
+.alias-review{margin:1.25rem 0;padding:1rem;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+.alias-head h2{margin:.15rem 0 .35rem}.alias-list{display:grid;gap:.65rem;margin-top:.9rem}.alias-card{display:grid;grid-template-columns:auto 1fr;gap:.75rem;align-items:start;padding:.8rem;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.alias-card>input{margin-top:.3rem}.alias-card>span{display:grid;gap:.35rem}.alias-card small{color:var(--muted)}.alias-canonical{max-width:22rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:.5rem .6rem}
