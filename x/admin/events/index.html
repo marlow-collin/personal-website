@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="theme-color" content="#0b0d10">
+  <title>Events · Secret Layer</title>
+  <link rel="stylesheet" href="/x/admin/shared/admin.css">
+</head>
+<body>
+  <main class="admin-shell admin-page">
+    <header class="page-header">
+      <div class="page-heading">
+        <a class="back-link" href="/x/admin/">← Control Center</a>
+        <p class="eyebrow">Secret Layer · Events</p>
+        <h1>Events</h1>
+        <p class="lede">Create invitation and countdown pages with readable URLs.</p>
+      </div>
+      <button class="button button-primary" id="newEventButton" type="button">New event</button>
+    </header>
+
+    <section class="admin-metrics" id="stats" aria-label="Event summary"></section>
+    <section class="workspace-card">
+      <div class="workspace-head"><div><p class="eyebrow">Invitations</p><h2>All events</h2></div><button class="button button-secondary button-small" id="refreshButton" type="button">Refresh</button></div>
+      <div class="record-list" id="eventList"><div class="skeleton-line">Loading events…</div></div>
+    </section>
+  </main>
+
+  <dialog class="admin-dialog event-editor" id="eventDialog">
+    <form class="dialog-card" id="eventForm">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Events · Editor</p><h2 id="dialogTitle">New event</h2></div>
+        <button class="icon-action" id="closeDialog" type="button" aria-label="Close">×</button>
+      </div>
+
+      <div class="form-grid">
+        <label class="field"><span>Slug</span><input name="slug" maxlength="60" required placeholder="poker" pattern="[a-z0-9]+(?:-[a-z0-9]+)*"><small>Public URL: /x/event/&lt;slug&gt;</small></label>
+        <label class="field"><span>Theme</span><select name="theme"><option value="minimal">Minimal</option><option value="card-room">Card Room</option></select></label>
+        <label class="field"><span>Title</span><input name="title" maxlength="100" required placeholder="Poker Night"></label>
+        <label class="field"><span>Icon <em>optional</em></span><input name="icon" maxlength="8" placeholder="♠"></label>
+        <label class="field field-wide"><span>Eyebrow <em>optional</em></span><input name="eyebrow" maxlength="100" placeholder="Private table · Saturday night"></label>
+        <label class="field field-wide"><span>Subtitle <em>optional</em></span><input name="subtitle" maxlength="180" placeholder="Cards, drinks and a little friendly competition."></label>
+        <label class="field field-wide"><span>Invitation text <em>optional</em></span><textarea name="description" maxlength="1200" rows="4"></textarea></label>
+        <label class="field"><span>Start</span><input type="datetime-local" name="start_local" required></label>
+        <label class="field"><span>End <em>optional</em></span><input type="datetime-local" name="end_local"></label>
+        <label class="field field-wide"><span>Timezone</span><input name="timezone" maxlength="80" value="Europe/Berlin" required><small>IANA timezone, e.g. Europe/Berlin.</small></label>
+        <label class="field"><span>Location <em>optional</em></span><input name="location_label" maxlength="160" placeholder="Clubhouse"></label>
+        <label class="field"><span>Location link <em>optional</em></span><input name="location_url" maxlength="500" placeholder="https://…"></label>
+
+        <div class="field field-wide"><span>Details <em>optional</em></span><div class="event-pairs" id="detailRows"></div><small>Up to four compact information rows.</small></div>
+        <div class="field field-wide"><span>Primary action <em>optional</em></span><div class="event-pair"><input name="primary_cta_label" maxlength="70" placeholder="Open Poker Companion"><input name="primary_cta_url" maxlength="500" placeholder="/x/poker/"></div></div>
+        <div class="field field-wide"><span>Secondary links <em>optional</em></span><div class="event-pairs" id="linkRows"></div><small>Up to three additional links.</small></div>
+        <label class="field field-wide"><span>Closing line <em>optional</em></span><input name="closing_message" maxlength="180" placeholder="See you at the table."></label>
+        <label class="event-active field-wide"><input type="checkbox" name="is_active" checked><span><strong>Active</strong><small>Inactive events are not available on their public URL.</small></span></label>
+      </div>
+
+      <p class="field-error" id="formError"></p>
+      <div class="dialog-actions">
+        <button class="button button-danger danger-left" id="deleteButton" type="button" hidden>Delete</button>
+        <button class="button button-secondary" id="copyButton" type="button" hidden>Copy link</button>
+        <button class="button button-secondary" id="previewButton" type="button" hidden>Open event</button>
+        <button class="button button-secondary" id="cancelButton" type="button">Cancel</button>
+        <button class="button button-primary" id="saveButton" type="submit">Save event</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="admin-toast" id="toast" hidden></div>
+  <script type="module" src="/x/admin/events/app.js"></script>
+</body>
+</html>

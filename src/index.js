@@ -7,6 +7,7 @@ import { handleConversationRequest } from "./conversation/routes.js";
 import { handleAdminRequest } from "./admin/routes.js";
 import { requireAdminApiAccess } from "./admin/access.js";
 import { handleDateRequest } from "./date/routes.js";
+import { handleEventRequest } from "./event/routes.js";
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -54,6 +55,9 @@ export default {
 
       const dateResponse = await handleDateRequest(request, env, ctx);
       if (dateResponse) return dateResponse;
+
+      const eventResponse = await handleEventRequest(request, env);
+      if (eventResponse) return eventResponse;
 
       const pokerLiveResponse = await handlePokerLiveRequest(request, env);
       if (pokerLiveResponse) return pokerLiveResponse;

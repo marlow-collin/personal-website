@@ -12,6 +12,7 @@
     "not_found_handling": "404-page",
     "run_worker_first": [
       "/x/date/*",
+      "/x/event/*",
       "/x/api/*",
       "/x/admin/api/*",
       "/x/poker/live/api/*"
@@ -34,6 +35,12 @@
       "database_name": "personal-website-date-invitations",
       "database_id": "5e9cdc4a-99c8-4235-9a2d-e0f08d855de5",
       "migrations_dir": "migrations"
+    },
+    {
+      "binding": "EVENTS_DB",
+      "database_name": "personal-website-events",
+      "database_id": "69860801-8a78-48bd-8cd9-a667795165bd",
+      "migrations_dir": "migrations/events"
     },
     {
       "binding": "DAILY_DB",

@@ -14,6 +14,16 @@ export const ADMIN_MODULES = Object.freeze([
     siteUrl: "/x/conversation/"
   }),
   Object.freeze({
+    id: "events",
+    label: "Event Invitations",
+    description: "Invitation and countdown pages with readable URLs",
+    manageUrl: "/x/admin/events/",
+    siteUrl: null,
+    quickActions: Object.freeze([
+      Object.freeze({ label: "New Event", href: "/x/admin/events/?new=1" })
+    ])
+  }),
+  Object.freeze({
     id: "date",
     label: "Date Invitations",
     description: "Private invitation management",

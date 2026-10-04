@@ -50,6 +50,23 @@ async function dateOverview(env) {
   return { module, attention: [] };
 }
 
+async function eventsOverview(env) {
+  const module = moduleBase("events");
+  const row = await env.EVENTS_DB.prepare(`
+    SELECT
+      COUNT(*) AS total,
+      SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active,
+      SUM(CASE WHEN is_active = 1 AND datetime(start_at) >= CURRENT_TIMESTAMP THEN 1 ELSE 0 END) AS upcoming
+    FROM events
+  `).first();
+  module.metrics = [
+    { label: "Events", value: number(row?.total) },
+    { label: "Upcoming", value: number(row?.upcoming) }
+  ];
+  module.summary = `${number(row?.active)} active · ${number(row?.upcoming)} upcoming`;
+  return { module, attention: [] };
+}
+
 async function dailyOverview(env) {
   const module = moduleBase("daily");
   const result = await env.DAILY_DB.prepare(`
@@ -303,6 +320,7 @@ export async function buildAdminOverview(request, env) {
   const mailConfigured = mailIsConfigured(env);
   const tasks = {
     date: () => dateOverview(env),
+    events: () => eventsOverview(env),
     daily: () => dailyOverview(env),
     conversation: () => conversationOverview(env),
     checkins: () => checkinsOverview(env, mailConfigured),
